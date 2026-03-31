@@ -1,0 +1,13 @@
+{
+  "app": { "title": "Smart Paimon", "subtitle": "Genshin Impact Damage Calculator" },
+  "nav": { "characters": "Characters", "team": "Team", "compare": "Compare", "import": "Import Data" },
+  "import": { "title": "Import GOOD File", "dragDrop": "Drag & drop your file here", "or": "or", "selectFile": "Select File", "sampleData": "Try with sample data", "supported": "Supported: Genshin Optimizer, Irminsul, Inventory Kamera, Amenoma", "error": "Import Error", "warnings": "Warnings" },
+  "characters": { "title": "Characters", "filter": { "all": "All", "element": "Element", "weapon": "Weapon" }, "count": "{{count}} characters loaded" },
+  "detail": { "level": "Lv.{{level}}", "constellation": "C{{count}}", "weapon": "Weapon", "artifacts": "Artifacts", "stats": "Final Stats", "damage": "Damage Calculation", "normalAttack": "Normal Attack", "elementalSkill": "Elemental Skill", "elementalBurst": "Elemental Burst", "nonCrit": "Non-Crit", "crit": "Crit", "average": "Average", "multiplier": "Multi", "talentName": "Talent" },
+  "enemy": { "title": "Enemy Config", "level": "Level", "resistance": "RES", "defReduction": "DEF Reduction" },
+  "reaction": { "none": "None", "vaporize": "Vaporize", "melt": "Melt", "overloaded": "Overloaded", "superconduct": "Superconduct", "electroCharged": "Electro-Charged", "swirl": "Swirl", "bloom": "Bloom", "hyperbloom": "Hyperbloom", "burgeon": "Burgeon", "burning": "Burning", "aggravate": "Aggravate", "spread": "Spread" },
+  "stats": { "hp": "HP", "atk": "ATK", "def": "DEF", "em": "Elemental Mastery", "critRate": "CRIT Rate", "critDmg": "CRIT DMG", "er": "Energy Recharge", "dmgBonus": "DMG Bonus" },
+  "element": { "pyro": "Pyro", "hydro": "Hydro", "electro": "Electro", "cryo": "Cryo", "anemo": "Anemo", "geo": "Geo", "dendro": "Dendro" },
+  "weaponType": { "sword": "Sword", "claymore": "Claymore", "polearm": "Polearm", "bow": "Bow", "catalyst": "Catalyst" },
+  "common": { "loading": "Loading...", "error": "Error", "retry": "Retry", "version": "ver.{{version}}" }
+}
