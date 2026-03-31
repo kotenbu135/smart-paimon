@@ -17,7 +17,7 @@ A web-based damage calculator for Genshin Impact that uses `@kotenbu/genshin-cal
 | i18n | react-i18next (Japanese / English) |
 | UI Components | Radix UI (headless, accessible) |
 | Animation | Framer Motion |
-| Calculation Engine | @kotenbu/genshin-calc (WASM) |
+| Calculation Engine | @kotenbu/genshin-calc@0.1.1 (WASM) |
 | Routing | React Router v7 (HashRouter for GitHub Pages) |
 | Deployment | GitHub Pages (GitHub Actions auto-deploy) |
 
@@ -33,9 +33,9 @@ GOOD JSON file
   → Damage results displayed in UI
 ```
 
-## GOOD Adapter (package-side addition)
+## GOOD Adapter
 
-A new function `import_good(json: string)` will be added to `@kotenbu/genshin-calc`. A design spec already exists in the `genshin-calc` repository (`docs/superpowers/specs/2026-03-31-good-import-design.md`). The new crate `genshin-calc-good` will be published as part of the WASM package.
+The `genshin-calc-good` crate has been implemented in the `genshin-calc` repository (`crates/good`). It handles GOOD JSON parsing and conversion to internal types.
 
 Key responsibilities:
 - Parses GOOD JSON format (version 1)
@@ -45,7 +45,8 @@ Key responsibilities:
 - Builds `StatProfile` from artifact main stats + substats (percentage values ÷100 to decimal)
 - Main stat value lookup tables for artifacts (3-5 stars, level 0-20)
 - Returns `GoodImport` struct with `CharacterBuild` array and warnings for unknown keys
-- Implemented in Rust (WASM), so Web UI just calls `import_good()`
+
+**Current status (v0.1.1):** The `genshin-calc-good` crate exists but `import_good()` is not yet exposed in the WASM bindings. Before Phase 1 can start, the WASM layer needs to export this function. As a fallback, the Web UI could implement the GOOD adapter in TypeScript using the existing `find_character`/`find_weapon`/`find_artifact_set` lookup functions.
 
 ## Pages & Routing
 
@@ -207,9 +208,10 @@ Genshin Impact-inspired rich UI:
 
 ## Prerequisites
 
-Before starting Web UI implementation:
-1. Implement `genshin-calc-good` crate (design spec exists at `genshin-calc` repo)
-2. Expose `import_good()` function in WASM bindings
-3. Publish updated `@kotenbu/genshin-calc` package version to npm
+Before starting Phase 1 implementation:
+1. ~~Implement `genshin-calc-good` crate~~ ✅ Done (crates/good in genshin-calc repo)
+2. Expose `import_good()` in WASM bindings (`crates/wasm`) and publish @kotenbu/genshin-calc@0.2.0
+   - Alternatively: implement GOOD adapter in TypeScript as a stopgap, using existing WASM lookup functions
+3. Ensure `types.ts` is included in the npm package (missing from v0.1.1 `files` field)
 
 Source repository: https://github.com/kotenbu135/genshin-calc
