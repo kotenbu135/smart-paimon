@@ -10,36 +10,62 @@ export function Navbar() {
   const { locale, setLocale } = useUIStore();
   const builds = useGoodStore((s) => s.builds);
 
-  const navItems = [
-    { to: "/", label: t("nav.import") },
-    { to: "/characters", label: t("nav.characters") },
-  ];
-
   const isActive = (path: string) =>
     path === "/" ? location.pathname === "/" : location.pathname.startsWith(path);
 
   return (
-    <nav className="bg-gray-900/80 backdrop-blur-sm border-b border-gray-800 sticky top-0 z-50">
-      <div className="container mx-auto px-4 h-14 flex items-center justify-between">
-        <div className="flex items-center gap-6">
-          <Link to="/" className="text-lg font-bold text-amber-400">{t("app.title")}</Link>
-          <div className="flex items-center gap-1">
-            {navItems.map(({ to, label }) => (
-              <Link key={to} to={to} className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${isActive(to) ? "bg-amber-400/10 text-amber-400" : "text-gray-400 hover:text-gray-200"}`}>
-                {label}
-              </Link>
-            ))}
+    <nav className="fixed top-0 w-full h-14 bg-navy-card border-b border-navy-border z-50">
+      <div className="flex justify-between items-center px-6 h-full max-w-7xl mx-auto">
+        <div className="flex items-center gap-10">
+          <Link to="/" className="text-xl font-bold text-gold tracking-tight">
+            Smart Paimon
+          </Link>
+          <div className="hidden md:flex items-center gap-6 h-14">
+            <Link
+              to={builds.length > 0 ? "/characters" : "#"}
+              className={`h-full flex items-center text-sm font-semibold tracking-wide transition-colors ${
+                isActive("/characters")
+                  ? "text-text-primary border-b-2 border-gold"
+                  : builds.length > 0
+                    ? "text-text-secondary hover:text-text-primary"
+                    : "text-text-muted cursor-not-allowed pointer-events-none"
+              }`}
+            >
+              {t("nav.characters")}
+            </Link>
+            <span className="text-text-muted text-sm font-semibold tracking-wide cursor-not-allowed">
+              Team
+            </span>
+            <span className="text-text-muted text-sm font-semibold tracking-wide cursor-not-allowed">
+              Compare
+            </span>
           </div>
         </div>
-        <div className="flex items-center gap-4 text-sm">
-          {builds.length > 0 && (
-            <span className="text-gray-500">
-              {t("characters.count", { count: builds.length })} | {t("common.version", { version: game_version() })}
+
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 pr-4 border-r border-navy-border">
+            <span className="bg-navy-hover px-2 py-0.5 rounded text-[10px] font-mono text-gold border border-navy-border">
+              {builds.length} {t("nav.characters").toUpperCase()}
             </span>
-          )}
-          <button onClick={() => setLocale(locale === "ja" ? "en" : "ja")} className="px-2 py-1 rounded border border-gray-700 text-gray-400 hover:text-gray-200 hover:border-gray-600 transition-colors">
-            {locale === "ja" ? "EN" : "JP"}
+            <span className="text-[10px] font-mono text-text-muted uppercase tracking-wider">
+              v{game_version()}
+            </span>
+          </div>
+          <button
+            onClick={() => setLocale(locale === "ja" ? "en" : "ja")}
+            className="px-3 py-1 text-xs font-label text-text-secondary hover:bg-navy-hover rounded transition-colors"
+          >
+            {locale === "ja" ? "JA / EN" : "EN / JA"}
           </button>
+          {builds.length > 0 && (
+            <Link
+              to="/"
+              className="p-1.5 text-text-secondary hover:text-text-primary hover:bg-navy-hover rounded transition-colors text-sm"
+              title="Re-import"
+            >
+              ↻
+            </Link>
+          )}
         </div>
       </div>
     </nav>

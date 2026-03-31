@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Smart Paimon - Character Gallery</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=Space+Grotesk:wght@500&amp;family=JetBrains+Mono:wght@600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        'deep-navy': '#1A1D2E',
+                        'midnight-blue': '#252A40',
+                        'slate-blue': '#2F3452',
+                        'muted-indigo': '#3A3F5C',
+                        'soft-white': '#E8E8E8',
+                        'lavender-gray': '#9B9DB8',
+                        'dusty-indigo': '#6B7094',
+                        'gold-accent': '#D4A84B',
+                        'pyro': '#EF7938',
+                        'hydro': '#4CC2F1',
+                        'electro': '#B57EDC',
+                        'cryo': '#9FD6E3',
+                        'dendro': '#A5C83B',
+                        'anemo': '#74C2A8',
+                        'geo': '#F0B232'
+                    },
+                    fontFamily: {
+                        "headline": ["Inter", "sans-serif"],
+                        "body": ["Inter", "sans-serif"],
+                        "label": ["Space Grotesk", "sans-serif"],
+                        "mono": ["JetBrains Mono", "monospace"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .element-glow-pyro:hover { box-shadow: 0 0 15px rgba(239, 121, 56, 0.2); border-color: #EF7938; }
+        .element-glow-hydro:hover { box-shadow: 0 0 15px rgba(76, 194, 241, 0.2); border-color: #4CC2F1; }
+        .element-glow-electro:hover { box-shadow: 0 0 15px rgba(181, 126, 220, 0.2); border-color: #B57EDC; }
+        .element-glow-cryo:hover { box-shadow: 0 0 15px rgba(159, 214, 227, 0.2); border-color: #9FD6E3; }
+        .element-glow-dendro:hover { box-shadow: 0 0 15px rgba(165, 200, 59, 0.2); border-color: #A5C83B; }
+        .element-glow-anemo:hover { box-shadow: 0 0 15px rgba(116, 194, 168, 0.2); border-color: #74C2A8; }
+        .element-glow-geo:hover { box-shadow: 0 0 15px rgba(240, 178, 50, 0.2); border-color: #F0B232; }
+    </style>
+</head>
+<body class="bg-deep-navy text-soft-white font-body selection:bg-gold-accent selection:text-deep-navy">
+<!-- Top Navigation Bar -->
+<nav class="fixed top-0 w-full h-14 bg-midnight-blue border-b border-muted-indigo z-50 flex justify-between items-center px-6">
+<div class="flex items-center gap-8">
+<span class="text-xl font-bold text-gold-accent tracking-tight font-headline">Smart Paimon</span>
+<div class="hidden md:flex items-center gap-6 font-headline font-semibold text-sm tracking-wide h-full">
+<a class="text-soft-white border-b-2 border-gold-accent h-14 flex items-center px-1" href="#">Characters</a>
+<a class="text-dusty-indigo cursor-not-allowed h-14 flex items-center px-1" href="#">Team</a>
+<a class="text-dusty-indigo cursor-not-allowed h-14 flex items-center px-1" href="#">Compare</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 bg-slate-blue/40 px-3 py-1 rounded-lg border border-muted-indigo">
+<span class="text-[10px] font-label uppercase text-lavender-gray tracking-wider">Loaded</span>
+<span class="text-xs font-mono font-semibold text-gold-accent">24 Characters</span>
+</div>
+<div class="h-4 w-[1px] bg-muted-indigo"></div>
+<span class="text-xs font-mono text-lavender-gray">v5.4</span>
+<div class="flex bg-slate-blue rounded overflow-hidden border border-muted-indigo">
+<button class="px-2 py-1 text-[10px] font-bold bg-gold-accent text-deep-navy">EN</button>
+<button class="px-2 py-1 text-[10px] font-bold text-lavender-gray hover:bg-slate-blue/80 transition-colors">JA</button>
+</div>
+<button class="flex items-center gap-2 px-3 py-1.5 bg-gold-accent text-deep-navy rounded-lg font-headline font-semibold text-xs hover:brightness-110 transition-all active:scale-95">
+<span class="material-symbols-outlined text-sm">sync</span>
+                Re-import
+            </button>
+</div>
+</nav>
+<!-- Side Navigation Bar (Elements Filter Shortcut) -->
+<aside class="hidden lg:flex flex-col items-center py-4 gap-6 h-screen w-20 fixed left-0 top-14 bg-midnight-blue border-r border-muted-indigo z-40">
+<div class="text-center mb-2">
+<span class="hidden">Elements Filter</span>
+</div>
+<!-- Active Pyro -->
+<button class="w-12 h-12 rounded-xl flex items-center justify-center bg-slate-blue text-pyro border-r-4 border-pyro scale-95 transition-all">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+</button>
+<button class="w-12 h-12 rounded-xl flex items-center justify-center text-lavender-gray hover:bg-slate-blue transition-all active:scale-90">
+<span class="material-symbols-outlined">water_drop</span>
+</button>
+<button class="w-12 h-12 rounded-xl flex items-center justify-center text-lavender-gray hover:bg-slate-blue transition-all active:scale-90">
+<span class="material-symbols-outlined">cyclone</span>
+</button>
+<button class="w-12 h-12 rounded-xl flex items-center justify-center text-lavender-gray hover:bg-slate-blue transition-all active:scale-90">
+<span class="material-symbols-outlined">bolt</span>
+</button>
+<button class="w-12 h-12 rounded-xl flex items-center justify-center text-lavender-gray hover:bg-slate-blue transition-all active:scale-90">
+<span class="material-symbols-outlined">grass</span>
+</button>
+<!-- Active Cryo -->
+<button class="w-12 h-12 rounded-xl flex items-center justify-center bg-slate-blue text-cryo border-r-4 border-cryo scale-95 transition-all">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">ac_unit</span>
+</button>
+<button class="w-12 h-12 rounded-xl flex items-center justify-center text-lavender-gray hover:bg-slate-blue transition-all active:scale-90">
+<span class="material-symbols-outlined">terrain</span>
+</button>
+</aside>
+<!-- Main Content Area -->
+<main class="lg:pl-20 pt-14">
+<!-- Filter Bar -->
+<div class="sticky top-14 z-30 bg-deep-navy/95 backdrop-blur-md px-6 py-4 border-b border-muted-indigo flex flex-col gap-3">
+<!-- Row 1: Elements -->
+<div class="flex items-center gap-2 overflow-x-auto no-scrollbar">
+<button class="px-4 py-1.5 rounded bg-pyro text-white text-xs font-label uppercase tracking-wider flex items-center gap-2 shadow-[0_0_10px_rgba(239,121,56,0.3)]">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">local_fire_department</span> Pyro
+                </button>
+<button class="px-4 py-1.5 rounded bg-midnight-blue text-lavender-gray hover:bg-slate-blue transition-colors text-xs font-label uppercase tracking-wider flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">water_drop</span> Hydro
+                </button>
+<button class="px-4 py-1.5 rounded bg-midnight-blue text-lavender-gray hover:bg-slate-blue transition-colors text-xs font-label uppercase tracking-wider flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">bolt</span> Electro
+                </button>
+<button class="px-4 py-1.5 rounded bg-cryo text-white text-xs font-label uppercase tracking-wider flex items-center gap-2 shadow-[0_0_10px_rgba(159,214,227,0.3)]">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">ac_unit</span> Cryo
+                </button>
+<button class="px-4 py-1.5 rounded bg-midnight-blue text-lavender-gray hover:bg-slate-blue transition-colors text-xs font-label uppercase tracking-wider flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">grass</span> Dendro
+                </button>
+<button class="px-4 py-1.5 rounded bg-midnight-blue text-lavender-gray hover:bg-slate-blue transition-colors text-xs font-label uppercase tracking-wider flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">cyclone</span> Anemo
+                </button>
+<button class="px-4 py-1.5 rounded bg-midnight-blue text-lavender-gray hover:bg-slate-blue transition-colors text-xs font-label uppercase tracking-wider flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">terrain</span> Geo
+                </button>
+</div>
+<!-- Row 2: Weapons -->
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<button class="px-3 py-1 rounded bg-midnight-blue text-lavender-gray hover:bg-slate-blue transition-colors text-[11px] font-label uppercase tracking-widest">Sword</button>
+<button class="px-3 py-1 rounded bg-midnight-blue text-lavender-gray hover:bg-slate-blue transition-colors text-[11px] font-label uppercase tracking-widest">Claymore</button>
+<button class="px-3 py-1 rounded bg-gold-accent text-deep-navy text-[11px] font-label font-bold uppercase tracking-widest">Polearm</button>
+<button class="px-3 py-1 rounded bg-midnight-blue text-lavender-gray hover:bg-slate-blue transition-colors text-[11px] font-label uppercase tracking-widest">Catalyst</button>
+<button class="px-3 py-1 rounded bg-midnight-blue text-lavender-gray hover:bg-slate-blue transition-colors text-[11px] font-label uppercase tracking-widest">Bow</button>
+</div>
+<button class="flex items-center gap-2 px-3 py-1 text-lavender-gray text-xs font-headline font-medium hover:text-soft-white transition-colors group">
+                    Sort: Level <span class="material-symbols-outlined text-sm group-hover:translate-y-0.5 transition-transform">expand_more</span>
+</button>
+</div>
+</div>
+<!-- Character Grid -->
+<div class="p-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+<!-- Hu Tao (Pyro) -->
+<div class="bg-midnight-blue border border-muted-indigo rounded-lg overflow-hidden group transition-all duration-300 element-glow-pyro cursor-pointer">
+<div class="relative aspect-square overflow-hidden bg-gradient-to-b from-pyro/10 to-transparent">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Anime style female character portrait with deep red aesthetics and butterfly motifs, glowing amber eyes" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAPtF_zWxG8n7GRH8k7tN_v4HiQvPhRzBk4scfkYteF8X9_oJ9gjsHrnKulp-LpD2SviiRxjye8GzUbNW21jiDfhxYoTPz7wM6KSRMIKKGmsIqt7m9PCPINA0QURBevnaUfJVZcTIdkpTHw1vgSVzUGPoMkfSiKqWm0lkPUf7Ex12vr5Ik-XSrW6oZcPDqnTYrHKBujnacW8mY_nHQmCu1GGcTwOihYllZGfgZNXGryNSZX3XflXIlRLtbpwwrKjYQsarGnH1SJalk"/>
+<div class="absolute top-2 right-2 w-5 h-5 rounded-full bg-pyro flex items-center justify-center text-[10px] font-bold text-white shadow-lg">炎</div>
+</div>
+<div class="p-3 text-center">
+<h3 class="text-sm font-semibold text-soft-white font-headline">Hu Tao</h3>
+<div class="flex justify-center text-[10px] text-gold-accent my-1">★★★★★</div>
+<span class="text-[11px] font-mono text-dusty-indigo">Lv.90</span>
+</div>
+</div>
+<!-- Yelan (Hydro) -->
+<div class="bg-midnight-blue border border-muted-indigo rounded-lg overflow-hidden group transition-all duration-300 element-glow-hydro cursor-pointer">
+<div class="relative aspect-square overflow-hidden bg-gradient-to-b from-hydro/10 to-transparent">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Elegant anime female character with short navy hair, blue highlights, mysterious lighting, oceanic theme" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAwYvzhZh2E9Db8oQSVnu_bonGZpjdje88jkMijMErArsHn6jpNZtbhmJXY5-zed9vyoAhU5JyGYbwcQPWSqufE2k3jnMHPUoEt70CKTk6YSEGjcgAZ-_TMeCZzZLmpkR8NYTkTy3ld-c1iCfiysnvJY3tAJnbv5QEjDcaS5S1GezECbN1H6cbg-nJQG6QreQoTnu3BbxodreQtleQ_FNzB2rdnjr0huqOEbXW5ubnUrbK3CcwAolGAPn1CnnWmx9l47r0yCJoe9z0"/>
+<div class="absolute top-2 right-2 w-5 h-5 rounded-full bg-hydro flex items-center justify-center text-[10px] font-bold text-white shadow-lg">水</div>
+</div>
+<div class="p-3 text-center">
+<h3 class="text-sm font-semibold text-soft-white font-headline">Yelan</h3>
+<div class="flex justify-center text-[10px] text-gold-accent my-1">★★★★★</div>
+<span class="text-[11px] font-mono text-dusty-indigo">Lv.90</span>
+</div>
+</div>
+<!-- Raiden Shogun (Electro) -->
+<div class="bg-midnight-blue border border-muted-indigo rounded-lg overflow-hidden group transition-all duration-300 element-glow-electro cursor-pointer">
+<div class="relative aspect-square overflow-hidden bg-gradient-to-b from-electro/10 to-transparent">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Regal anime female character with long braided purple hair, electrical sparks, majestic atmosphere, traditional kimono" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8rKCbOLAOWfUcFImy06nANVhYWe2vz_2KlNu-VynGdWSEouSfWPEgxlyj_RmJEyX0bHxZC0RmiY3O0i4nPbukfjQCl1QLVU6CwHYTRX-uiYY8hOAGtCuAwNSGNJclTyDtdZYjzsZo87hxN3gc0v-d1kihwPYYJlFID53YFtw42UiNjg6m1B4oEpPJDt5p4Lq10Z92BAdDgmvMwsBjyfyTzGgPJ7rz-aKtBVXKFH74FcEkShgAzjviN2zACYhDFX1nru3d00Eefow"/>
+<div class="absolute top-2 right-2 w-5 h-5 rounded-full bg-electro flex items-center justify-center text-[10px] font-bold text-white shadow-lg">雷</div>
+</div>
+<div class="p-3 text-center">
+<h3 class="text-sm font-semibold text-soft-white font-headline">Raiden Shogun</h3>
+<div class="flex justify-center text-[10px] text-gold-accent my-1">★★★★★</div>
+<span class="text-[11px] font-mono text-dusty-indigo">Lv.90</span>
+</div>
+</div>
+<!-- Ganyu (Cryo) -->
+<div class="bg-midnight-blue border border-muted-indigo rounded-lg overflow-hidden group transition-all duration-300 element-glow-cryo cursor-pointer">
+<div class="relative aspect-square overflow-hidden bg-gradient-to-b from-cryo/10 to-transparent">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Graceful anime character with blue hair and dark horns, icy mountain background, soft cool lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJ2TUnfSGLxDozz73zzMTEMBpNkCnbkGLIu-y9lDp_L7AEOzr0P_tOGEekNZ1y1GMaNytM3Ki-MYDySFiUMVl-lChvv5RePsZP2Qw8fTJZc77PrRRcXEoCo8N7AUfP2I1kDqkOgDSOdND3o4Ks-fyeiVpDT_3MNFTrNZ5xyFMit9ZGG3lzVz7GJBBWmOPzF2Fq15hIwE_OIwJvKsFLJ6z822hIZunLbp5Cwj55CHcSYDnpTaePPUXR_DdtHIXa2bDgRKt7JxUttgs"/>
+<div class="absolute top-2 right-2 w-5 h-5 rounded-full bg-cryo flex items-center justify-center text-[10px] font-bold text-white shadow-lg">氷</div>
+</div>
+<div class="p-3 text-center">
+<h3 class="text-sm font-semibold text-soft-white font-headline">Ganyu</h3>
+<div class="flex justify-center text-[10px] text-gold-accent my-1">★★★★★</div>
+<span class="text-[11px] font-mono text-dusty-indigo">Lv.90</span>
+</div>
+</div>
+<!-- Nahida (Dendro) -->
+<div class="bg-midnight-blue border border-muted-indigo rounded-lg overflow-hidden group transition-all duration-300 element-glow-dendro cursor-pointer">
+<div class="relative aspect-square overflow-hidden bg-gradient-to-b from-dendro/10 to-transparent">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Ethereal small anime girl character with white hair and green leaf accents, magical forest glow" src="https://lh3.googleusercontent.com/aida-public/AB6AXuACqWVoumQoVaa1lyj3r0gnSZT1_-VpbKAQRf1XRDnH0c0LYmfeEUiagS9ddAOkx_PBSgqnP_8qV0Y5zjSVd62oJbgYRwrO4iZPVGKzQAHTNWRyia6wq7qP070q2oS43cXlR5HOpM9nvzf5lQKz7uSp0txmDVDkGVtwbtUdREJh5S5FYv_Wr8dca_oW-4l6x2gdf87m7CXjorhNoUH5Ro5whJN-ca_9va3wVzrqIl8Bjby8HdPKIl504pkYxxZV-fu_XiRk-SQhiuk"/>
+<div class="absolute top-2 right-2 w-5 h-5 rounded-full bg-dendro flex items-center justify-center text-[10px] font-bold text-white shadow-lg">草</div>
+</div>
+<div class="p-3 text-center">
+<h3 class="text-sm font-semibold text-soft-white font-headline">Nahida</h3>
+<div class="flex justify-center text-[10px] text-gold-accent my-1">★★★★★</div>
+<span class="text-[11px] font-mono text-dusty-indigo">Lv.90</span>
+</div>
+</div>
+<!-- Kazuha (Anemo) -->
+<div class="bg-midnight-blue border border-muted-indigo rounded-lg overflow-hidden group transition-all duration-300 element-glow-anemo cursor-pointer">
+<div class="relative aspect-square overflow-hidden bg-gradient-to-b from-anemo/10 to-transparent">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Calm male anime samurai with white hair and red streak, swirling leaves, autumn wind theme" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBuC00FgbLQH6t4uJDi5oRSnB6xgpYpK8Rm4Kn01Py1oHqnHuXlGExHrUhIa3rGg7Bj3_MRW-64RevwtHwjTIUlWF4FeYD60hr9-e6qnzUTRSAf9iBQDoJDvNZWdcEW4ZUcOygI3GMJgoifWeisgntW-pZDnZ7W4yEsOZdi5ShYjQSFCoYxPb-JJb6nyPqplTnSrInR74LoE3_vnf-X1BRaFzCGQXQy4ddidgswoxsRinAXWXpuIkn0vPu-N3pr3XZOdAu8llpIZqI"/>
+<div class="absolute top-2 right-2 w-5 h-5 rounded-full bg-anemo flex items-center justify-center text-[10px] font-bold text-white shadow-lg">風</div>
+</div>
+<div class="p-3 text-center">
+<h3 class="text-sm font-semibold text-soft-white font-headline">Kazuha</h3>
+<div class="flex justify-center text-[10px] text-gold-accent my-1">★★★★★</div>
+<span class="text-[11px] font-mono text-dusty-indigo">Lv.90</span>
+</div>
+</div>
+<!-- Zhongli (Geo) -->
+<div class="bg-midnight-blue border border-muted-indigo rounded-lg overflow-hidden group transition-all duration-300 element-glow-geo cursor-pointer">
+<div class="relative aspect-square overflow-hidden bg-gradient-to-b from-geo/10 to-transparent">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Tall dignified male anime character in dark formal attire, golden geometric accents, earthy mountain backdrop" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3B0ivdOu2zgPfTn8M2NTwI22HfTgv35mYgZ5hL_FfBWGrBZypun5S9QspYT4CVx4B9IxaWqbxn_x3l_t82czVDH0c4QQjJ5KzoMdNG1JtrqXrujzoFSELbVBgIBMiGu-rIof8YCjZLv8RP5-uKe59ODIJr52-Ki-PCjfAAdL-NoZKOTjLQ5HRnbl_tuOxUrWlE2vpgMMqOv5K8lKzwUp2mt9XV8AXwWlq1Z21axc2rekC4jVLEUpi7_r498vbIgr9keuuTsG1IWo"/>
+<div class="absolute top-2 right-2 w-5 h-5 rounded-full bg-geo flex items-center justify-center text-[10px] font-bold text-white shadow-lg">岩</div>
+</div>
+<div class="p-3 text-center">
+<h3 class="text-sm font-semibold text-soft-white font-headline">Zhongli</h3>
+<div class="flex justify-center text-[10px] text-gold-accent my-1">★★★★★</div>
+<span class="text-[11px] font-mono text-dusty-indigo">Lv.90</span>
+</div>
+</div>
+<!-- Xiangling (Pyro - 4 Star) -->
+<div class="bg-midnight-blue border border-muted-indigo rounded-lg overflow-hidden group transition-all duration-300 element-glow-pyro cursor-pointer">
+<div class="relative aspect-square overflow-hidden bg-gradient-to-b from-pyro/10 to-transparent">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Energetic anime girl with indigo hair, chef outfit, cooking theme with fiery effects" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAlobVhXF9rFFTKDM4h7j4t6tdeka0Sdy0Xwdb5XiCRjZFmTHjf_w_oR95ZNA1nLTmTjUyZwbSLCRPOyGrb_cynBVuRznzd9ZyEAV5MtPG3AyeMb0-7pAS8WVkZuVjk0uM7jglASg23dQ0e_WuCoLeD3p2V0m6VQZADj4d1OFOu8PBEOvBv9Wtc3ohY2SoP0C6FK_HMNOmVLhysY5FKV089luGOgBQUGJahKwZyoC2YMLhlqLOEK6lqGrJZGiMVfAT1EJt3lpZXq9k"/>
+<div class="absolute top-2 right-2 w-5 h-5 rounded-full bg-pyro flex items-center justify-center text-[10px] font-bold text-white shadow-lg">炎</div>
+</div>
+<div class="p-3 text-center">
+<h3 class="text-sm font-semibold text-soft-white font-headline">Xiangling</h3>
+<div class="flex justify-center text-[10px] text-electro my-1">★★★★</div>
+<span class="text-[11px] font-mono text-dusty-indigo">Lv.80</span>
+</div>
+</div>
+<!-- Furina (Hydro) -->
+<div class="bg-midnight-blue border border-muted-indigo rounded-lg overflow-hidden group transition-all duration-300 element-glow-hydro cursor-pointer">
+<div class="relative aspect-square overflow-hidden bg-gradient-to-b from-hydro/10 to-transparent">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Theatrical anime girl with blue and white hair, extravagant hat, bubbles and water effects, dramatic lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAdYbX3HVPBbX-JyTyFc1e7P9ccq6IlEdQ17bIRW3i7Jyy_0PQTYY5drhv4YJASmRtSPG8QXiUe0h6i4yQqoB75vR1PdplZlYi0kGpOkqXgde5q9amsHpLVD5u5zUYpXV7d3WVYBtySwM5WoGqEb4RISpO9BX2J3eWtFZFIEggpp5aVF_RdeHWgoTtSlEAzRxYPf1Y0UbfM_Oud5lYi8WWD1cN15BSyG-uo328KS195Gy5Vegmk96svp16zb6WUNm3qm6NSfKBE6hs"/>
+<div class="absolute top-2 right-2 w-5 h-5 rounded-full bg-hydro flex items-center justify-center text-[10px] font-bold text-white shadow-lg">水</div>
+</div>
+<div class="p-3 text-center">
+<h3 class="text-sm font-semibold text-soft-white font-headline">Furina</h3>
+<div class="flex justify-center text-[10px] text-gold-accent my-1">★★★★★</div>
+<span class="text-[11px] font-mono text-dusty-indigo">Lv.90</span>
+</div>
+</div>
+<!-- Fischl (Electro - 4 Star) -->
+<div class="bg-midnight-blue border border-muted-indigo rounded-lg overflow-hidden group transition-all duration-300 element-glow-electro cursor-pointer">
+<div class="relative aspect-square overflow-hidden bg-gradient-to-b from-electro/10 to-transparent">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Anime girl with eyepatch, blonde hair, dark gothic dress, purple lightning and crow motifs" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBAxxDsQci0HstsukPTUh7mbFhPtx4hPWPsGwAnuCI6losmL6DpAgxWPPOrhmjXNU_ayAREq-jZthCA6YZXeoetJEgp1fNG1Av9tbgIuUmICYcTBr6NVbB8y0loRztE0h8xhW-zdoM8_-lc2abYmlsi7XaRxbBOdr-aRorx4eDs21SekT3ofdIOt_Bg1pSZRrEBtv8KT_UjlYmwh1Sem5ZvbPnJ_qdjiH_xRX_GPb-0LKwvCgoBmBixUJWTWDYRV-BulRcXzKo5Aww"/>
+<div class="absolute top-2 right-2 w-5 h-5 rounded-full bg-electro flex items-center justify-center text-[10px] font-bold text-white shadow-lg">雷</div>
+</div>
+<div class="p-3 text-center">
+<h3 class="text-sm font-semibold text-soft-white font-headline">Fischl</h3>
+<div class="flex justify-center text-[10px] text-electro my-1">★★★★</div>
+<span class="text-[11px] font-mono text-dusty-indigo">Lv.80</span>
+</div>
+</div>
+<!-- Ayaka (Cryo) -->
+<div class="bg-midnight-blue border border-muted-indigo rounded-lg overflow-hidden group transition-all duration-300 element-glow-cryo cursor-pointer">
+<div class="relative aspect-square overflow-hidden bg-gradient-to-b from-cryo/10 to-transparent">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Japanese style anime female character with light blue hair, folding fan, snowflakes, elegant kimono armor" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBXoXLFb7jps1gxdB1O8tT110UxF0EZ-DpvuD3ENosOERF0egre7eNCANa3ADpk06eJSMOwAbB7nRiDPNcF0Bg-4FjvTErVVTLye3CvN5vzXujuMRvFYXQNRWvil4o2Cyl5V7hoxPO98NQS0WBAf0D_qo9TAJsBMeGTUEKL3GjbgFs2uaPdEFHvLwtsaFkn5xJSUCATRCdwQH7PG877I7teFVpzcUQnGSKbLJtxeR3xeri0grsqRfTpuNY6wAi1YPBVEsX-nmx1M4Y"/>
+<div class="absolute top-2 right-2 w-5 h-5 rounded-full bg-cryo flex items-center justify-center text-[10px] font-bold text-white shadow-lg">氷</div>
+</div>
+<div class="p-3 text-center">
+<h3 class="text-sm font-semibold text-soft-white font-headline">Ayaka</h3>
+<div class="flex justify-center text-[10px] text-gold-accent my-1">★★★★★</div>
+<span class="text-[11px] font-mono text-dusty-indigo">Lv.90</span>
+</div>
+</div>
+<!-- Tighnari (Dendro) -->
+<div class="bg-midnight-blue border border-muted-indigo rounded-lg overflow-hidden group transition-all duration-300 element-glow-dendro cursor-pointer">
+<div class="relative aspect-square overflow-hidden bg-gradient-to-b from-dendro/10 to-transparent">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Anime boy character with dark hair and long pointed ears, botanical theme, glowing green forest light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDqC_fQXDZPOB5OTZPkvR1SuzZt67PfRKFkrkcE68DNEYPMl04eeheq8B51nup1VyOjQr-eXGJO57jYDdQd9VOXJh0qFzQjrGiNeRqa7ifddciMd9ii6UcZYRMaKI8A-kceDRvJf0tVlj_DRuFWZiD0b1T3kvPMJwsnVtcjxx2r8xZmQct_nZwpwXCe75KyWqsCekNDWEK8UyxJj1isaqLqc4Vz-mkFXhFfn6lLwQi0DJwjeCY15w8yBXk3EyC7pwSTHEu_p7dwV0U"/>
+<div class="absolute top-2 right-2 w-5 h-5 rounded-full bg-dendro flex items-center justify-center text-[10px] font-bold text-white shadow-lg">草</div>
+</div>
+<div class="p-3 text-center">
+<h3 class="text-sm font-semibold text-soft-white font-headline">Tighnari</h3>
+<div class="flex justify-center text-[10px] text-gold-accent my-1">★★★★★</div>
+<span class="text-[11px] font-mono text-dusty-indigo">Lv.90</span>
+</div>
+</div>
+</div>
+</main>
+<!-- Floating Action Button (Example) -->
+<button class="fixed bottom-6 right-6 w-14 h-14 bg-gold-accent text-deep-navy rounded-full shadow-[0_8px_20px_rgba(212,168,75,0.4)] flex items-center justify-center hover:scale-105 active:scale-95 transition-all z-50">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">add</span>
+</button>
+</body></html>

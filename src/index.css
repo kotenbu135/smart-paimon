@@ -1,1 +1,49 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Grotesk:wght@500&family=JetBrains+Mono:wght@500;600&display=swap");
 @import "tailwindcss";
+
+@theme {
+  /* Background layers */
+  --color-navy-page: #1A1D2E;
+  --color-navy-card: #252A40;
+  --color-navy-hover: #2F3452;
+  --color-navy-border: #3A3F5C;
+
+  /* Text hierarchy */
+  --color-text-primary: #E8E8E8;
+  --color-text-secondary: #9B9DB8;
+  --color-text-muted: #6B7094;
+
+  /* Accent */
+  --color-gold: #D4A84B;
+  --color-gold-light: #E5C27A;
+
+  /* Element colors */
+  --color-pyro: #EF7938;
+  --color-hydro: #4CC2F1;
+  --color-electro: #B57EDC;
+  --color-cryo: #9FD6E3;
+  --color-dendro: #A5C83B;
+  --color-anemo: #74C2A8;
+  --color-geo: #F0B232;
+
+  /* Fonts */
+  --font-headline: "Inter", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-label: "Space Grotesk", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+}
+
+body {
+  background-color: var(--color-navy-page);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+}
+
+/* Element glow effects */
+.glow-pyro:hover { box-shadow: 0 0 15px rgba(239, 121, 56, 0.2); border-color: #EF7938; }
+.glow-hydro:hover { box-shadow: 0 0 15px rgba(76, 194, 241, 0.2); border-color: #4CC2F1; }
+.glow-electro:hover { box-shadow: 0 0 15px rgba(181, 126, 220, 0.2); border-color: #B57EDC; }
+.glow-cryo:hover { box-shadow: 0 0 15px rgba(159, 214, 227, 0.2); border-color: #9FD6E3; }
+.glow-dendro:hover { box-shadow: 0 0 15px rgba(165, 200, 59, 0.2); border-color: #A5C83B; }
+.glow-anemo:hover { box-shadow: 0 0 15px rgba(116, 194, 168, 0.2); border-color: #74C2A8; }
+.glow-geo:hover { box-shadow: 0 0 15px rgba(240, 178, 50, 0.2); border-color: #F0B232; }

@@ -1,5 +1,6 @@
 import { useMemo } from "react";
-import { useParams, Navigate } from "react-router-dom";
+import { useParams, Navigate, Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useGoodStore } from "../stores/good";
 import { useCalcStore } from "../stores/calc";
 import { buildStats } from "../lib/stats";
@@ -10,29 +11,45 @@ import { EnemyConfig } from "../components/detail/EnemyConfig";
 import { ReactionSelector } from "../components/detail/ReactionSelector";
 
 export function CharacterDetailPage() {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const getBuild = useGoodStore((s) => s.getBuild);
   const { enemyConfig, selectedReaction } = useCalcStore();
   const build = id ? getBuild(id) : undefined;
-  const stats = useMemo(() => build ? buildStats(build) : null, [build]);
+  const stats = useMemo(() => (build ? buildStats(build) : null), [build]);
 
   if (!build || !stats) return <Navigate to="/characters" replace />;
 
+  const elementDmgLabel = `${build.character.element} DMG Bonus`;
+
   return (
-    <div>
-      <h2 className="text-2xl font-bold mb-6">{build.character.name}</h2>
-      <div className="grid grid-cols-[280px_1fr] gap-6">
-        <div className="space-y-4">
+    <div className="max-w-[1440px] mx-auto px-6 py-6">
+      {/* Breadcrumb */}
+      <div className="mb-6 flex items-center gap-2 text-xs font-label uppercase tracking-widest text-text-secondary">
+        <Link to="/characters" className="hover:text-text-primary transition-colors">
+          {t("nav.characters")}
+        </Link>
+        <span className="text-text-muted">›</span>
+        <span className="text-gold">{build.character.name}</span>
+      </div>
+
+      <div className="flex flex-col lg:flex-row gap-6">
+        {/* Left Column: Profile & Stats */}
+        <aside className="w-full lg:w-[360px] flex-shrink-0 space-y-3 lg:sticky lg:top-20 h-fit">
           <CharacterProfile build={build} />
-          <StatsPanel stats={stats} />
-        </div>
-        <div className="space-y-4">
-          <div className="flex flex-wrap items-center gap-4 p-4 bg-gray-900/80 border border-gray-800 rounded-xl">
-            <EnemyConfig />
-            <div className="w-px h-8 bg-gray-800" />
-            <ReactionSelector />
-          </div>
-          <DamageTable build={build} stats={stats} enemy={enemyConfig} reaction={selectedReaction} />
+          <StatsPanel stats={stats} elementDmgLabel={elementDmgLabel} />
+        </aside>
+
+        {/* Right Column: Calculator */}
+        <div className="flex-grow space-y-6">
+          <EnemyConfig />
+          <ReactionSelector />
+          <DamageTable
+            build={build}
+            stats={stats}
+            enemy={enemyConfig}
+            reaction={selectedReaction}
+          />
         </div>
       </div>
     </div>

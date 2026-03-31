@@ -29,42 +29,65 @@ export function GoodImporter() {
   }, [handleFile]);
 
   return (
-    <div className="flex flex-col items-center gap-6 max-w-lg mx-auto">
+    <div className="w-full flex flex-col items-center gap-6">
+      {/* Drop Zone */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className={`w-full p-12 border-2 border-dashed rounded-2xl text-center transition-colors cursor-pointer ${isDragging ? "border-amber-400 bg-amber-400/5" : "border-gray-700 hover:border-gray-600 bg-gray-900/50"}`}
+        className={`w-full h-[200px] border-2 border-dashed rounded-xl flex flex-col items-center justify-center cursor-pointer transition-all duration-300 ${
+          isDragging
+            ? "border-gold bg-gold/5"
+            : "border-navy-border bg-navy-card/50 hover:border-gold"
+        }`}
         onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
         onDragLeave={() => setIsDragging(false)}
         onDrop={handleDrop}
         onClick={() => document.getElementById("good-file-input")?.click()}
       >
-        <div className="text-4xl mb-4">📁</div>
-        <p className="text-gray-300 text-lg mb-2">{t("import.dragDrop")}</p>
-        <p className="text-gray-500 text-sm">{t("import.or")}</p>
-        <button className="mt-3 px-6 py-2 bg-amber-500 hover:bg-amber-400 text-gray-950 font-medium rounded-lg transition-colors">
-          {t("import.selectFile")}
-        </button>
-        <input id="good-file-input" type="file" accept=".json" onChange={handleFileInput} className="hidden" />
+        <div className={`text-[32px] mb-3 transition-colors ${isDragging ? "text-gold" : "text-text-muted"}`}>
+          ☁
+        </div>
+        <p className="text-base text-text-secondary">
+          {t("import.dragDrop")}
+        </p>
+        <p className="text-[12px] text-text-muted mt-1">
+          {t("import.or")} <span className="underline">{t("import.selectFile")}</span>
+        </p>
+        <input
+          id="good-file-input"
+          type="file"
+          accept=".json"
+          onChange={handleFileInput}
+          className="hidden"
+        />
       </motion.div>
 
+      {/* Sample Data CTA */}
+      <button className="w-full h-[44px] bg-gold hover:bg-gold-light text-navy-page font-semibold text-[15px] rounded-md transition-all active:scale-[0.98]">
+        {t("import.sampleData")}
+      </button>
+
+      {/* Error / Warning messages */}
       {error && (
-        <div className="w-full p-4 bg-red-950/50 border border-red-800 rounded-xl">
-          <p className="text-red-400 font-medium">{t("import.error")}</p>
-          <p className="text-red-300 text-sm mt-1">{error}</p>
+        <div className="w-full p-4 bg-navy-card border border-pyro/40 rounded-lg">
+          <p className="text-pyro font-medium">{t("import.error")}</p>
+          <p className="text-text-secondary text-sm mt-1">{error}</p>
         </div>
       )}
 
       {warnings.length > 0 && (
-        <div className="w-full p-4 bg-yellow-950/50 border border-yellow-800 rounded-xl">
-          <p className="text-yellow-400 font-medium">{t("import.warnings")}</p>
-          <ul className="text-yellow-300 text-sm mt-1 list-disc list-inside">
+        <div className="w-full p-4 bg-navy-card border border-gold/40 rounded-lg">
+          <p className="text-gold font-medium">{t("import.warnings")}</p>
+          <ul className="text-text-secondary text-sm mt-1 list-disc list-inside">
             {warnings.map((w, i) => <li key={i}>{w.message}</li>)}
           </ul>
         </div>
       )}
 
-      <p className="text-gray-600 text-xs text-center">{t("import.supported")}</p>
+      {/* Format note */}
+      <p className="text-[11px] text-text-muted leading-relaxed max-w-[400px] text-center">
+        {t("import.supported")}
+      </p>
     </div>
   );
 }

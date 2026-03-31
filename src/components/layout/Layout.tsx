@@ -9,11 +9,14 @@ export function Layout() {
 
   if (wasmError) {
     return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-        <div className="text-center p-8 bg-red-950/50 border border-red-800 rounded-xl max-w-md">
-          <h2 className="text-red-400 text-xl font-bold mb-2">{t("common.error")}</h2>
-          <p className="text-red-300 mb-4">{wasmError}</p>
-          <button onClick={() => window.location.reload()} className="px-4 py-2 bg-red-800 hover:bg-red-700 text-white rounded-lg transition-colors">
+      <div className="min-h-screen bg-navy-page flex items-center justify-center">
+        <div className="text-center p-8 bg-navy-card border border-navy-border rounded-lg max-w-md">
+          <h2 className="text-pyro text-xl font-bold mb-2">{t("common.error")}</h2>
+          <p className="text-text-secondary mb-4">{wasmError}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-gold hover:bg-gold-light text-navy-page font-semibold rounded-md transition-colors"
+          >
             {t("common.retry")}
           </button>
         </div>
@@ -23,16 +26,16 @@ export function Layout() {
 
   if (!wasmReady) {
     return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-        <p className="text-gray-400 text-lg animate-pulse">{t("common.loading")}</p>
+      <div className="min-h-screen bg-navy-page flex items-center justify-center">
+        <p className="text-text-muted text-lg animate-pulse">{t("common.loading")}</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-950 text-gray-100">
+    <div className="min-h-screen bg-navy-page text-text-primary">
       <Navbar />
-      <main className="container mx-auto px-4 py-6">
+      <main className="pt-14">
         <Outlet />
       </main>
     </div>

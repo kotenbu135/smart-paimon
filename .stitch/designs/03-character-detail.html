@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Smart Paimon | Hu Tao Build &amp; Calculator</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&amp;family=Space+Grotesk:wght@500&amp;family=JetBrains+Mono:wght@500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            // Mapping Design System to functional utility names
+            'page-bg': '#1A1D2E',
+            'card-surface': '#252A40',
+            'hover-state': '#2F3452',
+            'border-subtle': '#3A3F5C',
+            'primary-text': '#E8E8E8',
+            'secondary-text': '#9B9DB8',
+            'muted-text': '#6B7094',
+            'brand-gold': '#D4A84B',
+            'pyro': '#EF7938',
+            'hydro': '#4CC2F1',
+            'electro': '#B57EDC',
+            'cryo': '#9FD6E3',
+            'dendro': '#A5C83B',
+            'anemo': '#74C2A8',
+            'geo': '#F0B232',
+          },
+          fontFamily: {
+            "headline": ["Inter", "sans-serif"],
+            "body": ["Inter", "sans-serif"],
+            "label": ["Space Grotesk", "sans-serif"],
+            "mono": ["JetBrains Mono", "monospace"]
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+        },
+      },
+    }
+  </script>
+<style>
+    body {
+      background-color: #1A1D2E;
+      color: #E8E8E8;
+      font-family: 'Inter', sans-serif;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      vertical-align: middle;
+    }
+    .mono-stat {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    /* Ambient Glow Effects */
+    .pyro-glow:hover {
+      box-shadow: 0 0 15px rgba(239, 121, 56, 0.2);
+      border-color: rgba(239, 121, 56, 0.4);
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #1A1D2E;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #3A3F5C;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body class="bg-page-bg text-primary-text min-h-screen">
+<!-- TopNavBar (Shared Component) -->
+<nav class="fixed top-0 w-full h-[56px] bg-[#252A40] dark:bg-slate-900 border-b border-[#3A3F5C] dark:border-slate-800 flex justify-between items-center px-6 z-50 shadow-none">
+<div class="flex items-center gap-8">
+<span class="text-xl font-bold text-[#D4A84B] tracking-tight">Smart Paimon</span>
+<div class="hidden md:flex items-center gap-6 font-['Inter'] font-semibold text-sm">
+<a class="text-[#E8E8E8] border-b-2 border-[#D4A84B] pb-1" href="#">Characters</a>
+<a class="text-[#9B9DB8] hover:text-[#E8E8E8] transition-colors duration-200" href="#">Weapons</a>
+<a class="text-[#9B9DB8] hover:text-[#E8E8E8] transition-colors duration-200" href="#">Artifacts</a>
+<a class="text-[#9B9DB8] hover:text-[#E8E8E8] transition-colors duration-200" href="#">Teams</a>
+<a class="text-[#9B9DB8] hover:text-[#E8E8E8] transition-colors duration-200" href="#">Calculators</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 px-3 py-1 bg-[#2F3452] rounded border border-[#3A3F5C]">
+<span class="material-symbols-outlined text-sm text-[#9B9DB8]">search</span>
+<span class="text-xs text-[#9B9DB8]">Search...</span>
+</div>
+<span class="material-symbols-outlined text-[#D4A84B] cursor-pointer hover:bg-[#2F3452] p-1 rounded transition-colors duration-200" data-icon="notifications">notifications</span>
+<span class="material-symbols-outlined text-[#D4A84B] cursor-pointer hover:bg-[#2F3452] p-1 rounded transition-colors duration-200" data-icon="settings">settings</span>
+</div>
+</nav>
+<!-- Main Content Layout -->
+<main class="pt-[80px] pb-12 px-6 max-w-[1440px] mx-auto">
+<!-- Breadcrumb -->
+<div class="mb-6 flex items-center gap-2 text-xs font-label uppercase tracking-widest text-secondary-text">
+<span>Characters</span>
+<span class="material-symbols-outlined text-[10px]">chevron_right</span>
+<span class="text-brand-gold">Hu Tao</span>
+</div>
+<div class="flex flex-col lg:flex-row gap-6">
+<!-- LEFT COLUMN: Profile & Stats (Fixed 360px) -->
+<aside class="w-full lg:w-[360px] flex-shrink-0 space-y-6 lg:sticky lg:top-[80px] h-fit">
+<!-- Profile Card -->
+<section class="bg-card-surface border border-border-subtle rounded-lg p-5 flex flex-col items-center text-center">
+<div class="relative mb-4 group">
+<div class="w-[120px] h-[120px] rounded-full overflow-hidden border-[3px] border-pyro shadow-[0_0_15px_rgba(239,121,56,0.3)]">
+<img alt="Hu Tao" class="w-full h-full object-cover" data-alt="detailed anime portrait of Hu Tao from Genshin Impact with brown hair and butterfly hat, warm cinematic lighting and pyro sparks" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBFVE_8IEYNcBuLOz7A5-uw_cQ9xCOuV7LzFcaAj5ZHcPhmAe_khmoCTI4n5_libZ4FlNkkte7kVE1P5o99lJ1bujE7P61BnslDq-94ShOp2XNeQXMRyX9N-MHI-U79rayOnc4E_m8zy6-wVUUuuKOfRAujqQ-1gbL9yeOrKKZWMN9dxll2Mx40ZQ3_Ht7X7nnAZnd6eLCQPyiuQvd6wIlIjkrAEFWSt8Jj8wG1HHdTu5gBpnqrEFbWacfE3hwDVacu8tnDa5ss6Z8"/>
+</div>
+<div class="absolute -bottom-1 -right-1 bg-pyro w-7 h-7 rounded-full flex items-center justify-center border-2 border-card-surface">
+<span class="text-[14px] font-bold text-white">炎</span>
+</div>
+</div>
+<h1 class="text-[20px] font-bold text-primary-text leading-tight">Hu Tao</h1>
+<div class="flex items-center gap-2 mt-1">
+<span class="text-[14px] text-secondary-text">Lv.90 · C1</span>
+<div class="flex text-brand-gold text-[10px]">
+<span class="material-symbols-outlined" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</div>
+<div class="mt-4 flex items-center gap-2 bg-pyro/10 px-3 py-1 rounded-full border border-pyro/30">
+<span class="text-[12px] font-label font-medium text-pyro uppercase tracking-wider">Pyro Main DPS</span>
+</div>
+</section>
+<!-- Weapon Card -->
+<section class="bg-card-surface border border-border-subtle rounded-lg p-4 flex items-center gap-4 transition-all pyro-glow">
+<div class="w-12 h-12 bg-hover-state rounded-lg overflow-hidden border border-border-subtle flex-shrink-0">
+<img alt="Staff of Homa" class="w-full h-full object-cover" data-alt="iconic Genshin Impact Staff of Homa polearm, glowing red patterns on obsidian-like blade, cinematic lighting on dark background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC3Q5HfkMonC0w9yF87iTO60iNPnP3lFlVy_NMAmht__QhcuDROd1Cqw8_IOG_uV98KPCxApxGZZD-ALg0RmAnHETaLjfRGz0-BwlzU55fFILHB2bBjDAVSWy-0vBKfk3SyL_xAgjc4PkkJHenvUbs9120p4FoPvlB9C32McL3WS2-cfa75ltXDwZJLkpE-Z87wrB4wtpfDhmgutehU5C8jAQFXGJYYlCEZhuLcssPjBaSQuMmdSSxF5H0iMJFoCZkmzt445Ounqv8"/>
+</div>
+<div class="flex-grow">
+<div class="text-[14px] font-semibold text-primary-text leading-tight">Staff of Homa</div>
+<div class="text-[12px] text-secondary-text">Lv.90 · R1</div>
+</div>
+<div class="text-right">
+<div class="text-[12px] font-mono font-semibold text-brand-gold">CRIT DMG</div>
+<div class="text-[12px] font-mono text-primary-text">66.2%</div>
+</div>
+</section>
+<!-- Artifact Card -->
+<section class="bg-card-surface border border-border-subtle rounded-lg p-4">
+<div class="flex justify-between items-center mb-4">
+<h3 class="text-[14px] font-semibold text-primary-text">Crimson Witch of Flames</h3>
+<span class="bg-brand-gold/10 text-brand-gold text-[10px] px-2 py-0.5 rounded border border-brand-gold/30 font-bold">(4)</span>
+</div>
+<div class="flex justify-between gap-2">
+<!-- Slot Icons -->
+<div class="w-10 h-10 bg-hover-state rounded-lg border border-border-subtle flex items-center justify-center group cursor-pointer hover:border-brand-gold transition-colors">
+<span class="material-symbols-outlined text-secondary-text group-hover:text-brand-gold" data-icon="flower">local_florist</span>
+</div>
+<div class="w-10 h-10 bg-hover-state rounded-lg border border-border-subtle flex items-center justify-center group cursor-pointer hover:border-brand-gold transition-colors">
+<span class="material-symbols-outlined text-secondary-text group-hover:text-brand-gold" data-icon="feather">flight</span>
+</div>
+<div class="w-10 h-10 bg-hover-state rounded-lg border border-border-subtle flex items-center justify-center group cursor-pointer hover:border-brand-gold transition-colors">
+<span class="material-symbols-outlined text-secondary-text group-hover:text-brand-gold" data-icon="hourglass_empty">hourglass_empty</span>
+</div>
+<div class="w-10 h-10 bg-hover-state rounded-lg border border-border-subtle flex items-center justify-center group cursor-pointer hover:border-brand-gold transition-colors">
+<span class="material-symbols-outlined text-secondary-text group-hover:text-brand-gold" data-icon="trophy">trophy</span>
+</div>
+<div class="w-10 h-10 bg-hover-state rounded-lg border border-brand-gold flex items-center justify-center group cursor-pointer">
+<span class="material-symbols-outlined text-brand-gold" data-icon="view_in_ar">view_in_ar</span>
+</div>
+</div>
+</section>
+<!-- Final Stats Card -->
+<section class="bg-card-surface border border-border-subtle rounded-lg overflow-hidden">
+<div class="bg-hover-state/50 px-4 py-2 border-b border-border-subtle">
+<span class="text-[11px] font-label font-bold tracking-widest text-secondary-text uppercase">Final Stats</span>
+</div>
+<div class="p-2 space-y-0.5">
+<div class="flex justify-between items-center h-9 px-3 border-b border-border-subtle/50">
+<span class="text-[13px] text-secondary-text">HP</span>
+<span class="text-[14px] font-mono text-primary-text">36,154</span>
+</div>
+<div class="flex justify-between items-center h-9 px-3 border-b border-border-subtle/50">
+<span class="text-[13px] text-secondary-text">ATK</span>
+<span class="text-[14px] font-mono text-primary-text">2,847</span>
+</div>
+<div class="flex justify-between items-center h-9 px-3 border-b border-border-subtle/50">
+<span class="text-[13px] text-secondary-text">DEF</span>
+<span class="text-[14px] font-mono text-primary-text">982</span>
+</div>
+<div class="flex justify-between items-center h-9 px-3 border-b border-border-subtle/50">
+<span class="text-[13px] text-secondary-text">Elemental Mastery</span>
+<span class="text-[14px] font-mono text-primary-text">105</span>
+</div>
+<div class="flex justify-between items-center h-9 px-3 border-b border-border-subtle/50">
+<span class="text-[13px] text-secondary-text">CRIT Rate</span>
+<span class="text-[14px] font-mono text-primary-text">68.4%</span>
+</div>
+<div class="flex justify-between items-center h-9 px-3 border-b border-border-subtle/50">
+<span class="text-[13px] text-secondary-text">CRIT DMG</span>
+<span class="text-[14px] font-mono text-primary-text">221.6%</span>
+</div>
+<div class="flex justify-between items-center h-9 px-3 border-b border-border-subtle/50">
+<span class="text-[13px] text-secondary-text">Energy Recharge</span>
+<span class="text-[14px] font-mono text-primary-text">111.0%</span>
+</div>
+<div class="flex justify-between items-center h-9 px-3">
+<span class="text-[13px] text-secondary-text">Pyro DMG Bonus</span>
+<span class="text-[14px] font-mono text-pyro">33.0%</span>
+</div>
+</div>
+</section>
+</aside>
+<!-- RIGHT COLUMN: Calculator & Config -->
+<div class="flex-grow space-y-6">
+<!-- Enemy Config Bar -->
+<section class="bg-card-surface border border-border-subtle rounded-lg p-4 flex flex-wrap gap-6 items-center">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-muted-text" data-icon="swords">swords</span>
+<span class="text-[12px] font-label font-bold text-secondary-text uppercase tracking-wider">Enemy Stats</span>
+</div>
+<div class="flex gap-4 flex-wrap">
+<div class="flex flex-col gap-1">
+<label class="text-[10px] text-muted-text uppercase font-label">Level</label>
+<input class="w-20 h-9 bg-card-surface border border-border-subtle rounded px-3 text-[14px] font-mono text-primary-text focus:border-brand-gold focus:ring-0 outline-none transition-colors" type="text" value="90"/>
+</div>
+<div class="flex flex-col gap-1">
+<label class="text-[10px] text-muted-text uppercase font-label">RES%</label>
+<input class="w-20 h-9 bg-card-surface border border-border-subtle rounded px-3 text-[14px] font-mono text-primary-text focus:border-brand-gold focus:ring-0 outline-none transition-colors" type="text" value="10%"/>
+</div>
+<div class="flex flex-col gap-1">
+<label class="text-[10px] text-muted-text uppercase font-label">DEF Reduction</label>
+<input class="w-20 h-9 bg-card-surface border border-border-subtle rounded px-3 text-[14px] font-mono text-primary-text focus:border-brand-gold focus:ring-0 outline-none transition-colors" type="text" value="0%"/>
+</div>
+</div>
+</section>
+<!-- Reaction Selector -->
+<section class="bg-card-surface border border-border-subtle rounded-lg p-5">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Group: Amplifying -->
+<div class="space-y-3">
+<h4 class="text-[11px] font-label font-bold text-muted-text uppercase tracking-widest">Amplifying</h4>
+<div class="flex flex-wrap gap-2">
+<button class="px-3 py-1.5 rounded-sm bg-border-subtle text-[12px] font-medium text-secondary-text hover:bg-hover-state transition-colors">None</button>
+<button class="px-3 py-1.5 rounded-sm bg-pyro text-[12px] font-bold text-white shadow-[0_0_10px_rgba(239,121,56,0.4)]">Vaporize</button>
+<button class="px-3 py-1.5 rounded-sm bg-border-subtle text-[12px] font-medium text-secondary-text hover:bg-hover-state transition-colors">Melt</button>
+</div>
+</div>
+<!-- Group: Transformative -->
+<div class="space-y-3">
+<h4 class="text-[11px] font-label font-bold text-muted-text uppercase tracking-widest">Transformative</h4>
+<div class="flex flex-wrap gap-2">
+<button class="px-3 py-1.5 rounded-sm bg-border-subtle text-[12px] font-medium text-secondary-text hover:bg-hover-state transition-colors">Overloaded</button>
+<button class="px-3 py-1.5 rounded-sm bg-border-subtle text-[12px] font-medium text-secondary-text hover:bg-hover-state transition-colors">Burgeon</button>
+</div>
+</div>
+<!-- Group: Lunar -->
+<div class="space-y-3">
+<h4 class="text-[11px] font-label font-bold text-muted-text uppercase tracking-widest">Team Buffs</h4>
+<div class="flex flex-wrap gap-2">
+<button class="px-3 py-1.5 rounded-sm bg-hover-state border border-border-subtle text-[12px] font-medium text-secondary-text flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[14px]" data-icon="add">add</span>
+                  Zhongli Shield
+                </button>
+<button class="px-3 py-1.5 rounded-sm bg-hover-state border border-border-subtle text-[12px] font-medium text-secondary-text flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[14px]" data-icon="add">add</span>
+                  Kazuha C2
+                </button>
+</div>
+</div>
+</div>
+</section>
+<!-- Damage Calculator Tabs -->
+<div class="flex gap-1 p-1 bg-border-subtle/50 rounded-lg w-fit">
+<button class="px-6 py-2 rounded-md bg-pyro text-white text-[13px] font-bold shadow-lg">Elemental Skill</button>
+<button class="px-6 py-2 rounded-md hover:bg-hover-state text-secondary-text text-[13px] font-medium transition-colors">Normal Attack</button>
+<button class="px-6 py-2 rounded-md hover:bg-hover-state text-secondary-text text-[13px] font-medium transition-colors">Elemental Burst</button>
+</div>
+<!-- Damage Table -->
+<section class="bg-card-surface border border-border-subtle rounded-lg overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-hover-state/50 border-b border-border-subtle">
+<th class="px-6 py-4 text-[11px] font-label font-bold uppercase tracking-widest text-secondary-text">Talent Name</th>
+<th class="px-6 py-4 text-[11px] font-label font-bold uppercase tracking-widest text-secondary-text">Multiplier%</th>
+<th class="px-6 py-4 text-[11px] font-label font-bold uppercase tracking-widest text-secondary-text">Non-Crit</th>
+<th class="px-6 py-4 text-[11px] font-label font-bold uppercase tracking-widest text-secondary-text text-right">Crit</th>
+<th class="px-6 py-4 text-[11px] font-label font-bold uppercase tracking-widest text-secondary-text text-right">Average</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-subtle/50">
+<tr class="hover:bg-hover-state/30 transition-colors">
+<td class="px-6 py-4 text-[14px] font-medium text-primary-text">Charged Attack <span class="text-[10px] text-muted-text ml-2">Pyro Infusion</span></td>
+<td class="px-6 py-4 text-[14px] font-mono text-secondary-text">242.6%</td>
+<td class="px-6 py-4 text-[14px] font-mono text-primary-text">44,163</td>
+<td class="px-6 py-4 text-[16px] font-mono font-bold text-pyro text-right">113,097</td>
+<td class="px-6 py-4 text-[14px] font-mono text-primary-text text-right">73,442</td>
+</tr>
+<tr class="hover:bg-hover-state/30 transition-colors bg-white/[0.01]">
+<td class="px-6 py-4 text-[14px] font-medium text-primary-text">1-Hit DMG</td>
+<td class="px-6 py-4 text-[14px] font-mono text-secondary-text">83.6%</td>
+<td class="px-6 py-4 text-[14px] font-mono text-primary-text">12,142</td>
+<td class="px-6 py-4 text-[15px] font-mono font-bold text-pyro text-right">39,048</td>
+<td class="px-6 py-4 text-[14px] font-mono text-primary-text text-right">30,580</td>
+</tr>
+<tr class="hover:bg-hover-state/30 transition-colors">
+<td class="px-6 py-4 text-[14px] font-medium text-primary-text">2-Hit DMG</td>
+<td class="px-6 py-4 text-[14px] font-mono text-secondary-text">86.1%</td>
+<td class="px-6 py-4 text-[14px] font-mono text-primary-text">12,504</td>
+<td class="px-6 py-4 text-[15px] font-mono font-bold text-pyro text-right">40,211</td>
+<td class="px-6 py-4 text-[14px] font-mono text-primary-text text-right">31,492</td>
+</tr>
+<tr class="hover:bg-hover-state/30 transition-colors bg-white/[0.01]">
+<td class="px-6 py-4 text-[14px] font-medium text-primary-text">Blood Blossom DMG</td>
+<td class="px-6 py-4 text-[14px] font-mono text-secondary-text">115.2%</td>
+<td class="px-6 py-4 text-[14px] font-mono text-primary-text">20,935</td>
+<td class="px-6 py-4 text-[15px] font-mono font-bold text-pyro text-right">67,326</td>
+<td class="px-6 py-4 text-[14px] font-mono text-primary-text text-right">52,711</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- Performance Graph Placeholder -->
+<section class="bg-card-surface border border-border-subtle rounded-lg p-6 relative min-h-[200px] flex flex-col justify-end overflow-hidden">
+<div class="absolute inset-0 opacity-10 pointer-events-none">
+<svg class="w-full h-full" viewbox="0 0 800 200">
+<path d="M0 180 Q 100 120 200 150 T 400 80 T 600 110 T 800 40" fill="transparent" stroke="#EF7938" stroke-width="4"></path>
+<path d="M0 200 L 0 180 Q 100 120 200 150 T 400 80 T 600 110 T 800 40 L 800 200 Z" fill="url(#pyro-grad)"></path>
+<defs>
+<lineargradient id="pyro-grad" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#EF7938"></stop>
+<stop offset="100%" stop-color="#EF7938" stop-opacity="0"></stop>
+</lineargradient>
+</defs>
+</svg>
+</div>
+<div class="relative z-10 flex justify-between items-end">
+<div>
+<h4 class="text-[16px] font-bold text-primary-text">Build Potential</h4>
+<p class="text-[12px] text-secondary-text max-w-md mt-1">This Hu Tao build ranks in the Top 2% of the Vaporize leaderboard (Staff of Homa category).</p>
+</div>
+<button class="px-4 py-2 bg-hover-state border border-border-subtle rounded text-[12px] font-bold text-brand-gold hover:bg-border-subtle transition-all">View Leaderboard</button>
+</div>
+</section>
+</div>
+</div>
+</main>
+<!-- Footer (Shared Component) -->
+<footer class="w-full py-8 border-t border-[#3A3F5C] bg-[#1A1D2E] dark:bg-slate-950 flex flex-col md:flex-row justify-between items-center px-8">
+<div class="text-[#9B9DB8] font-['Inter'] text-xs text-center md:text-left mb-4 md:mb-0">
+      © 2024 Smart Paimon. Not affiliated with HoYoverse.
+    </div>
+<div class="flex gap-6 font-['Inter'] text-xs">
+<a class="text-[#6B7094] hover:text-[#E8E8E8] transition-colors" href="#">Privacy Policy</a>
+<a class="text-[#6B7094] hover:text-[#E8E8E8] transition-colors" href="#">Terms of Service</a>
+<a class="text-[#6B7094] hover:text-[#E8E8E8] transition-colors" href="#">Discord Support</a>
+<a class="text-[#6B7094] hover:text-[#E8E8E8] transition-colors" href="#">Github</a>
+</div>
+</footer>
+</body></html>

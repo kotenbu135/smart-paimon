@@ -2,30 +2,54 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import * as Tabs from "@radix-ui/react-tabs";
 import type { CharacterBuild, Stats, Enemy, Reaction } from "@kotenbu/genshin-calc/types";
-import { getTalentData, computeTalentDamage, computeTransformativeDamage, computeLunarDamage, getReactionBonus, isTransformative, isLunar, type TalentRow, type TransformativeRow } from "../../lib/damage";
+import { ELEMENT_TW } from "../../lib/elements";
+import {
+  getTalentData,
+  computeTalentDamage,
+  computeTransformativeDamage,
+  computeLunarDamage,
+  getReactionBonus,
+  isTransformative,
+  isLunar,
+  type TalentRow,
+  type TransformativeRow,
+} from "../../lib/damage";
 
-interface Props { build: CharacterBuild; stats: Stats; enemy: Enemy; reaction: Reaction | null; }
+interface DamageTableProps {
+  readonly build: Readonly<CharacterBuild>;
+  readonly stats: Readonly<Stats>;
+  readonly enemy: Readonly<Enemy>;
+  readonly reaction: Reaction | null;
+}
 
-export function DamageTable({ build, stats, enemy, reaction }: Props) {
+export function DamageTable({ build, stats, enemy, reaction }: DamageTableProps) {
   const { t } = useTranslation();
+  const el = build.character.element;
+  const tw = ELEMENT_TW[el];
+
   const talents = useMemo(() => getTalentData(build.character.id), [build.character.id]);
-  const reactionBonus = useMemo(() => getReactionBonus(build.artifacts.four_piece_set, reaction), [build.artifacts.four_piece_set, reaction]);
+  const reactionBonus = useMemo(
+    () => getReactionBonus(build.artifacts.four_piece_set, reaction),
+    [build.artifacts.four_piece_set, reaction],
+  );
 
   const [normalLv, skillLv, burstLv] = build.talent_levels;
 
   const talentRows = useMemo(() => {
     if (!talents) return { normal: [], skill: [], burst: [] };
     return {
-      normal: computeTalentDamage(talents.normal_attack?.hits, normalLv, stats, build.level, build.character.element, enemy, reaction, "Normal", reactionBonus),
-      skill: computeTalentDamage(talents.elemental_skill?.scalings, skillLv, stats, build.level, build.character.element, enemy, reaction, "Skill", reactionBonus),
-      burst: computeTalentDamage(talents.elemental_burst?.scalings, burstLv, stats, build.level, build.character.element, enemy, reaction, "Burst", reactionBonus),
+      normal: computeTalentDamage(talents.normal_attack?.hits, normalLv, stats, build.level, el, enemy, reaction, "Normal", reactionBonus),
+      skill: computeTalentDamage(talents.elemental_skill?.scalings, skillLv, stats, build.level, el, enemy, reaction, "Skill", reactionBonus),
+      burst: computeTalentDamage(talents.elemental_burst?.scalings, burstLv, stats, build.level, el, enemy, reaction, "Burst", reactionBonus),
     };
-  }, [talents, build, stats, enemy, reaction, reactionBonus, normalLv, skillLv, burstLv]);
+  }, [talents, build, stats, enemy, reaction, reactionBonus, normalLv, skillLv, burstLv, el]);
 
   const reactionRow: TransformativeRow | null = useMemo(() => {
     if (!reaction) return null;
-    if (isTransformative(reaction)) return computeTransformativeDamage(reaction, build.level, stats.elemental_mastery, enemy, reactionBonus);
-    if (isLunar(reaction)) return computeLunarDamage(reaction, build.level, stats, enemy, reactionBonus);
+    if (isTransformative(reaction))
+      return computeTransformativeDamage(reaction, build.level, stats.elemental_mastery, enemy, reactionBonus);
+    if (isLunar(reaction))
+      return computeLunarDamage(reaction, build.level, stats, enemy, reactionBonus);
     return null;
   }, [reaction, build.level, stats, enemy, reactionBonus]);
 
@@ -36,35 +60,68 @@ export function DamageTable({ build, stats, enemy, reaction }: Props) {
   ];
 
   const renderTable = (rows: TalentRow[]) => (
-    <div>
-      <table className="w-full text-sm">
-        <thead>
-          <tr className="text-gray-500 border-b border-gray-800">
-            <th className="text-left py-2 font-normal">{t("detail.talentName")}</th>
-            <th className="text-center py-2 font-normal">{t("detail.multiplier")}</th>
-            <th className="text-right py-2 font-normal">{t("detail.nonCrit")}</th>
-            <th className="text-right py-2 font-normal text-red-400">{t("detail.crit")}</th>
-            <th className="text-right py-2 font-normal text-amber-400">{t("detail.average")}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((row, i) => (
-            <tr key={i} className="border-b border-gray-800/50 last:border-0">
-              <td className="py-2">{row.name}</td>
-              <td className="py-2 text-center text-gray-400">{(row.multiplier * 100).toFixed(1)}%</td>
-              <td className="py-2 text-right font-mono">{Math.round(row.nonCrit).toLocaleString()}</td>
-              <td className="py-2 text-right font-mono text-red-400">{Math.round(row.crit).toLocaleString()}</td>
-              <td className="py-2 text-right font-mono text-amber-400">{Math.round(row.average).toLocaleString()}</td>
+    <div className="bg-navy-card border border-navy-border rounded-lg overflow-hidden">
+      <div className="overflow-x-auto">
+        <table className="w-full text-left border-collapse">
+          <thead>
+            <tr className="bg-navy-hover/50 border-b border-navy-border">
+              <th className="px-6 py-4 text-[11px] font-label font-bold uppercase tracking-widest text-text-secondary">
+                {t("detail.talentName")}
+              </th>
+              <th className="px-6 py-4 text-[11px] font-label font-bold uppercase tracking-widest text-text-secondary">
+                {t("detail.multiplier")}
+              </th>
+              <th className="px-6 py-4 text-[11px] font-label font-bold uppercase tracking-widest text-text-secondary">
+                {t("detail.nonCrit")}
+              </th>
+              <th className="px-6 py-4 text-[11px] font-label font-bold uppercase tracking-widest text-text-secondary text-right">
+                {t("detail.crit")}
+              </th>
+              <th className="px-6 py-4 text-[11px] font-label font-bold uppercase tracking-widest text-text-secondary text-right">
+                {t("detail.average")}
+              </th>
             </tr>
-          ))}
-          {rows.length === 0 && <tr><td colSpan={5} className="py-4 text-center text-gray-500">{!talents ? "Talent data not available" : "No scalings found"}</td></tr>}
-        </tbody>
-      </table>
+          </thead>
+          <tbody className="divide-y divide-navy-border/50">
+            {rows.map((row, i) => (
+              <tr key={i} className="hover:bg-navy-hover/30 transition-colors">
+                <td className="px-6 py-4 text-[14px] font-medium text-text-primary">{row.name}</td>
+                <td className="px-6 py-4 text-[14px] font-mono text-text-secondary">
+                  {(row.multiplier * 100).toFixed(1)}%
+                </td>
+                <td className="px-6 py-4 text-[14px] font-mono text-text-primary">
+                  {Math.round(row.nonCrit).toLocaleString()}
+                </td>
+                <td className={`px-6 py-4 text-[15px] font-mono font-bold text-right ${tw?.text ?? "text-gold"}`}>
+                  {Math.round(row.crit).toLocaleString()}
+                </td>
+                <td className="px-6 py-4 text-[14px] font-mono text-text-primary text-right">
+                  {Math.round(row.average).toLocaleString()}
+                </td>
+              </tr>
+            ))}
+            {rows.length === 0 && (
+              <tr>
+                <td colSpan={5} className="px-6 py-8 text-center text-text-muted">
+                  {!talents ? t("detail.noTalentData") : t("detail.noScalings")}
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Transformative / Lunar reaction row */}
       {reactionRow && (
-        <div className="mt-3 pt-3 border-t border-gray-800">
+        <div className="px-6 py-4 border-t border-navy-border">
+          <h4 className="text-[11px] font-label font-bold text-text-muted uppercase tracking-widest mb-2">
+            {t("detail.reactionDamage")}
+          </h4>
           <div className="flex justify-between text-sm">
-            <span className="text-sky-400">{reactionRow.name}</span>
-            <span className="font-mono text-sky-400">{Math.round(reactionRow.damage).toLocaleString()}</span>
+            <span className="text-hydro font-medium">{reactionRow.name}</span>
+            <span className="font-mono text-hydro font-bold">
+              {Math.round(reactionRow.damage).toLocaleString()}
+            </span>
           </div>
         </div>
       )}
@@ -72,11 +129,17 @@ export function DamageTable({ build, stats, enemy, reaction }: Props) {
   );
 
   return (
-    <div className="p-4 bg-gray-900/80 border border-gray-800 rounded-xl">
+    <div className="space-y-4">
       <Tabs.Root defaultValue="normal">
-        <Tabs.List className="flex gap-1 mb-4">
+        <Tabs.List className="flex gap-1 p-1 bg-navy-border/50 rounded-lg w-fit">
           {tabs.map(({ key, label }) => (
-            <Tabs.Trigger key={key} value={key} className="px-4 py-2 text-sm rounded-t-lg transition-colors data-[state=active]:bg-red-500/20 data-[state=active]:text-red-400 text-gray-400 hover:text-gray-200">
+            <Tabs.Trigger
+              key={key}
+              value={key}
+              className={`px-6 py-2 rounded-md text-[13px] font-medium transition-colors
+                data-[state=active]:${tw?.bg ?? "bg-gold"} data-[state=active]:text-white data-[state=active]:font-bold
+                text-text-secondary hover:bg-navy-hover`}
+            >
               {label}
             </Tabs.Trigger>
           ))}

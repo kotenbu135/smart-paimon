@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Smart Paimon | Genshin Impact Damage Calculator</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=Space+Grotesk:wght@500&amp;family=JetBrains+Mono:wght@600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        navy: {
+                            page: "#1A1D2E",
+                            card: "#252A40",
+                            hover: "#2F3452",
+                            border: "#3A3F5C"
+                        },
+                        text: {
+                            primary: "#E8E8E8",
+                            secondary: "#9B9DB8",
+                            muted: "#6B7094"
+                        },
+                        gold: {
+                            DEFAULT: "#D4A84B",
+                            light: "#E5C27A"
+                        }
+                    },
+                    fontFamily: {
+                        "headline": ["Inter", "sans-serif"],
+                        "body": ["Inter", "sans-serif"],
+                        "label": ["Space Grotesk", "sans-serif"],
+                        "mono": ["JetBrains Mono", "monospace"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #1A1D2E;
+            color: #E8E8E8;
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+<!-- Top Navigation Bar -->
+<nav class="fixed top-0 w-full h-[56px] bg-navy-card border-b border-navy-border z-50">
+<div class="flex justify-between items-center px-6 h-full max-w-7xl mx-auto">
+<!-- Left: Logo & Navigation -->
+<div class="flex items-center gap-10">
+<span class="text-xl font-bold text-gold tracking-tighter cursor-pointer">Smart Paimon</span>
+<div class="hidden md:flex items-center gap-6 h-[56px]">
+<!-- Active Link -->
+<a class="h-full flex items-center text-text-primary border-b-2 border-gold font-semibold text-sm tracking-wide" href="#">
+                        Characters
+                    </a>
+<!-- Disabled Links -->
+<a class="text-text-muted cursor-not-allowed font-semibold text-sm tracking-wide" href="#">
+                        Team
+                    </a>
+<a class="text-text-muted cursor-not-allowed font-semibold text-sm tracking-wide" href="#">
+                        Compare
+                    </a>
+</div>
+</div>
+<!-- Right: Actions & Meta -->
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-3 pr-4 border-r border-navy-border">
+<span class="bg-navy-hover px-2 py-0.5 rounded text-[10px] font-mono text-gold border border-navy-border">
+                        0 CHARACTERS
+                    </span>
+<span class="text-[10px] font-mono text-text-muted uppercase tracking-wider">
+                        v5.4
+                    </span>
+</div>
+<div class="flex items-center gap-2">
+<button class="px-3 py-1 text-xs font-label text-text-secondary hover:bg-navy-hover transition-all duration-200 rounded cursor-pointer">
+                        JA / EN
+                    </button>
+<button class="p-1.5 text-text-secondary hover:text-text-primary hover:bg-navy-hover transition-all rounded cursor-pointer" title="Re-import">
+<span class="material-symbols-outlined text-[20px]">refresh</span>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<!-- Main Content Area / Hero Section -->
+<main class="flex-grow flex items-center justify-center pt-[56px] px-6">
+<div class="w-full max-w-[480px] flex flex-col items-center text-center">
+<!-- Logo & Title -->
+<div class="mb-8">
+<h1 class="text-[32px] font-bold text-gold tracking-[-0.5px] leading-tight">
+                    Smart Paimon
+                </h1>
+<p class="text-base text-text-secondary mt-1 font-body">
+                    Genshin Impact Damage Calculator
+                </p>
+</div>
+<!-- Drop Zone -->
+<div class="w-full h-[200px] border-2 border-dashed border-navy-border rounded-xl flex flex-col items-center justify-center group cursor-pointer hover:border-gold transition-colors duration-300 mb-6 bg-navy-card/50">
+<span class="material-symbols-outlined text-[32px] text-text-muted group-hover:text-gold transition-colors mb-3">
+                    cloud_upload
+                </span>
+<p class="text-base text-text-secondary group-hover:text-text-primary transition-colors">
+                    Drop GOOD JSON file here
+                </p>
+<p class="text-[12px] text-text-muted mt-1">
+                    or <span class="underline hover:text-text-secondary">click to select file</span>
+</p>
+</div>
+<!-- Sample Data CTA -->
+<button class="w-full h-[44px] bg-gold hover:bg-gold-light text-navy-page font-semibold text-[15px] rounded-lg transition-all duration-200 active:scale-[0.98] mb-3 shadow-lg shadow-gold/10">
+                Try with Sample Data
+            </button>
+<!-- Format Note -->
+<p class="text-[11px] text-text-muted leading-relaxed max-w-[400px]">
+                Compatible with GOOD format exports from Irminsul, Inventory Kamera, and Amenoma
+            </p>
+<!-- Decorative Visual (Background Context) -->
+<div class="fixed inset-0 -z-10 pointer-events-none overflow-hidden">
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gold/5 blur-[120px] rounded-full"></div>
+<div class="absolute bottom-[-10%] right-[-10%] w-[400px] h-[400px] bg-blue-500/5 blur-[100px] rounded-full"></div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="w-full py-8 border-t border-navy-border bg-navy-page">
+<div class="flex flex-col md:flex-row justify-between items-center px-8 w-full max-w-7xl mx-auto gap-4">
+<div class="flex items-center gap-2">
+<span class="text-gold font-bold">Smart Paimon</span>
+<span class="font-['Inter'] text-xs text-text-muted">
+                    © 2024 Smart Paimon. Not affiliated with HoYoverse.
+                </span>
+</div>
+<div class="flex gap-6">
+<a class="font-['Inter'] text-xs text-text-muted hover:text-text-primary transition-colors cursor-pointer" href="#">Privacy Policy</a>
+<a class="font-['Inter'] text-xs text-text-muted hover:text-text-primary transition-colors cursor-pointer" href="#">Terms of Service</a>
+<a class="font-['Inter'] text-xs text-text-muted hover:text-text-primary transition-colors cursor-pointer" href="#">Contact</a>
+<a class="font-['Inter'] text-xs text-text-muted hover:text-text-primary transition-colors cursor-pointer" href="#">Discord</a>
+</div>
+</div>
+</footer>
+</body></html>

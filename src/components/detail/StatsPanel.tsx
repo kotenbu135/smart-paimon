@@ -1,11 +1,17 @@
 import { useTranslation } from "react-i18next";
 import type { Stats } from "@kotenbu/genshin-calc/types";
 
-interface Props { stats: Stats; }
-const fmt = (v: number, pct: boolean) => pct ? `${(v * 100).toFixed(1)}%` : Math.round(v).toLocaleString();
+interface StatsPanelProps {
+  readonly stats: Readonly<Stats>;
+  readonly elementDmgLabel?: string;
+}
 
-export function StatsPanel({ stats }: Props) {
+const fmt = (v: number, pct: boolean) =>
+  pct ? `${(v * 100).toFixed(1)}%` : Math.round(v).toLocaleString();
+
+export function StatsPanel({ stats, elementDmgLabel }: StatsPanelProps) {
   const { t } = useTranslation();
+
   const rows = [
     { label: t("stats.hp"), value: stats.hp, pct: false },
     { label: t("stats.atk"), value: stats.atk, pct: false },
@@ -14,21 +20,29 @@ export function StatsPanel({ stats }: Props) {
     { label: t("stats.critRate"), value: stats.crit_rate, pct: true },
     { label: t("stats.critDmg"), value: stats.crit_dmg, pct: true },
     { label: t("stats.er"), value: stats.energy_recharge, pct: true },
-    { label: t("stats.dmgBonus"), value: stats.dmg_bonus, pct: true },
+    { label: elementDmgLabel ?? t("stats.dmgBonus"), value: stats.dmg_bonus, pct: true, highlight: true },
   ];
+
   return (
-    <div className="p-4 bg-gray-900/80 border border-gray-800 rounded-xl">
-      <p className="text-sm font-bold text-sky-400 mb-3">{t("detail.stats")}</p>
-      <table className="w-full text-sm">
-        <tbody>
-          {rows.map(({ label, value, pct }) => (
-            <tr key={label} className="border-b border-gray-800/50 last:border-0">
-              <td className="py-1.5 text-gray-400">{label}</td>
-              <td className="py-1.5 text-right font-mono">{fmt(value, pct)}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <section className="bg-navy-card border border-navy-border rounded-lg overflow-hidden">
+      <div className="bg-navy-hover/50 px-4 py-2 border-b border-navy-border">
+        <span className="text-[11px] font-label font-bold tracking-widest text-text-secondary uppercase">
+          {t("detail.stats")}
+        </span>
+      </div>
+      <div className="p-2">
+        {rows.map(({ label, value, pct, highlight }) => (
+          <div
+            key={label}
+            className="flex justify-between items-center h-9 px-3 border-b border-navy-border/50 last:border-0"
+          >
+            <span className="text-[13px] text-text-secondary">{label}</span>
+            <span className={`text-[14px] font-mono ${highlight ? "text-pyro" : "text-text-primary"}`}>
+              {fmt(value, pct)}
+            </span>
+          </div>
+        ))}
+      </div>
+    </section>
   );
 }
