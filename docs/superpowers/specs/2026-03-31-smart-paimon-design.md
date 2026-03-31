@@ -17,7 +17,7 @@ A web-based damage calculator for Genshin Impact that uses `@kotenbu/genshin-cal
 | i18n | react-i18next (Japanese / English) |
 | UI Components | Radix UI (headless, accessible) |
 | Animation | Framer Motion |
-| Calculation Engine | @kotenbu/genshin-calc@0.1.1 (WASM) |
+| Calculation Engine | @kotenbu/genshin-calc@0.2.0 (WASM) |
 | Routing | React Router v7 (HashRouter for GitHub Pages) |
 | Deployment | GitHub Pages (GitHub Actions auto-deploy) |
 
@@ -26,46 +26,48 @@ A web-based damage calculator for Genshin Impact that uses `@kotenbu/genshin-cal
 ```
 GOOD JSON file
   → Drag & drop / file picker
-  → WASM GOOD Adapter (import_good in @kotenbu/genshin-calc)
-  → Zustand stores (characters, weapons, artifacts)
+  → WASM import_good(json) → GoodImport { builds: CharacterBuild[], warnings }
+  → Zustand GoodStore (builds array)
   → User interaction (select character, configure enemy, pick reaction)
   → WASM calculation (calculate_damage / resolve_team_stats)
   → Damage results displayed in UI
 ```
 
-## GOOD Adapter
+## GOOD Adapter (v0.2.0 — fully available)
 
-The `genshin-calc-good` crate (`crates/good`) is fully implemented. `import_good(json) -> Result<GoodImport, GoodError>` parses GOOD JSON and returns structured character builds.
+`import_good(json: string)` is exported from `@kotenbu/genshin-calc@0.2.0`. Throws `JsError` on invalid JSON or unsupported format.
 
-### Return types (Rust → JS via serde)
+### Return types (from `types.ts`)
 
 ```
 GoodImport
-├── characters: Vec<CharacterBuild>
-│   ├── character: &'static CharacterData   // find_character() と同じデータ（名前、元素、天賦倍率テーブル等）
-│   ├── level: u32
-│   ├── ascension: u32
-│   ├── constellation: u32
-│   ├── talent_levels: [u8; 3]              // [normal, skill, burst]
-│   ├── weapon: Option<WeaponBuild>
-│   │   ├── weapon: &'static WeaponData
-│   │   ├── level: u32
-│   │   ├── ascension: u32
-│   │   └── refinement: u32
+├── source: string                          // GOOD source identifier
+├── version: number                         // GOOD format version
+├── builds: CharacterBuild[]
+│   ├── character: CharacterData            // { id, name, element, weapon_type, rarity, base_hp/atk/def, ascension_stat/value }
+│   ├── level: number
+│   ├── ascension: number
+│   ├── constellation: number
+│   ├── talent_levels: [number, number, number]  // [normal, skill, burst]
+│   ├── weapon: WeaponBuild | null
+│   │   ├── weapon: WeaponData              // { id, name, weapon_type, rarity, base_atk, sub_stat/value }
+│   │   ├── level: number
+│   │   └── refinement: number
 │   └── artifacts: ArtifactsBuild
 │       ├── stats: StatProfile              // 聖遺物ステータス算出済み（メイン+サブ全合算）
-│       ├── sets: Vec<(ArtifactSetId, u32)> // (セットID, ピース数)
-│       └── four_piece_set: Option<ArtifactSetId>  // 4セット効果があれば
-└── warnings: Vec<String>                   // 未知キー等のパースエラー
+│       ├── sets: ArtifactSetData[]         // [{ id, name }, ...]
+│       └── four_piece_set: ArtifactSetData | null
+└── warnings: ImportWarning[]               // [{ kind, message }, ...]
 ```
 
 ### Key features
 - ID変換: PascalCase (`"HuTao"`) → snake_case (`"hu_tao"`) 実装済み
 - Stat変換: GOOD stat keys → StatProfile（percentage ÷100 → decimal）実装済み
-- `character` フィールドに `CharacterData` への参照が入るため、Web UIは別途 `find_character()` を呼ぶ必要がない
-- Warnings で部分インポートをサポート（未知キャラ・武器はスキップしつつ警告）
+- `character` フィールドに `CharacterData` が入るため、Web UIは別途 `find_character()` を呼ぶ必要がない
+- `ImportWarning` で部分インポートをサポート（未知キャラ・武器はスキップしつつ `kind` + `message` で警告）
 
-**Current status (v0.1.1):** crate は実装済みだが `import_good()` はまだ WASM バインディングに公開されていない。Phase 1 開始前に WASM 層への公開が必要。
+### CharacterData の注意点
+`CharacterData` には天賦倍率テーブルは含まれない（`id`, `name`, `element`, `weapon_type`, `rarity`, `base_hp/atk/def`, `ascension_stat/value` のみ）。天賦倍率は `find_character(id)` で取得する `any` 型の戻り値から参照する。
 
 ## Pages & Routing
 
@@ -97,7 +99,7 @@ GoodImport
 
 ### GoodStore
 - `builds`: `CharacterBuild[]` — `import_good()` の結果。各ビルドに `character`（CharacterData）、`weapon`、`artifacts`（算出済みStatProfile含む）、`talent_levels` が入っている
-- `warnings`: `string[]` — インポート時の警告
+- `warnings`: `ImportWarning[]` — インポート時の警告（`{ kind, message }`）
 - `importGood(json)`: WASM `import_good()` を呼び、結果を格納。エラー時は `GoodError` をUIに表示
 - `clear()`: データクリア
 - `getBuild(characterId)`: IDでビルドを検索
@@ -113,23 +115,24 @@ GoodImport
 
 **Damage calculation strategy:**
 
-`CharacterBuild.character` に `CharacterData`（天賦倍率テーブル含む）が直接入っているため、`find_character()` の追加呼び出しは不要。`CharacterBuild.talent_levels` で天賦レベルを参照し、`character.talents` の倍率テーブルから `values[level - 1]` で倍率を取得する。
+`CharacterBuild.character` に `CharacterData`（id, name, element, base stats 等）が入っている。ただし天賦倍率テーブルは `CharacterData` に含まれないため、`find_character(build.character.id)` を呼んで天賦データを取得する必要がある。
 
 最終ステータスの組み立て:
-- キャラ基礎ステ: `character.base_hp/atk/def`（レベル・突破に応じた値）
-- 武器基礎ステ: `weapon.weapon.base_atk` 等
-- 聖遺物ステ: `artifacts.stats`（`StatProfile`、算出済み）
+- キャラ基礎ステ: `build.character.base_hp/atk/def` + `ascension_stat/ascension_stat_value`
+- 武器基礎ステ: `build.weapon.weapon.base_atk` + `sub_stat/sub_stat_value`
+- 聖遺物ステ: `build.artifacts.stats`（`StatProfile`、算出済み）
 - これらを合算して `Stats` を構築し `DamageInput` に渡す
 
 For each talent scaling entry:
-1. Get `talent_multiplier` from `character.talents.values[talentLevel - 1]`
-2. Assemble `DamageInput` from computed stats + talent data + enemy config
-3. Call `calculate_damage(input, enemy)` → `{ non_crit, crit, average }`
-4. If amplifying reaction selected: re-call with `reaction` field set → values include reaction multiplier
-5. If transformative reaction selected: call `calculate_transformative` separately
-6. If lunar reaction selected: call `calculate_lunar` separately
+1. `find_character(build.character.id)` で天賦倍率テーブルを取得
+2. `build.talent_levels` の天賦レベルから倍率を参照
+3. Assemble `DamageInput` from computed stats + talent data + enemy config
+4. Call `calculate_damage(input, enemy)` → `{ non_crit, crit, average }`
+5. If amplifying reaction selected: re-call with `reaction` field set → values include reaction multiplier
+6. If transformative reaction selected: call `calculate_transformative` separately
+7. If lunar reaction selected: call `calculate_lunar` separately
 
-`reaction_bonus` is auto-derived from `artifacts.four_piece_set` (e.g., Crimson Witch 4pc = 0.15 for Vaporize/Melt).
+`reaction_bonus` is auto-derived from `build.artifacts.four_piece_set` (e.g., Crimson Witch 4pc = 0.15 for Vaporize/Melt).
 
 ### TeamStore (Phase 2)
 - `members`: 4-slot array of character IDs
@@ -183,12 +186,15 @@ src/
 │       ├── DamageTable.tsx       # Right column (tabbed)
 │       ├── EnemyConfig.tsx
 │       └── ReactionSelector.tsx
-├── pages/
-│   ├── HomePage.tsx
-│   ├── CharactersPage.tsx
-│   └── CharacterDetailPage.tsx
-└── types/
-    └── good.ts                   # GOOD format type definitions
+└── pages/
+    ├── HomePage.tsx
+    ├── CharactersPage.tsx
+    └── CharacterDetailPage.tsx
+```
+
+Types are imported directly from `@kotenbu/genshin-calc/types`:
+```ts
+import type { GoodImport, CharacterBuild, Stats, DamageInput, Enemy } from "@kotenbu/genshin-calc/types";
 ```
 
 ## Phased Delivery
@@ -232,9 +238,9 @@ Genshin Impact-inspired rich UI:
 
 ## Prerequisites
 
-Before starting Phase 1 implementation:
-1. ~~Implement `genshin-calc-good` crate~~ ✅ Done (crates/good in genshin-calc repo)
-2. Expose `import_good()` in WASM bindings (`crates/wasm`) and publish @kotenbu/genshin-calc@0.2.0
-3. Ensure `types.ts` is included in the npm package (missing from v0.1.1 `files` field)
+All prerequisites are met:
+1. ~~Implement `genshin-calc-good` crate~~ ✅ Done
+2. ~~Expose `import_good()` in WASM bindings~~ ✅ Done (@kotenbu/genshin-calc@0.2.0)
+3. ~~Include `types.ts` in npm package~~ ✅ Done (v0.2.0)
 
 Source repository: https://github.com/kotenbu135/genshin-calc
