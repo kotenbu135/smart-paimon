@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import type { CharacterBuild } from "@kotenbu/genshin-calc/types";
-import { ELEMENT_META, ELEMENT_TW, RARITY_COLORS } from "../../lib/elements";
+import { ELEMENT_TW, RARITY_COLORS } from "../../lib/elements";
+import { charIcon, charBanner, elementIcon } from "../../lib/charAssets";
 
 interface CharacterProfileProps {
   readonly build: Readonly<CharacterBuild>;
@@ -10,24 +11,37 @@ export function CharacterProfile({ build }: CharacterProfileProps) {
   const { t } = useTranslation();
   const { character, level, constellation, weapon, artifacts } = build;
   const el = character.element;
-  const meta = ELEMENT_META[el];
   const tw = ELEMENT_TW[el];
 
   return (
     <div className="space-y-3">
       {/* Profile Card */}
-      <section className="bg-navy-card border border-navy-border rounded-lg p-5 flex flex-col items-center text-center">
-        <div className="relative mb-4">
+      <section className="relative bg-navy-card border border-navy-border rounded-lg p-5 flex flex-col items-center text-center overflow-hidden">
+        {/* Namecard banner background */}
+        <div className="absolute inset-0 h-28">
+          <img
+            src={charBanner(character.id)}
+            alt=""
+            className="w-full h-full object-cover opacity-30"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent to-navy-card" />
+        </div>
+
+        <div className="relative mb-4 mt-6">
           <div
-            className={`w-[120px] h-[120px] rounded-full overflow-hidden border-[3px] ${tw?.border ?? "border-navy-border"} flex items-center justify-center bg-navy-hover text-4xl text-text-muted`}
+            className={`w-[120px] h-[120px] rounded-full overflow-hidden border-[3px] ${tw?.border ?? "border-navy-border"}`}
             style={{ boxShadow: `0 0 15px ${getElementColor(el)}30` }}
           >
-            {meta?.abbr ?? "?"}
+            <img
+              src={charIcon(character.id)}
+              alt={character.name}
+              className="w-full h-full object-cover"
+            />
           </div>
           <div
-            className={`absolute -bottom-1 -right-1 ${tw?.bg ?? "bg-navy-hover"} w-7 h-7 rounded-full flex items-center justify-center border-2 border-navy-card`}
+            className={`absolute -bottom-1 -right-1 ${tw?.bg ?? "bg-navy-hover"} w-7 h-7 rounded-full flex items-center justify-center border-2 border-navy-card p-1`}
           >
-            <span className="text-[14px] font-bold text-white">{meta?.abbr}</span>
+            <img src={elementIcon(el)} alt={el} className="w-full h-full" />
           </div>
         </div>
         <h1 className="text-[20px] font-bold text-text-primary leading-tight">{character.name}</h1>

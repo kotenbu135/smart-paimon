@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import type { CharacterBuild } from "@kotenbu/genshin-calc/types";
 import { ELEMENT_META, ELEMENT_TW, RARITY_COLORS } from "../../lib/elements";
+import { charIcon, elementIcon } from "../../lib/charAssets";
 
 interface CharacterCardProps {
   readonly build: Readonly<CharacterBuild>;
@@ -19,15 +20,17 @@ export function CharacterCard({ build }: CharacterCardProps) {
       >
         {/* Avatar area with element gradient */}
         <div className={`relative aspect-square overflow-hidden bg-gradient-to-b ${tw?.gradient ?? ""} to-transparent`}>
-          {/* Placeholder avatar */}
-          <div className="w-full h-full bg-navy-hover flex items-center justify-center text-text-muted text-3xl">
-            {meta?.abbr ?? "?"}
-          </div>
+          <img
+            src={charIcon(character.id)}
+            alt={character.name}
+            className="w-full h-full object-cover"
+            loading="lazy"
+          />
           {/* Element badge */}
           <div
-            className={`absolute top-2 right-2 w-5 h-5 rounded-full ${tw?.bg ?? "bg-navy-hover"} flex items-center justify-center text-[10px] font-bold text-white`}
+            className={`absolute top-2 right-2 w-6 h-6 rounded-full ${tw?.bg ?? "bg-navy-hover"} flex items-center justify-center p-1`}
           >
-            {meta?.abbr ?? "?"}
+            <img src={elementIcon(el)} alt={el} className="w-full h-full" />
           </div>
         </div>
         {/* Info area */}

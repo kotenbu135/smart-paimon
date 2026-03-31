@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import type { Element, WeaponType } from "@kotenbu/genshin-calc/types";
 import { ALL_ELEMENTS, ALL_WEAPONS, ELEMENT_TW } from "../../lib/elements";
+import { elementIcon } from "../../lib/charAssets";
 
 interface CharacterFilterProps {
   readonly elementFilter: Element | null;
@@ -23,13 +24,14 @@ export function CharacterFilter({ elementFilter, weaponFilter, onElementChange, 
             <button
               key={el}
               onClick={() => onElementChange(active ? null : el as Element)}
-              className={`px-4 py-1.5 rounded text-xs font-label uppercase tracking-wider transition-colors whitespace-nowrap ${
+              className={`px-4 py-1.5 rounded text-xs font-label uppercase tracking-wider transition-colors whitespace-nowrap flex items-center gap-1.5 ${
                 active
                   ? `${tw.bg} text-white`
                   : "bg-navy-card text-text-secondary hover:bg-navy-hover"
               }`}
             >
-              {t(`element.${el.toLowerCase()}`)}
+              <img src={elementIcon(el)} alt={el} className="w-4 h-4 inline-block" />
+              <span>{t(`element.${el.toLowerCase()}`)}</span>
             </button>
           );
         })}
