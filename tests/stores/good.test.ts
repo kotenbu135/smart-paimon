@@ -34,13 +34,15 @@ describe("GoodStore", () => {
     expect(s.builds).toEqual([]);
     expect(s.warnings).toEqual([]);
     expect(s.error).toBeNull();
+    expect(s.rawJson).toBeNull();
   });
 
   it("imports GOOD data", () => {
     vi.mocked(import_good).mockReturnValue({ source: "test", version: 1, builds: [mockBuild], warnings: [] });
-    useGoodStore.getState().importGood("{}");
+    useGoodStore.getState().importGood('{"foo":"bar"}');
     expect(useGoodStore.getState().builds).toHaveLength(1);
     expect(useGoodStore.getState().builds[0].character.id).toBe("diluc");
+    expect(useGoodStore.getState().rawJson).toBe('{"foo":"bar"}');
   });
 
   it("stores warnings", () => {
@@ -54,6 +56,7 @@ describe("GoodStore", () => {
     useGoodStore.getState().importGood("bad");
     expect(useGoodStore.getState().builds).toEqual([]);
     expect(useGoodStore.getState().error).toBe("Invalid GOOD format");
+    expect(useGoodStore.getState().rawJson).toBeNull();
   });
 
   it("finds build by ID", () => {
@@ -68,5 +71,6 @@ describe("GoodStore", () => {
     useGoodStore.getState().importGood("{}");
     useGoodStore.getState().clear();
     expect(useGoodStore.getState().builds).toEqual([]);
+    expect(useGoodStore.getState().rawJson).toBeNull();
   });
 });
