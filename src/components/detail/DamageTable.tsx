@@ -142,7 +142,7 @@ export function DamageTable({ build, stats, enemy, reaction, stickyHeader }: Dam
             {t("detail.reactionDamage")}
           </h4>
           <div className="flex justify-between text-sm">
-            <span className="text-hydro font-medium">{localizeReactionName(reactionRow.name, t, locale)}</span>
+            <span className="text-hydro font-medium">{localizeReactionName(reactionRow.name, t)}</span>
             <span className="font-mono text-hydro font-bold">
               {Math.round(reactionRow.damage).toLocaleString()}
             </span>
@@ -176,7 +176,7 @@ export function DamageTable({ build, stats, enemy, reaction, stickyHeader }: Dam
               {t("detail.reactionDamage")}
             </h4>
             <div className="flex justify-between text-sm">
-              <span className="text-hydro font-medium">{localizeReactionName(reactionRow.name, t, locale)}</span>
+              <span className="text-hydro font-medium">{localizeReactionName(reactionRow.name, t)}</span>
               <span className="font-mono text-hydro font-bold">
                 {Math.round(reactionRow.damage).toLocaleString()}
               </span>

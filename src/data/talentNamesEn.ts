@@ -83,7 +83,6 @@ const TALENT_NAMES_EN: Record<string, string> = {
   "2段旋火輪ダメージ": "Pyronado 2-Hit DMG",
   "3段旋火輪ダメージ": "Pyronado 3-Hit DMG",
   "旋火輪ダメージ": "Pyronado DMG",
-  "炎の援護ダメージ": "Flame Support DMG",
 
   // Raiden Shogun
   "夢想の一太刀基礎ダメージ": "Musou no Hitotachi Base DMG",
@@ -143,7 +142,6 @@ const TALENT_NAMES_EN: Record<string, string> = {
 
   // Klee
   "ドッカン花火ダメージ": "Sparks 'n' Splash DMG",
-  "ボンボン爆弾ダメージ": "Bouncing Bomb DMG",
 
   // Bennett
   "スラッシュダメージ (×5)": "Slash DMG (x5)",
@@ -207,7 +205,6 @@ const TALENT_NAMES_EN: Record<string, string> = {
   "海月ダメージボーナス": "Jellyfish DMG Bonus",
 
   // Chongyun
-  "氷星の欠片ダメージ": "Ice Shard DMG",
 
   // Diona
   "猫の爪ダメージ": "Cat's Claw DMG",
@@ -325,7 +322,6 @@ const TALENT_NAMES_EN: Record<string, string> = {
 
   // Lyney
   "ハットトリックダメージ": "Hat Trick DMG",
-  "炎のダメージ": "Pyro DMG",
 
   // Lynette
   "突進ダメージ": "Rush DMG",

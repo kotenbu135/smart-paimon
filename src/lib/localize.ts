@@ -52,7 +52,7 @@ export function localizeTalentName(name: string, locale: string): string {
   return name;
 }
 
-export function localizeReactionName(name: string, t: TFunction, locale: string): string {
+export function localizeReactionName(name: string, t: TFunction): string {
   // Handle Swirl(Element) format
   const swirlMatch = name.match(/^Swirl \((\w+)\)$/);
   if (swirlMatch) {
