@@ -1,5 +1,6 @@
 import { Outlet } from "react-router-dom";
 import { Navbar } from "./Navbar";
+import { Footer } from "./Footer";
 import { useUIStore } from "../../stores/ui";
 import { useTranslation } from "react-i18next";
 
@@ -35,9 +36,10 @@ export function Layout() {
   return (
     <div className="min-h-screen bg-navy-page text-text-primary">
       <Navbar />
-      <main className="pt-14">
+      <main className="pt-14 pb-10">
         <Outlet />
       </main>
+      <Footer />
     </div>
   );
 }

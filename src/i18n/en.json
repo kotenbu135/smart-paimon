@@ -20,5 +20,6 @@
   },
   "element": { "pyro": "Pyro", "hydro": "Hydro", "electro": "Electro", "cryo": "Cryo", "anemo": "Anemo", "geo": "Geo", "dendro": "Dendro", "physical": "Physical" },
   "weaponType": { "sword": "Sword", "claymore": "Claymore", "polearm": "Polearm", "bow": "Bow", "catalyst": "Catalyst" },
+  "footer": { "disclaimer": "Fan-made tool. Not affiliated with HoYoverse." },
   "common": { "loading": "Loading...", "error": "Error", "retry": "Retry", "version": "ver.{{version}}" }
 }

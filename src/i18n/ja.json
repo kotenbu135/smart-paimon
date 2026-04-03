@@ -20,5 +20,6 @@
   },
   "element": { "pyro": "炎", "hydro": "水", "electro": "雷", "cryo": "氷", "anemo": "風", "geo": "岩", "dendro": "草", "physical": "物理" },
   "weaponType": { "sword": "片手剣", "claymore": "両手剣", "polearm": "長柄武器", "bow": "弓", "catalyst": "法器" },
+  "footer": { "disclaimer": "当サイトはファンメイドツールであり、HoYoverseとは無関係です" },
   "common": { "loading": "読み込み中...", "error": "エラー", "retry": "再試行", "version": "ver.{{version}}" }
 }
