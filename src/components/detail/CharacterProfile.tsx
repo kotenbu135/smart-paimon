@@ -49,8 +49,8 @@ export function CharacterProfile({ build }: CharacterProfileProps) {
           <span className="text-[14px] text-text-secondary">
             Lv.{level} · C{constellation}
           </span>
-          <div className={`text-[10px] ${RARITY_COLORS[character.rarity] ?? "text-text-muted"}`}>
-            {"★".repeat(character.rarity)}
+          <div className={`text-[10px] ${RARITY_COLORS[+character.rarity.replace("Star", "")] ?? "text-text-muted"}`}>
+            {"★".repeat(+character.rarity.replace("Star", ""))}
           </div>
         </div>
       </section>
@@ -65,16 +65,18 @@ export function CharacterProfile({ build }: CharacterProfileProps) {
             <div className="text-[14px] font-semibold text-text-primary truncate">{weapon.weapon.name}</div>
             <div className="text-[12px] text-text-secondary">Lv.{weapon.level} · R{weapon.refinement}</div>
           </div>
-          {weapon.weapon.sub_stat && (
-            <div className="text-right flex-shrink-0">
-              <div className="text-[12px] font-mono font-semibold text-gold">{weapon.weapon.sub_stat}</div>
-              <div className="text-[12px] font-mono text-text-primary">
-                {typeof weapon.weapon.sub_stat_value === "number"
-                  ? `${(weapon.weapon.sub_stat_value * 100).toFixed(1)}%`
-                  : ""}
+          {weapon.weapon.sub_stat && (() => {
+            const [statName, statValues] = Object.entries(weapon.weapon.sub_stat)[0];
+            const statValue = statValues[statValues.length - 1];
+            return (
+              <div className="text-right flex-shrink-0">
+                <div className="text-[12px] font-mono font-semibold text-gold">{statName}</div>
+                <div className="text-[12px] font-mono text-text-primary">
+                  {`${(statValue * 100).toFixed(1)}%`}
+                </div>
               </div>
-            </div>
-          )}
+            );
+          })()}
         </section>
       )}
 

@@ -188,22 +188,20 @@ export interface CharacterData {
   name: string;
   element: Element;
   weapon_type: WeaponType;
-  rarity: number;
-  base_hp: number;
-  base_atk: number;
-  base_def: number;
-  ascension_stat: string;
-  ascension_stat_value: number;
+  rarity: string; // e.g. "Star4", "Star5"
+  base_hp: number[];
+  base_atk: number[];
+  base_def: number[];
+  ascension_stat: Record<string, number>; // e.g. { "Def": 0.3 }
 }
 
 export interface WeaponData {
   id: string;
   name: string;
   weapon_type: WeaponType;
-  rarity: number;
-  base_atk: number;
-  sub_stat: string | null;
-  sub_stat_value: number;
+  rarity: string; // e.g. "Star4", "Star5"
+  base_atk: number[];
+  sub_stat: Record<string, number[]> | null; // e.g. { "DefPercent": [0.113, 0.473, ...] }
 }
 
 export interface ArtifactSetData {

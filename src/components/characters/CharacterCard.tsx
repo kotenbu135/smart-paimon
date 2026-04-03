@@ -38,8 +38,8 @@ export function CharacterCard({ build }: CharacterCardProps) {
           <h3 className="text-sm font-semibold text-text-primary truncate">
             {character.name}
           </h3>
-          <div className={`text-[10px] my-1 ${RARITY_COLORS[character.rarity] ?? "text-text-muted"}`}>
-            {"★".repeat(character.rarity)}
+          <div className={`text-[10px] my-1 ${RARITY_COLORS[+character.rarity.replace("Star", "")] ?? "text-text-muted"}`}>
+            {"★".repeat(+character.rarity.replace("Star", ""))}
           </div>
           <span className="text-[11px] font-mono text-text-muted">
             Lv.{level}
