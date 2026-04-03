@@ -19,7 +19,7 @@ export function CharacterCard({ build }: CharacterCardProps) {
   return (
     <Link to={`/characters/${character.id}`}>
       <div
-        className={`bg-navy-card border border-navy-border rounded-lg overflow-hidden transition-all duration-300 cursor-pointer ${meta?.glowClass ?? ""}`}
+        className={`bg-navy-card border border-navy-border rounded-lg overflow-hidden transition-all duration-300 cursor-pointer hover:scale-105 hover:-translate-y-1 hover:shadow-lg hover:shadow-black/30 ${meta?.glowClass ?? ""}`}
       >
         {/* Avatar area with element gradient */}
         <div className={`relative aspect-square overflow-hidden bg-gradient-to-b ${tw?.gradient ?? ""} to-transparent`}>

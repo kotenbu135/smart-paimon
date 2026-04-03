@@ -216,7 +216,7 @@ export function DamageTable({ build, stats, enemy, reaction, stickyHeader }: Dam
   );
 
   return (
-    <Tabs.Root defaultValue="normal" className="flex flex-col min-h-0 h-full">
+    <Tabs.Root defaultValue="normal" className="flex flex-col">
       <div className="flex-shrink-0 space-y-4 pb-4">
         {stickyHeader}
         <Tabs.List className="flex gap-1 p-1 bg-navy-border/50 rounded-lg w-fit">
@@ -235,7 +235,7 @@ export function DamageTable({ build, stats, enemy, reaction, stickyHeader }: Dam
           ))}
         </Tabs.List>
       </div>
-      <div className="flex-1 min-h-0 overflow-y-auto space-y-3">
+      <div className="space-y-3">
         <Tabs.Content value="normal">{renderNormalAttackTab()}</Tabs.Content>
         <Tabs.Content value="skill">{renderTable(talentRows.skill)}</Tabs.Content>
         <Tabs.Content value="burst">{renderTable(talentRows.burst)}</Tabs.Content>

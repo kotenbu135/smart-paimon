@@ -25,7 +25,7 @@ export function CharacterDetailPage() {
   if (!build || !stats) return <Navigate to="/characters" replace />;
 
   return (
-    <div className="max-w-[1440px] mx-auto px-6 flex flex-col h-[calc(100vh-56px)]">
+    <div className="max-w-[1440px] mx-auto px-6 flex flex-col">
       {/* Breadcrumb */}
       <div className="py-6 pb-0 mb-6 flex items-center gap-2 text-xs font-label uppercase tracking-widest text-text-secondary">
         <Link to="/characters" className="hover:text-text-primary transition-colors">
@@ -35,7 +35,7 @@ export function CharacterDetailPage() {
         <span className="text-gold">{localizeCharacterName(build.character.id, build.character.name, i18n.language)}</span>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-6 min-h-0 flex-1 pb-6">
+      <div className="flex flex-col lg:flex-row gap-6 pb-6">
         {/* Left Column: Profile & Stats */}
         <aside className="w-full lg:w-[360px] flex-shrink-0 space-y-3">
           <CharacterProfile build={build} />
@@ -43,7 +43,7 @@ export function CharacterDetailPage() {
         </aside>
 
         {/* Right Column: Calculator */}
-        <div className="flex-grow flex flex-col min-h-0">
+        <div className="flex-grow flex flex-col">
           <DamageTable
             build={build}
             stats={stats}
