@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import type { Stats } from "@kotenbu/genshin-calc/types";
+import type { Stats } from "../../types/wasm";
 
 interface StatsPanelProps {
   readonly stats: Readonly<Stats>;

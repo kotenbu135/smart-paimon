@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { buildStats } from "../../src/lib/stats";
-import type { CharacterBuild } from "@kotenbu/genshin-calc/types";
+import type { CharacterBuild } from "../../src/types/wasm";
 
 const mockBuild: CharacterBuild = {
   character: { id: "diluc", name: "Diluc", element: "Pyro", weapon_type: "Claymore", rarity: 5, base_hp: 12981, base_atk: 335, base_def: 784, ascension_stat: "crit_dmg", ascension_stat_value: 0.384 },
