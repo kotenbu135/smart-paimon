@@ -6,8 +6,8 @@
   "detail": { "level": "Lv.{{level}}", "constellation": "C{{count}}", "weapon": "Weapon", "artifacts": "Artifacts", "stats": "Final Stats", "damage": "Damage Calculation", "normalAttack": "Normal Attack", "elementalSkill": "Elemental Skill", "elementalBurst": "Elemental Burst", "nonCrit": "Non-Crit", "crit": "Crit", "average": "Average", "multiplier": "Multi", "talentName": "Talent" },
   "enemy": { "title": "Enemy Config", "level": "Level", "resistance": "RES", "defReduction": "DEF Reduction" },
   "reaction": { "none": "None", "vaporize": "Vaporize", "melt": "Melt", "overloaded": "Overloaded", "superconduct": "Superconduct", "electroCharged": "Electro-Charged", "swirl": "Swirl", "bloom": "Bloom", "hyperbloom": "Hyperbloom", "burgeon": "Burgeon", "burning": "Burning", "aggravate": "Aggravate", "spread": "Spread" },
-  "stats": { "hp": "HP", "atk": "ATK", "def": "DEF", "em": "Elemental Mastery", "critRate": "CRIT Rate", "critDmg": "CRIT DMG", "er": "Energy Recharge", "dmgBonus": "DMG Bonus" },
-  "element": { "pyro": "Pyro", "hydro": "Hydro", "electro": "Electro", "cryo": "Cryo", "anemo": "Anemo", "geo": "Geo", "dendro": "Dendro" },
+  "stats": { "hp": "HP", "atk": "ATK", "def": "DEF", "em": "Elemental Mastery", "critRate": "CRIT Rate", "critDmg": "CRIT DMG", "er": "Energy Recharge", "dmgBonus": "DMG Bonus", "elementDmgBonus": "Elemental DMG Bonus" },
+  "element": { "pyro": "Pyro", "hydro": "Hydro", "electro": "Electro", "cryo": "Cryo", "anemo": "Anemo", "geo": "Geo", "dendro": "Dendro", "physical": "Physical" },
   "weaponType": { "sword": "Sword", "claymore": "Claymore", "polearm": "Polearm", "bow": "Bow", "catalyst": "Catalyst" },
   "common": { "loading": "Loading...", "error": "Error", "retry": "Retry", "version": "ver.{{version}}" }
 }
