@@ -1,6 +1,8 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { AnimatePresence, motion } from "framer-motion";
 import * as Tabs from "@radix-ui/react-tabs";
+import { AnimatedNumber } from "../ui/AnimatedNumber";
 import type { CharacterBuild, Stats, Enemy, Reaction } from "../../types/wasm";
 import { ELEMENT_TW } from "../../lib/elements";
 import { localizeTalentName, localizeReactionName } from "../../lib/localize";
@@ -74,21 +76,23 @@ export function DamageTable({ build, stats, enemy, reaction, stickyHeader }: Dam
     </colgroup>
   );
 
+  const fmtPct = (n: number) => `${n.toFixed(1)}%`;
+
   const renderRows = (rows: TalentRow[]) =>
     rows.map((row, i) => (
       <tr key={i} className="hover:bg-navy-hover/30 transition-colors">
         <td className="px-6 py-4 text-[14px] font-medium text-text-primary">{localizeTalentName(row.name, locale)}</td>
         <td className="px-6 py-4 text-[14px] font-mono text-text-secondary text-right">
-          {(row.multiplier * 100).toFixed(1)}%
+          <AnimatedNumber value={row.multiplier * 100} formatFn={fmtPct} />
         </td>
         <td className="px-6 py-4 text-[14px] font-mono text-text-primary text-right">
-          {Math.round(row.nonCrit).toLocaleString()}
+          <AnimatedNumber value={row.nonCrit} />
         </td>
         <td className={`px-6 py-4 text-[15px] font-mono font-bold text-right ${tw?.text ?? "text-gold"}`}>
-          {Math.round(row.crit).toLocaleString()}
+          <AnimatedNumber value={row.crit} />
         </td>
         <td className="px-6 py-4 text-[14px] font-mono text-text-primary text-right">
-          {Math.round(row.average).toLocaleString()}
+          <AnimatedNumber value={row.average} />
         </td>
       </tr>
     ));
@@ -215,8 +219,23 @@ export function DamageTable({ build, stats, enemy, reaction, stickyHeader }: Dam
     </div>
   );
 
+  const tabOrder = ["normal", "skill", "burst"];
+  const [activeTab, setActiveTab] = useState("normal");
+  const [direction, setDirection] = useState(0);
+
+  const handleTabChange = (value: string) => {
+    setDirection(tabOrder.indexOf(value) > tabOrder.indexOf(activeTab) ? 1 : -1);
+    setActiveTab(value);
+  };
+
+  const tabContent: Record<string, () => React.ReactNode> = {
+    normal: renderNormalAttackTab,
+    skill: () => renderTable(talentRows.skill),
+    burst: () => renderTable(talentRows.burst),
+  };
+
   return (
-    <Tabs.Root defaultValue="normal" className="flex flex-col">
+    <Tabs.Root value={activeTab} onValueChange={handleTabChange} className="flex flex-col">
       <div className="flex-shrink-0 space-y-4 pb-4">
         {stickyHeader}
         <Tabs.List className="flex gap-1 p-1 bg-navy-border/50 rounded-lg w-fit">
@@ -224,7 +243,7 @@ export function DamageTable({ build, stats, enemy, reaction, stickyHeader }: Dam
             <Tabs.Trigger
               key={key}
               value={key}
-              className="px-6 py-2 rounded-md text-[13px] font-medium transition-colors
+              className="px-6 py-2 rounded-md text-[13px] font-medium transition-all active:scale-95
                 data-[state=active]:text-white data-[state=active]:font-bold
                 text-text-secondary hover:bg-navy-hover"
               style={{ "--tab-active-bg": `var(--color-${el.toLowerCase()}, var(--color-gold))` } as React.CSSProperties}
@@ -235,11 +254,18 @@ export function DamageTable({ build, stats, enemy, reaction, stickyHeader }: Dam
           ))}
         </Tabs.List>
       </div>
-      <div className="space-y-3">
-        <Tabs.Content value="normal">{renderNormalAttackTab()}</Tabs.Content>
-        <Tabs.Content value="skill">{renderTable(talentRows.skill)}</Tabs.Content>
-        <Tabs.Content value="burst">{renderTable(talentRows.burst)}</Tabs.Content>
-      </div>
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.div
+          key={activeTab}
+          initial={{ opacity: 0, x: direction * 30 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: direction * -30 }}
+          transition={{ duration: 0.2, ease: "easeOut" }}
+          className="space-y-3"
+        >
+          {tabContent[activeTab]?.()}
+        </motion.div>
+      </AnimatePresence>
     </Tabs.Root>
   );
 }

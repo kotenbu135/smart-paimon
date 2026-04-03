@@ -30,7 +30,7 @@ export function CharacterFilter({ elementFilter, weaponFilter, onElementChange, 
             <button
               key={el}
               onClick={() => onElementChange(active ? null : el as Element)}
-              className={`px-4 py-1.5 rounded text-xs font-label uppercase tracking-wider transition-colors whitespace-nowrap flex items-center gap-1.5 ${
+              className={`px-4 py-1.5 rounded text-xs font-label uppercase tracking-wider transition-all active:scale-95 whitespace-nowrap flex items-center gap-1.5 ${
                 active
                   ? `${tw.bg} text-white`
                   : "bg-navy-card text-text-secondary hover:bg-navy-hover"
@@ -51,7 +51,7 @@ export function CharacterFilter({ elementFilter, weaponFilter, onElementChange, 
               <button
                 key={wt}
                 onClick={() => onWeaponChange(active ? null : wt as WeaponType)}
-                className={`px-3 py-1 rounded text-[11px] font-label uppercase tracking-widest transition-colors ${
+                className={`px-3 py-1 rounded text-[11px] font-label uppercase tracking-widest transition-all active:scale-95 ${
                   active
                     ? "bg-gold text-navy-page font-bold"
                     : "bg-navy-card text-text-secondary hover:bg-navy-hover"
@@ -69,7 +69,7 @@ export function CharacterFilter({ elementFilter, weaponFilter, onElementChange, 
               <button
                 key={key}
                 onClick={() => onSortChange(key)}
-                className={`px-2.5 py-1 rounded text-[11px] font-label transition-colors ${
+                className={`px-2.5 py-1 rounded text-[11px] font-label transition-all active:scale-95 ${
                   active
                     ? "bg-navy-hover text-text-primary"
                     : "text-text-secondary hover:text-text-primary"

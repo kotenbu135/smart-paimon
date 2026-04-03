@@ -6,6 +6,7 @@ import { CharacterGrid } from "../components/characters/CharacterGrid";
 import { CharacterFilter } from "../components/characters/CharacterFilter";
 import type { Element, WeaponType, CharacterBuild } from "../types/wasm";
 import { localizeCharacterName } from "../lib/localize";
+import { PageTransition } from "../components/ui/PageTransition";
 
 export type SortKey = "default" | "level" | "rarity" | "name";
 export type SortDir = "asc" | "desc";
@@ -88,17 +89,19 @@ export function CharactersPage() {
   if (builds.length === 0) return <Navigate to="/" replace />;
 
   return (
-    <div>
-      <CharacterFilter
-        elementFilter={elementFilter}
-        weaponFilter={weaponFilter}
-        onElementChange={setElementFilter}
-        onWeaponChange={setWeaponFilter}
-        sortKey={sortKey}
-        sortDir={sortDir}
-        onSortChange={handleSortChange}
-      />
-      <CharacterGrid builds={filteredBuilds} />
-    </div>
+    <PageTransition>
+      <div>
+        <CharacterFilter
+          elementFilter={elementFilter}
+          weaponFilter={weaponFilter}
+          onElementChange={setElementFilter}
+          onWeaponChange={setWeaponFilter}
+          sortKey={sortKey}
+          sortDir={sortDir}
+          onSortChange={handleSortChange}
+        />
+        <CharacterGrid builds={filteredBuilds} />
+      </div>
+    </PageTransition>
   );
 }

@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import type { CharacterBuild } from "../../types/wasm";
 import { ELEMENT_TW, RARITY_COLORS } from "../../lib/elements";
@@ -25,6 +26,11 @@ export function CharacterProfile({ build }: CharacterProfileProps) {
     [rawJson, character.id],
   );
   const [selectedSlot, setSelectedSlot] = useState<ArtifactSlot | null>(null);
+
+  const fadeInUp = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } },
+  };
 
   return (
     <div className="space-y-3">
@@ -70,7 +76,13 @@ export function CharacterProfile({ build }: CharacterProfileProps) {
 
       {/* Weapon Card */}
       {weapon && (
-        <section className="bg-navy-card border border-navy-border rounded-lg p-4 flex items-center gap-4">
+        <motion.section
+          variants={fadeInUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-50px" }}
+          className="bg-navy-card border border-navy-border rounded-lg p-4 flex items-center gap-4"
+        >
           <div className="w-12 h-12 bg-navy-hover rounded-lg border border-navy-border flex-shrink-0 overflow-hidden">
             <img
               src={weaponIcon(weapon.weapon.id, weapon.refinement >= 5)}
@@ -101,11 +113,17 @@ export function CharacterProfile({ build }: CharacterProfileProps) {
               </div>
             );
           })()}
-        </section>
+        </motion.section>
       )}
 
       {/* Artifact Card */}
-      <section className="bg-navy-card border border-navy-border rounded-lg p-4">
+      <motion.section
+        variants={fadeInUp}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-50px" }}
+        className="bg-navy-card border border-navy-border rounded-lg p-4"
+      >
         <div className="flex justify-between items-center mb-3">
           <h3 className="text-[14px] font-semibold text-text-primary truncate">
             {artifacts.four_piece_set?.name ?? artifacts.sets[0]?.name ?? t("detail.artifacts")}
@@ -146,7 +164,7 @@ export function CharacterProfile({ build }: CharacterProfileProps) {
         {selectedSlot && charArtifacts[selectedSlot] && (
           <ArtifactDetailPopover artifact={charArtifacts[selectedSlot]} />
         )}
-      </section>
+      </motion.section>
     </div>
   );
 }

@@ -8,7 +8,9 @@ import { CharacterProfile } from "../components/detail/CharacterProfile";
 import { StatsPanel } from "../components/detail/StatsPanel";
 import { DamageTable } from "../components/detail/DamageTable";
 import { EnemyConfig } from "../components/detail/EnemyConfig";
+import { motion } from "framer-motion";
 import { localizeCharacterName } from "../lib/localize";
+import { PageTransition } from "../components/ui/PageTransition";
 
 export function CharacterDetailPage() {
   const { t, i18n } = useTranslation();
@@ -25,34 +27,42 @@ export function CharacterDetailPage() {
   if (!build || !stats) return <Navigate to="/characters" replace />;
 
   return (
-    <div className="max-w-[1440px] mx-auto px-6 flex flex-col">
-      {/* Breadcrumb */}
-      <div className="py-6 pb-0 mb-6 flex items-center gap-2 text-xs font-label uppercase tracking-widest text-text-secondary">
-        <Link to="/characters" className="hover:text-text-primary transition-colors">
-          {t("nav.characters")}
-        </Link>
-        <span className="text-text-muted">›</span>
-        <span className="text-gold">{localizeCharacterName(build.character.id, build.character.name, i18n.language)}</span>
-      </div>
+    <PageTransition>
+      <div className="max-w-[1440px] mx-auto px-6 flex flex-col">
+        {/* Breadcrumb */}
+        <div className="py-6 pb-0 mb-6 flex items-center gap-2 text-xs font-label uppercase tracking-widest text-text-secondary">
+          <Link to="/characters" className="hover:text-text-primary transition-colors">
+            {t("nav.characters")}
+          </Link>
+          <span className="text-text-muted">›</span>
+          <span className="text-gold">{localizeCharacterName(build.character.id, build.character.name, i18n.language)}</span>
+        </div>
 
-      <div className="flex flex-col lg:flex-row gap-6 pb-6">
-        {/* Left Column: Profile & Stats */}
-        <aside className="w-full lg:w-[360px] flex-shrink-0 space-y-3">
-          <CharacterProfile build={build} />
-          <StatsPanel stats={stats} />
-        </aside>
+        <div className="flex flex-col lg:flex-row gap-6 pb-6">
+          {/* Left Column: Profile & Stats */}
+          <aside className="w-full lg:w-[360px] flex-shrink-0 space-y-3">
+            <CharacterProfile build={build} />
+            <StatsPanel stats={stats} />
+          </aside>
 
-        {/* Right Column: Calculator */}
-        <div className="flex-grow flex flex-col">
-          <DamageTable
-            build={build}
-            stats={stats}
-            enemy={enemyConfig}
-            reaction={null}
-            stickyHeader={<EnemyConfig />}
-          />
+          {/* Right Column: Calculator */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.4, ease: "easeOut", delay: 0.1 }}
+            className="flex-grow flex flex-col"
+          >
+            <DamageTable
+              build={build}
+              stats={stats}
+              enemy={enemyConfig}
+              reaction={null}
+              stickyHeader={<EnemyConfig />}
+            />
+          </motion.div>
         </div>
       </div>
-    </div>
+    </PageTransition>
   );
 }

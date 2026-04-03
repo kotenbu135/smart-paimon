@@ -195,7 +195,7 @@ const WEAPON_NAMES_JA: Record<string, string> = {
   mappa_mare: "万国諸海の図譜",
   oathsworn_eye: "誓いの目",
   prototype_amber: "金珀・試作",
-  ring_of_yaxche: "ヤシュチェの指環",
+  ring_of_yaxche: "ヤシュチェの環",
   royal_grimoire: "旧貴族秘法録",
   sacrificial_fragments: "祭礼の断片",
   sacrificial_jade: "祭礼の翡翠",

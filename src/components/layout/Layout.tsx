@@ -1,4 +1,5 @@
-import { Outlet } from "react-router-dom";
+import { useEffect } from "react";
+import { Outlet, useLocation } from "react-router-dom";
 import { Navbar } from "./Navbar";
 import { Footer } from "./Footer";
 import { useUIStore } from "../../stores/ui";
@@ -7,6 +8,11 @@ import { useTranslation } from "react-i18next";
 export function Layout() {
   const { wasmReady, wasmError } = useUIStore();
   const { t } = useTranslation();
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
 
   if (wasmError) {
     return (

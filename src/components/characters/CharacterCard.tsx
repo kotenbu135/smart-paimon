@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import type { CharacterBuild } from "../../types/wasm";
 import { ELEMENT_META, ELEMENT_TW, RARITY_COLORS } from "../../lib/elements";
@@ -18,7 +19,8 @@ export function CharacterCard({ build }: CharacterCardProps) {
 
   return (
     <Link to={`/characters/${character.id}`}>
-      <div
+      <motion.div
+        whileTap={{ scale: 0.97 }}
         className={`bg-navy-card border border-navy-border rounded-lg overflow-hidden transition-all duration-300 cursor-pointer hover:scale-105 hover:-translate-y-1 hover:shadow-lg hover:shadow-black/30 ${meta?.glowClass ?? ""}`}
       >
         {/* Avatar area with element gradient */}
@@ -48,7 +50,7 @@ export function CharacterCard({ build }: CharacterCardProps) {
             {t("detail.level", { level })}
           </span>
         </div>
-      </div>
+      </motion.div>
     </Link>
   );
 }

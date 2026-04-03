@@ -1,10 +1,12 @@
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import { GoodImporter } from "../components/import/GoodImporter";
+import { PageTransition } from "../components/ui/PageTransition";
 
 export function HomePage() {
   const { t } = useTranslation();
   return (
+    <PageTransition>
     <div className="flex flex-col items-center justify-center min-h-[calc(100vh-56px)] px-6">
       {/* Ambient background glow */}
       <div className="fixed inset-0 -z-10 pointer-events-none overflow-hidden">
@@ -28,5 +30,6 @@ export function HomePage() {
         <GoodImporter />
       </motion.div>
     </div>
+    </PageTransition>
   );
 }
