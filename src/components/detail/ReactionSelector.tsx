@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { useCalcStore } from "../../stores/calc";
-import type { Reaction } from "@kotenbu/genshin-calc/types";
+import type { Reaction } from "../../types/wasm";
 
 interface ReactionGroup {
   readonly label: string;

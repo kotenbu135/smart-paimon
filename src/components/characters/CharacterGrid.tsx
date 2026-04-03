@@ -1,4 +1,4 @@
-import type { CharacterBuild } from "@kotenbu/genshin-calc/types";
+import type { CharacterBuild } from "../../types/wasm";
 import { CharacterCard } from "./CharacterCard";
 import { motion } from "framer-motion";
 

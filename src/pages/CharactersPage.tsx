@@ -3,7 +3,7 @@ import { Navigate } from "react-router-dom";
 import { useGoodStore } from "../stores/good";
 import { CharacterGrid } from "../components/characters/CharacterGrid";
 import { CharacterFilter } from "../components/characters/CharacterFilter";
-import type { Element, WeaponType } from "@kotenbu/genshin-calc/types";
+import type { Element, WeaponType } from "../types/wasm";
 
 export function CharactersPage() {
   const builds = useGoodStore((s) => s.builds);

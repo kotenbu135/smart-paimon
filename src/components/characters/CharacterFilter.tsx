@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import type { Element, WeaponType } from "@kotenbu/genshin-calc/types";
+import type { Element, WeaponType } from "../../types/wasm";
 import { ALL_ELEMENTS, ALL_WEAPONS, ELEMENT_TW } from "../../lib/elements";
 import { elementIcon } from "../../lib/charAssets";
 

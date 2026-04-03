@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import type { CharacterBuild } from "@kotenbu/genshin-calc/types";
+import type { CharacterBuild } from "../../types/wasm";
 import { ELEMENT_META, ELEMENT_TW, RARITY_COLORS } from "../../lib/elements";
 import { charIcon, elementIcon } from "../../lib/charAssets";
 

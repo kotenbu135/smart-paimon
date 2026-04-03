@@ -2,7 +2,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useUIStore } from "../../stores/ui";
 import { useGoodStore } from "../../stores/good";
-import { game_version } from "@kotenbu/genshin-calc";
+import { game_version } from "@kotenbu135/genshin-calc-wasm";
 
 export function Navbar() {
   const { t } = useTranslation();

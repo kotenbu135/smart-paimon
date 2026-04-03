@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import * as Tabs from "@radix-ui/react-tabs";
-import type { CharacterBuild, Stats, Enemy, Reaction } from "@kotenbu/genshin-calc/types";
+import type { CharacterBuild, Stats, Enemy, Reaction } from "../../types/wasm";
 import { ELEMENT_TW } from "../../lib/elements";
 import {
   getTalentData,
