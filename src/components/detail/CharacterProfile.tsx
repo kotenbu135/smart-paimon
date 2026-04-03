@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import type { CharacterBuild } from "@kotenbu/genshin-calc/types";
+import type { CharacterBuild } from "../../types/wasm";
 import { ELEMENT_TW, RARITY_COLORS } from "../../lib/elements";
 import { charIcon, charBanner, elementIcon } from "../../lib/charAssets";
 

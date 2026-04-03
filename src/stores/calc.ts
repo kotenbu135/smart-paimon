@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { Enemy, Reaction } from "@kotenbu/genshin-calc/types";
+import type { Enemy, Reaction } from "../types/wasm";
 
 interface CalcState {
   selectedCharacterId: string | null;

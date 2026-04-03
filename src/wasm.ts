@@ -1,4 +1,4 @@
-import wasmInit, { init } from "@kotenbu/genshin-calc";
+import wasmInit, { init } from "@kotenbu135/genshin-calc-wasm";
 import { useUIStore } from "./stores/ui";
 
 export async function initWasm(): Promise<void> {

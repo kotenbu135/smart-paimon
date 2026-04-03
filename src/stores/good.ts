@@ -1,6 +1,6 @@
 import { create } from "zustand";
-import { import_good } from "@kotenbu/genshin-calc";
-import type { CharacterBuild, ImportWarning } from "@kotenbu/genshin-calc/types";
+import { import_good } from "@kotenbu135/genshin-calc-wasm";
+import type { CharacterBuild, ImportWarning } from "../types/wasm";
 
 interface GoodState {
   builds: CharacterBuild[];

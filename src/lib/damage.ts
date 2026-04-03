@@ -1,5 +1,5 @@
-import { calculate_damage, calculate_transformative, calculate_lunar, find_character } from "@kotenbu/genshin-calc";
-import type { Stats, Enemy, DamageInput, Reaction, DamageType, ArtifactSetData } from "@kotenbu/genshin-calc/types";
+import { calculate_damage, calculate_transformative, calculate_lunar, find_character } from "@kotenbu135/genshin-calc-wasm";
+import type { Stats, Enemy, DamageInput, Reaction, DamageType, ArtifactSetData } from "../types/wasm";
 
 export interface TalentRow { name: string; multiplier: number; nonCrit: number; crit: number; average: number; }
 export interface TransformativeRow { name: string; damage: number; }
