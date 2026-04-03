@@ -1,11 +1,11 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { useGoodStore } from "../../src/stores/good";
 
-vi.mock("@kotenbu/genshin-calc", () => ({
+vi.mock("@kotenbu135/genshin-calc-wasm", () => ({
   import_good: vi.fn(),
 }));
 
-import { import_good } from "@kotenbu/genshin-calc";
+import { import_good } from "@kotenbu135/genshin-calc-wasm";
 
 const mockBuild = {
   character: {
