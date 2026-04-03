@@ -3,7 +3,6 @@ import type { ExtendedStats } from "../../types/wasm";
 
 interface StatsPanelProps {
   readonly stats: Readonly<ExtendedStats>;
-  readonly elementDmgLabel?: string;
 }
 
 const fmt = (v: number, pct: boolean) =>
@@ -24,7 +23,7 @@ const ELEMENT_BONUSES: Array<{
   { key: "physical_dmg_bonus", labelKey: "element.physical", color: "#aabbcc" },
 ];
 
-export function StatsPanel({ stats, elementDmgLabel }: StatsPanelProps) {
+export function StatsPanel({ stats }: StatsPanelProps) {
   const { t } = useTranslation();
 
   const baseRows = [
@@ -35,7 +34,7 @@ export function StatsPanel({ stats, elementDmgLabel }: StatsPanelProps) {
     { label: t("stats.critRate"), value: stats.crit_rate,         pct: true  },
     { label: t("stats.critDmg"),  value: stats.crit_dmg,          pct: true  },
     { label: t("stats.er"),       value: stats.energy_recharge,   pct: true  },
-    { label: elementDmgLabel ?? t("stats.dmgBonus"), value: stats.dmg_bonus, pct: true, highlight: true },
+    { label: t("stats.dmgBonus"), value: stats.dmg_bonus, pct: true, highlight: true },
   ];
 
   const activeElementBonuses = ELEMENT_BONUSES.filter(
