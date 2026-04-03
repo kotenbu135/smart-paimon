@@ -12,7 +12,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@kotenbu/genshin-calc": "^0.2.2",
+    "@kotenbu135/genshin-calc-wasm": "^0.2.4",
     "@radix-ui/react-dialog": "^1.1.14",
     "@radix-ui/react-select": "^2.2.5",
     "@radix-ui/react-tabs": "^1.1.12",
