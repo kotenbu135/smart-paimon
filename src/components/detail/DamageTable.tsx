@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import * as Tabs from "@radix-ui/react-tabs";
 import type { CharacterBuild, Stats, Enemy, Reaction } from "../../types/wasm";
 import { ELEMENT_TW } from "../../lib/elements";
+import { localizeTalentName, localizeReactionName } from "../../lib/localize";
 import {
   getTalentData,
   computeTalentDamage,
@@ -24,7 +25,8 @@ interface DamageTableProps {
 }
 
 export function DamageTable({ build, stats, enemy, reaction, stickyHeader }: DamageTableProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const locale = i18n.language;
   const el = build.character.element;
   const tw = ELEMENT_TW[el];
 
@@ -75,7 +77,7 @@ export function DamageTable({ build, stats, enemy, reaction, stickyHeader }: Dam
   const renderRows = (rows: TalentRow[]) =>
     rows.map((row, i) => (
       <tr key={i} className="hover:bg-navy-hover/30 transition-colors">
-        <td className="px-6 py-4 text-[14px] font-medium text-text-primary">{row.name}</td>
+        <td className="px-6 py-4 text-[14px] font-medium text-text-primary">{localizeTalentName(row.name, locale)}</td>
         <td className="px-6 py-4 text-[14px] font-mono text-text-secondary text-right">
           {(row.multiplier * 100).toFixed(1)}%
         </td>
@@ -136,7 +138,7 @@ export function DamageTable({ build, stats, enemy, reaction, stickyHeader }: Dam
             {t("detail.reactionDamage")}
           </h4>
           <div className="flex justify-between text-sm">
-            <span className="text-hydro font-medium">{reactionRow.name}</span>
+            <span className="text-hydro font-medium">{localizeReactionName(reactionRow.name, t, locale)}</span>
             <span className="font-mono text-hydro font-bold">
               {Math.round(reactionRow.damage).toLocaleString()}
             </span>
@@ -170,7 +172,7 @@ export function DamageTable({ build, stats, enemy, reaction, stickyHeader }: Dam
               {t("detail.reactionDamage")}
             </h4>
             <div className="flex justify-between text-sm">
-              <span className="text-hydro font-medium">{reactionRow.name}</span>
+              <span className="text-hydro font-medium">{localizeReactionName(reactionRow.name, t, locale)}</span>
               <span className="font-mono text-hydro font-bold">
                 {Math.round(reactionRow.damage).toLocaleString()}
               </span>

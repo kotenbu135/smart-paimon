@@ -1,18 +1,30 @@
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { CharacterBuild } from "../../types/wasm";
 import { ELEMENT_TW, RARITY_COLORS } from "../../lib/elements";
 import { charIcon, charBanner, elementIcon, weaponIcon, artifactIcon } from "../../lib/charAssets";
 import type { ArtifactSlot } from "../../lib/charAssets";
+import { getCharacterArtifacts, setKeyToAssetId } from "../../lib/goodArtifacts";
+import { useGoodStore } from "../../stores/good";
+import { ArtifactDetailPopover } from "./ArtifactDetailDialog";
+import { localizeCharacterName, localizeWeaponName, localizeWeaponStat } from "../../lib/localize";
 
 interface CharacterProfileProps {
   readonly build: Readonly<CharacterBuild>;
 }
 
 export function CharacterProfile({ build }: CharacterProfileProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const locale = i18n.language;
   const { character, level, constellation, weapon, artifacts } = build;
   const el = character.element;
   const tw = ELEMENT_TW[el];
+  const rawJson = useGoodStore((s) => s.rawJson);
+  const charArtifacts = useMemo(
+    () => (rawJson ? getCharacterArtifacts(rawJson, character.id) : {}),
+    [rawJson, character.id],
+  );
+  const [selectedSlot, setSelectedSlot] = useState<ArtifactSlot | null>(null);
 
   return (
     <div className="space-y-3">
@@ -45,7 +57,7 @@ export function CharacterProfile({ build }: CharacterProfileProps) {
             <img src={elementIcon(el)} alt={el} className="w-full h-full" />
           </div>
         </div>
-        <h1 className="text-[20px] font-bold text-text-primary leading-tight">{character.name}</h1>
+        <h1 className="text-[20px] font-bold text-text-primary leading-tight">{localizeCharacterName(character.id, character.name, locale)}</h1>
         <div className="flex items-center gap-2 mt-1">
           <span className="text-[14px] text-text-secondary">
             {t("detail.level", { level })} · {t("detail.constellation", { count: constellation })}
@@ -67,7 +79,7 @@ export function CharacterProfile({ build }: CharacterProfileProps) {
             />
           </div>
           <div className="flex-grow min-w-0">
-            <div className="text-[14px] font-semibold text-text-primary truncate">{weapon.weapon.name}</div>
+            <div className="text-[14px] font-semibold text-text-primary truncate">{localizeWeaponName(weapon.weapon.id, weapon.weapon.name, locale)}</div>
             <div className="text-[12px] text-text-secondary">{t("detail.level", { level: weapon.level })} · {t("detail.refinement", { rank: weapon.refinement })}</div>
           </div>
           {weapon.weapon.sub_stat && (() => {
@@ -75,9 +87,11 @@ export function CharacterProfile({ build }: CharacterProfileProps) {
             const statValue = statValues[statValues.length - 1];
             return (
               <div className="text-right flex-shrink-0">
-                <div className="text-[12px] font-mono font-semibold text-gold">{statName}</div>
+                <div className="text-[12px] font-mono font-semibold text-gold">{localizeWeaponStat(statName, t)}</div>
                 <div className="text-[12px] font-mono text-text-primary">
-                  {`${(statValue * 100).toFixed(1)}%`}
+                  {statName.includes("Percent") || statName === "CritRate" || statName === "CritDMG" || statName === "EnergyRecharge"
+                    ? `${(statValue * 100).toFixed(1)}%`
+                    : Math.round(statValue).toLocaleString()}
                 </div>
               </div>
             );
@@ -99,15 +113,19 @@ export function CharacterProfile({ build }: CharacterProfileProps) {
         </div>
         <div className="flex gap-2">
           {(["flower", "plume", "sands", "goblet", "circlet"] as const).map((slot) => {
-            const setId = artifacts.four_piece_set?.id ?? artifacts.sets[0]?.id;
+            const art = charArtifacts[slot];
+            const assetId = art ? setKeyToAssetId(art.setKey) : undefined;
+            const isSelected = selectedSlot === slot;
             return (
-              <div
+              <button
                 key={slot}
-                className="w-10 h-10 bg-navy-hover rounded-lg border border-navy-border overflow-hidden"
+                type="button"
+                onClick={() => art && setSelectedSlot(isSelected ? null : slot)}
+                className={`w-10 h-10 bg-navy-hover rounded-lg border overflow-hidden transition-colors ${isSelected ? "border-gold/60" : "border-navy-border"} ${art ? "cursor-pointer hover:border-gold/40" : "cursor-default"}`}
               >
-                {setId ? (
+                {assetId ? (
                   <img
-                    src={artifactIcon(setId, slot)}
+                    src={artifactIcon(assetId, slot)}
                     alt={slot}
                     className="w-full h-full object-contain"
                   />
@@ -116,10 +134,13 @@ export function CharacterProfile({ build }: CharacterProfileProps) {
                     {slot[0].toUpperCase()}
                   </div>
                 )}
-              </div>
+              </button>
             );
           })}
         </div>
+        {selectedSlot && charArtifacts[selectedSlot] && (
+          <ArtifactDetailPopover artifact={charArtifacts[selectedSlot]} />
+        )}
       </section>
     </div>
   );

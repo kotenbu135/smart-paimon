@@ -3,13 +3,14 @@ import { useTranslation } from "react-i18next";
 import type { CharacterBuild } from "../../types/wasm";
 import { ELEMENT_META, ELEMENT_TW, RARITY_COLORS } from "../../lib/elements";
 import { charIcon, elementIcon } from "../../lib/charAssets";
+import { localizeCharacterName } from "../../lib/localize";
 
 interface CharacterCardProps {
   readonly build: Readonly<CharacterBuild>;
 }
 
 export function CharacterCard({ build }: CharacterCardProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { character, level } = build;
   const el = character.element;
   const meta = ELEMENT_META[el];
@@ -30,7 +31,7 @@ export function CharacterCard({ build }: CharacterCardProps) {
           />
           {/* Element badge */}
           <div
-            className={`absolute top-2 right-2 w-6 h-6 rounded-full ${tw?.bg ?? "bg-navy-hover"} flex items-center justify-center p-1`}
+            className="absolute top-2 right-2 w-8 h-8 rounded-full bg-navy-card flex items-center justify-center border-2 border-navy-border p-1.5"
           >
             <img src={elementIcon(el)} alt={el} className="w-full h-full" />
           </div>
@@ -38,7 +39,7 @@ export function CharacterCard({ build }: CharacterCardProps) {
         {/* Info area */}
         <div className="p-3 text-center">
           <h3 className="text-sm font-semibold text-text-primary truncate">
-            {character.name}
+            {localizeCharacterName(character.id, character.name, i18n.language)}
           </h3>
           <div className={`text-[10px] my-1 ${RARITY_COLORS[+character.rarity.replace("Star", "")] ?? "text-text-muted"}`}>
             {"★".repeat(+character.rarity.replace("Star", ""))}

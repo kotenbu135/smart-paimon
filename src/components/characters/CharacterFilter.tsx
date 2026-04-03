@@ -1,16 +1,22 @@
 import { useTranslation } from "react-i18next";
 import type { Element, WeaponType } from "../../types/wasm";
+import type { SortKey, SortDir } from "../../pages/CharactersPage";
 import { ALL_ELEMENTS, ALL_WEAPONS, ELEMENT_TW } from "../../lib/elements";
 import { elementIcon } from "../../lib/charAssets";
+
+const SORT_KEYS: SortKey[] = ["default", "level", "rarity", "name"];
 
 interface CharacterFilterProps {
   readonly elementFilter: Element | null;
   readonly weaponFilter: WeaponType | null;
   readonly onElementChange: (el: Element | null) => void;
   readonly onWeaponChange: (wt: WeaponType | null) => void;
+  readonly sortKey: SortKey;
+  readonly sortDir: SortDir;
+  readonly onSortChange: (key: SortKey) => void;
 }
 
-export function CharacterFilter({ elementFilter, weaponFilter, onElementChange, onWeaponChange }: CharacterFilterProps) {
+export function CharacterFilter({ elementFilter, weaponFilter, onElementChange, onWeaponChange, sortKey, sortDir, onSortChange }: CharacterFilterProps) {
   const { t } = useTranslation();
 
   return (
@@ -56,9 +62,27 @@ export function CharacterFilter({ elementFilter, weaponFilter, onElementChange, 
             );
           })}
         </div>
-        <span className="text-text-secondary text-xs font-label">
-          {t("characters.sortLevel")}
-        </span>
+        <div className="flex items-center gap-1.5">
+          {SORT_KEYS.map((key) => {
+            const active = sortKey === key;
+            return (
+              <button
+                key={key}
+                onClick={() => onSortChange(key)}
+                className={`px-2.5 py-1 rounded text-[11px] font-label transition-colors ${
+                  active
+                    ? "bg-navy-hover text-text-primary"
+                    : "text-text-secondary hover:text-text-primary"
+                }`}
+              >
+                {t(`characters.sort.${key}`)}
+                {active && (
+                  <span className="ml-0.5">{sortDir === "desc" ? "▼" : "▲"}</span>
+                )}
+              </button>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

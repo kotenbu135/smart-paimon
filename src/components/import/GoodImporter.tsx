@@ -83,11 +83,11 @@ export function GoodImporter() {
         </div>
       )}
 
-      {warnings.length > 0 && (
+      {warnings.some((w) => w.message) && (
         <div className="w-full p-4 bg-navy-card border border-gold/40 rounded-lg">
           <p className="text-gold font-medium">{t("import.warnings")}</p>
           <ul className="text-text-secondary text-sm mt-1 list-disc list-inside">
-            {warnings.map((w, i) => <li key={i}>{w.message}</li>)}
+            {warnings.filter((w) => w.message).map((w, i) => <li key={i}>{w.message}</li>)}
           </ul>
         </div>
       )}

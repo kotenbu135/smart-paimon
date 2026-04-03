@@ -2,11 +2,22 @@
   "app": { "title": "Smart Paimon", "subtitle": "Genshin Impact Damage Calculator" },
   "nav": { "characters": "Characters", "team": "Team", "compare": "Compare", "import": "Import Data", "reimport": "Re-import" },
   "import": { "title": "Import GOOD File", "dragDrop": "Drag & drop your file here", "or": "or", "selectFile": "Select File", "sampleData": "Try with sample data", "supported": "Supported: Genshin Optimizer, Irminsul, Inventory Kamera, Amenoma", "error": "Import Error", "warnings": "Warnings" },
-  "characters": { "title": "Characters", "filter": { "all": "All", "element": "Element", "weapon": "Weapon" }, "count": "{{count}} characters loaded", "sortLevel": "Sort: Level ▼" },
+  "characters": { "title": "Characters", "filter": { "all": "All", "element": "Element", "weapon": "Weapon" }, "count": "{{count}} characters loaded", "sort": { "label": "Sort", "default": "Default", "level": "Level", "rarity": "Rarity", "name": "Name" } },
   "detail": { "level": "Lv.{{level}}", "constellation": "C{{count}}", "refinement": "R{{rank}}", "weapon": "Weapon", "artifacts": "Artifacts", "stats": "Final Stats", "damage": "Damage Calculation", "normalAttack": "Normal Attack", "elementalSkill": "Elemental Skill", "elementalBurst": "Elemental Burst", "nonCrit": "Non-Crit", "crit": "Crit", "average": "Average", "multiplier": "Multi", "talentName": "Talent", "chargedAttack": "Charged Attack", "plungeAttack": "Plunge Attack", "noTalentData": "No talent data", "noScalings": "No scalings", "reactionDamage": "Reaction Damage" },
   "enemy": { "title": "Enemy Config", "level": "Level", "resistance": "RES", "defReduction": "DEF Reduction" },
   "reaction": { "none": "None", "vaporize": "Vaporize", "melt": "Melt", "overloaded": "Overloaded", "superconduct": "Superconduct", "electroCharged": "Electro-Charged", "swirl": "Swirl", "bloom": "Bloom", "hyperbloom": "Hyperbloom", "burgeon": "Burgeon", "burning": "Burning", "aggravate": "Aggravate", "spread": "Spread" },
   "stats": { "hp": "HP", "atk": "ATK", "def": "DEF", "em": "Elemental Mastery", "critRate": "CRIT Rate", "critDmg": "CRIT DMG", "er": "Energy Recharge", "dmgBonus": "DMG Bonus", "elementDmgBonus": "Elemental DMG Bonus" },
+  "artifact": {
+    "slot": { "flower": "Flower of Life", "plume": "Plume of Death", "sands": "Sands of Eon", "goblet": "Goblet of Eonothem", "circlet": "Circlet of Logos" },
+    "stat": {
+      "hpFlat": "HP", "hpPercent": "HP%", "atkFlat": "ATK", "atkPercent": "ATK%",
+      "defFlat": "DEF", "defPercent": "DEF%", "em": "Elemental Mastery", "er": "Energy Recharge",
+      "critRate": "CRIT Rate", "critDmg": "CRIT DMG", "healing": "Healing Bonus",
+      "pyroDmg": "Pyro DMG", "hydroDmg": "Hydro DMG", "electroDmg": "Electro DMG",
+      "cryoDmg": "Cryo DMG", "dendroDmg": "Dendro DMG", "anemoDmg": "Anemo DMG",
+      "geoDmg": "Geo DMG", "physicalDmg": "Physical DMG"
+    }
+  },
   "element": { "pyro": "Pyro", "hydro": "Hydro", "electro": "Electro", "cryo": "Cryo", "anemo": "Anemo", "geo": "Geo", "dendro": "Dendro", "physical": "Physical" },
   "weaponType": { "sword": "Sword", "claymore": "Claymore", "polearm": "Polearm", "bow": "Bow", "catalyst": "Catalyst" },
   "common": { "loading": "Loading...", "error": "Error", "retry": "Retry", "version": "ver.{{version}}" }

@@ -9,6 +9,7 @@ export function Navbar() {
   const location = useLocation();
   const { locale, setLocale } = useUIStore();
   const builds = useGoodStore((s) => s.builds);
+  const clearGood = useGoodStore((s) => s.clear);
 
   const isActive = (path: string) =>
     path === "/" ? location.pathname === "/" : location.pathname.startsWith(path);
@@ -60,6 +61,7 @@ export function Navbar() {
           {builds.length > 0 && (
             <Link
               to="/"
+              onClick={clearGood}
               className="p-1.5 text-text-secondary hover:text-text-primary hover:bg-navy-hover rounded transition-colors text-sm"
               title={t("nav.reimport")}
             >

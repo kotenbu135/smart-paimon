@@ -8,9 +8,10 @@ import { CharacterProfile } from "../components/detail/CharacterProfile";
 import { StatsPanel } from "../components/detail/StatsPanel";
 import { DamageTable } from "../components/detail/DamageTable";
 import { EnemyConfig } from "../components/detail/EnemyConfig";
+import { localizeCharacterName } from "../lib/localize";
 
 export function CharacterDetailPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const getBuild = useGoodStore((s) => s.getBuild);
   const rawJson = useGoodStore((s) => s.rawJson);
@@ -31,7 +32,7 @@ export function CharacterDetailPage() {
           {t("nav.characters")}
         </Link>
         <span className="text-text-muted">›</span>
-        <span className="text-gold">{build.character.name}</span>
+        <span className="text-gold">{localizeCharacterName(build.character.id, build.character.name, i18n.language)}</span>
       </div>
 
       <div className="flex flex-col lg:flex-row gap-6 min-h-0 flex-1 pb-6">
