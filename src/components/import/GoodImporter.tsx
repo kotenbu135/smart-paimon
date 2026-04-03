@@ -7,8 +7,9 @@ import { useGoodStore } from "../../stores/good";
 export function GoodImporter() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { importGood, error, warnings } = useGoodStore();
+  const { importGood, restoreFromStorage, hasSavedData, error, warnings } = useGoodStore();
   const [isDragging, setIsDragging] = useState(false);
+  const [showSaved] = useState(() => hasSavedData());
 
   const handleFile = useCallback(async (file: File) => {
     const text = await file.text();
@@ -30,6 +31,21 @@ export function GoodImporter() {
 
   return (
     <div className="w-full flex flex-col items-center gap-6">
+      {/* Restore saved data */}
+      {showSaved && (
+        <motion.button
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="w-full h-[52px] bg-navy-card border border-gold/60 hover:border-gold text-gold font-semibold text-[15px] rounded-xl transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+          onClick={() => {
+            if (restoreFromStorage()) navigate("/characters");
+          }}
+        >
+          <span className="text-lg">↻</span>
+          {t("import.restoreSaved")}
+        </motion.button>
+      )}
+
       {/* Drop Zone */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}

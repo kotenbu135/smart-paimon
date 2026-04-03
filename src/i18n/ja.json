@@ -1,7 +1,7 @@
 {
   "app": { "title": "Smart Paimon", "subtitle": "原神ダメージ計算ツール" },
   "nav": { "characters": "キャラクター", "team": "チーム編成", "compare": "ビルド比較", "import": "データ読み込み", "reimport": "再読み込み" },
-  "import": { "title": "GOODファイルを読み込む", "dragDrop": "ファイルをドラッグ＆ドロップ", "or": "または", "selectFile": "ファイルを選択", "sampleData": "サンプルデータで試す", "supported": "対応ツール: Genshin Optimizer, Irminsul, Inventory Kamera, Amenoma", "error": "読み込みエラー", "warnings": "警告" },
+  "import": { "title": "GOODファイルを読み込む", "dragDrop": "ファイルをドラッグ＆ドロップ", "or": "または", "selectFile": "ファイルを選択", "sampleData": "サンプルデータで試す", "restoreSaved": "前回のデータを使用する", "supported": "対応ツール: Genshin Optimizer, Irminsul, Inventory Kamera, Amenoma", "error": "読み込みエラー", "warnings": "警告" },
   "characters": { "title": "キャラクター一覧", "filter": { "all": "すべて", "element": "元素", "weapon": "武器" }, "count": "{{count}}キャラ読み込み済み", "sort": { "label": "ソート", "default": "実装順", "level": "レベル", "rarity": "レアリティ", "name": "名前" } },
   "detail": { "level": "Lv.{{level}}", "constellation": "C{{count}}", "refinement": "R{{rank}}", "weapon": "武器", "artifacts": "聖遺物", "stats": "最終ステータス", "damage": "ダメージ計算", "normalAttack": "通常攻撃", "elementalSkill": "元素スキル", "elementalBurst": "元素爆発", "nonCrit": "非会心", "crit": "会心", "average": "期待値", "multiplier": "倍率", "talentName": "天賦名", "chargedAttack": "重撃", "plungeAttack": "落下攻撃", "noTalentData": "天賦データなし", "noScalings": "倍率データなし", "reactionDamage": "元素反応ダメージ" },
   "enemy": { "title": "敵設定", "level": "レベル", "resistance": "耐性", "defReduction": "防御力減少" },
