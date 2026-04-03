@@ -2,6 +2,7 @@ import type { TFunction } from "i18next";
 import CHARACTER_NAMES_JA from "../data/characterNamesJa";
 import WEAPON_NAMES_JA from "../data/weaponNamesJa";
 import TALENT_NAMES_EN from "../data/talentNamesEn";
+import TALENT_NAMES_JA from "../data/talentNamesJa";
 
 /** Map WASM weapon sub_stat keys to i18n artifact.stat keys */
 const WEAPON_STAT_I18N: Record<string, string> = {
@@ -45,9 +46,10 @@ export function localizeWeaponStat(statKey: string, t: TFunction): string {
   return i18nKey ? t(i18nKey) : statKey;
 }
 
-export function localizeTalentName(jaName: string, locale: string): string {
-  if (locale === "en") return TALENT_NAMES_EN[jaName] ?? jaName;
-  return jaName;
+export function localizeTalentName(name: string, locale: string): string {
+  if (locale === "en") return TALENT_NAMES_EN[name] ?? name;
+  if (locale === "ja") return TALENT_NAMES_JA[name] ?? name;
+  return name;
 }
 
 export function localizeReactionName(name: string, t: TFunction, locale: string): string {

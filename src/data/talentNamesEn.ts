@@ -13,8 +13,9 @@ const TALENT_NAMES_EN: Record<string, string> = {
   "1回のダメージ": "1-Hit DMG",
   "重撃ダメージ(1)": "Charged Attack DMG (1)",
   "重撃ダメージ(2)": "Charged Attack DMG (2)",
+  "重撃ダメージ": "Charged Attack DMG",
   "重撃ダメージボーナス": "Charged Attack DMG Bonus",
-  "落下攻撃ダメージ": "Plunging Attack DMG",
+  "落下攻撃ダメージ": "Plunge DMG",
 
   // Scaling variants
   "1段ダメージ・攻撃力": "1-Hit DMG (ATK)",
@@ -110,16 +111,20 @@ const TALENT_NAMES_EN: Record<string, string> = {
   "断流・爆ダメージ": "Riptide Blast DMG",
 
   // Yae Miko
-  "殺生桜ダメージ・壱階": "Sesshou Sakura DMG Lv.1",
-  "殺生桜ダメージ・弐階": "Sesshou Sakura DMG Lv.2",
-  "殺生桜ダメージ・参階": "Sesshou Sakura DMG Lv.3",
-  "殺生桜ダメージ・肆階": "Sesshou Sakura DMG Lv.4",
+  "殺生桜ダメージ・壱階": "Sesshou Sakura DMG: Level 1",
+  "殺生桜ダメージ・弐階": "Sesshou Sakura DMG: Level 2",
+  "殺生桜ダメージ・参階": "Sesshou Sakura DMG: Level 3",
+  "殺生桜ダメージ・肆階": "Sesshou Sakura DMG: Level 4",
+  "殺生櫻ダメージ・階位壱": "Sesshou Sakura DMG: Level 1",
+  "殺生櫻ダメージ・階位弐": "Sesshou Sakura DMG: Level 2",
+  "殺生櫻ダメージ・階位参": "Sesshou Sakura DMG: Level 3",
+  "殺生櫻ダメージ・階位肆": "Sesshou Sakura DMG: Level 4",
   "天狐雷霆ダメージ": "Tenko Thunderbolt DMG",
 
   // Kujou Sara
-  "天狗の羽撃ダメージ": "Tengu Storm DMG",
-  "天狗雷撃ダメージ": "Tengu Thunder DMG",
-  "天狗雷球ダメージ": "Tengu Thunder Ball DMG",
+  "天狗の羽撃ダメージ": "Tengu Stormcall DMG",
+  "天狗雷撃ダメージ": "Tengu Juurai DMG",
+  "天狗雷球ダメージ": "Tengu Juurai: Titanbreaker DMG",
 
   // Zhongli
   "岩柱ダメージ": "Stone Stele DMG",
@@ -153,7 +158,10 @@ const TALENT_NAMES_EN: Record<string, string> = {
 
   // Eula
   "光臨の剣基礎ダメージ": "Lightfall Sword Base DMG",
-  "光臨の剣スタックダメージ": "Lightfall Sword Stack DMG",
+  "光臨の剣スタックダメージ": "DMG Per Stack",
+  "連続重撃ダメージ": "Charged Attack Spinning DMG",
+  "重撃終了ダメージ": "Charged Attack Final DMG",
+  "氷渦の剣ダメージ": "Icewhirl Brand DMG",
 
   // Ganyu
   "蓮灯ダメージ": "Ice Lotus DMG",
@@ -236,14 +244,17 @@ const TALENT_NAMES_EN: Record<string, string> = {
   "夢念衝撃波ダメージ": "Dream Shockwave DMG",
 
   // Furina
-  "紳士のヒステリックダメージ": "Gentleman's Hysteric DMG",
-  "騎士のシュヴァルマランダメージ": "Knight's Chevalmarín DMG",
+  "紳士のヒステリックダメージ": "Gentilhomme Usher DMG",
+  "ジェントルマン・アッシャーのダメージ": "Gentilhomme Usher DMG",
+  "騎士のシュヴァルマランダメージ": "Surintendante Chevalmarin DMG",
+  "シュヴァルマラン婦人のダメージ": "Surintendante Chevalmarin DMG",
   "マドモワゼルクラバレッタダメージ": "Mademoiselle Crabaletta DMG",
+  "クラバレッタさんのダメージ": "Mademoiselle Crabaletta DMG",
 
   // Neuvillette
-  "正論ボーナス": "Justification Bonus",
-  "波衝撃ダメージ": "Wave Impact DMG",
-  "巨浪追加ダメージ": "Great Wave Additional DMG",
+  "正論ボーナス": "Equitable Judgment Bonus",
+  "波衝撃ダメージ": "Charged Attack: Equitable Judgment DMG",
+  "巨浪追加ダメージ": "Spiritbreath Thorn DMG",
 
   // Navia
   "砲弾ダメージ": "Shell DMG",
@@ -532,6 +543,136 @@ const TALENT_NAMES_EN: Record<string, string> = {
   "剣舞ステップ1ダメージ": "Sword Dance Step 1 DMG",
   "剣舞ステップ2ダメージ": "Sword Dance Step 2 DMG",
   "水の幻影ダメージ": "Water Phantom DMG",
+
+  // ---- Common plunging variants ----
+  "落下期間のダメージ": "Plunge DMG",
+  "低空落下攻撃ダメージ": "Low Plunge DMG",
+  "高空落下攻撃ダメージ": "High Plunge DMG",
+  "落下ダメージ": "Plunge DMG",
+  "低空落下ダメージ": "Low Plunge DMG",
+  "高空落下ダメージ": "High Plunge DMG",
+
+  // ---- Aimed shot variants ----
+  "狙い撃ち": "Aimed Shot",
+  "フルチャージ狙い撃ち": "Fully-Charged Aimed Shot",
+  "1段チャージ狙い撃ち": "Aimed Shot Charge Level 1",
+  "チャージ攻撃ダメージ": "Charged Attack DMG",
+  "通常攻撃ダメージ": "Normal Attack DMG",
+
+  // ---- Hit count variants (different formatting) ----
+  "1段ダメージ (1)": "1-Hit DMG (1)",
+  "1段ダメージ (2)": "1-Hit DMG (2)",
+  "1段ダメージ(x2)": "1-Hit DMG (x2)",
+  "2段ダメージ (1)": "2-Hit DMG (1)",
+  "2段ダメージ (2)": "2-Hit DMG (2)",
+  "2段ダメージA": "2-Hit DMG A",
+  "2段ダメージB": "2-Hit DMG B",
+  "3段ダメージ (1)": "3-Hit DMG (1)",
+  "3段ダメージ (2)": "3-Hit DMG (2)",
+  "3段ダメージ(1)": "3-Hit DMG (1)",
+  "3段ダメージ(2)": "3-Hit DMG (2)",
+  "3段ダメージ(x2)": "3-Hit DMG (x2)",
+  "3段ダメージ1": "3-Hit DMG 1",
+  "3段ダメージ2": "3-Hit DMG 2",
+  "3段ダメージA": "3-Hit DMG A",
+  "3段ダメージB": "3-Hit DMG B",
+  "4段ダメージ (1)": "4-Hit DMG (1)",
+  "4段ダメージ (2)": "4-Hit DMG (2)",
+  "4段ダメージ (3)": "4-Hit DMG (3)",
+  "4段ダメージ (x2)": "4-Hit DMG (x2)",
+  "4段ダメージ (×3)": "4-Hit DMG (x3)",
+  "4段ダメージ (×4)": "4-Hit DMG (x4)",
+  "4段ダメージ(x2)": "4-Hit DMG (x2)",
+  "4段ダメージ(x3)": "4-Hit DMG (x3)",
+  "4段ダメージ(×2)": "4-Hit DMG (x2)",
+  "4段ダメージ1": "4-Hit DMG 1",
+  "4段ダメージ2": "4-Hit DMG 2",
+  "4段ダメージA": "4-Hit DMG A",
+  "4段ダメージB": "4-Hit DMG B",
+  "5段ダメージ (1)": "5-Hit DMG (1)",
+  "5段ダメージ (2)": "5-Hit DMG (2)",
+  "5段ダメージ (×2)": "5-Hit DMG (x2)",
+  "5段ダメージ(1)": "5-Hit DMG (1)",
+  "5段ダメージ(2)": "5-Hit DMG (2)",
+  "5段ダメージ(x3)": "5-Hit DMG (x3)",
+  "5段ダメージ1": "5-Hit DMG 1",
+  "5段ダメージA": "5-Hit DMG A",
+  "5段ダメージB": "5-Hit DMG B",
+  "6段ダメージ": "6-Hit DMG",
+
+  // ---- Charged attack variants ----
+  "重撃ダメージ (1)": "Charged Attack DMG (1)",
+  "重撃ダメージ (2)": "Charged Attack DMG (2)",
+  "重撃ダメージ (0印)": "Charged Attack DMG (0 Seals)",
+  "重撃ダメージ (1印)": "Charged Attack DMG (1 Seal)",
+  "重撃ダメージ (2印)": "Charged Attack DMG (2 Seals)",
+  "重撃ダメージ (3印)": "Charged Attack DMG (3 Seals)",
+  "重撃ダメージ (4印)": "Charged Attack DMG (4 Seals)",
+  "重撃ダメージ (×2)": "Charged Attack DMG (x2)",
+  "重撃ダメージ (×3)": "Charged Attack DMG (x3)",
+  "重撃ダメージ 1段": "Charged Attack DMG 1",
+  "重撃ダメージ 2段": "Charged Attack DMG 2",
+  "重撃ダメージ(x2)": "Charged Attack DMG (x2)",
+  "重撃ダメージ(x3)": "Charged Attack DMG (x3)",
+  "重撃ダメージ1": "Charged Attack DMG 1",
+  "重撃ダメージ2": "Charged Attack DMG 2",
+  "重撃ダメージA": "Charged Attack DMG A",
+  "重撃ダメージB": "Charged Attack DMG B",
+
+  // ---- Character-specific (verified from genshin-center.com) ----
+  // Ganyu
+  "霜華の矢ダメージ": "Frostflake Arrow DMG",
+  "霜華の矢・霜華満開ダメージ": "Frostflake Arrow Bloom DMG",
+
+  // Tighnari
+  "花筐矢ダメージ": "Wreath Arrow DMG",
+  "蔵蘊花矢ダメージ": "Clusterbloom Arrow DMG",
+
+  // Ningguang
+  "星璃ダメージ": "DMG per Star Jade",
+
+  // Itto
+  "荒瀧キ逆袈裟連斬ダメージ": "Arataki Kesagiri Combo Slash DMG",
+  "荒瀧キ逆袈裟終了ダメージ": "Arataki Kesagiri Final Slash DMG",
+
+  // Neuvillette
+  "衡平な裁量ダメージ": "Charged Attack: Equitable Judgment",
+
+  // Yelan
+  "破局の矢ダメージ": "Breakthrough Barb DMG",
+
+  // Heizou
+  "不動流・真空弾ダメージ": "Fudou Style Vacuum Slugger DMG",
+
+  // Lyney
+  "パイロテクニックストライク": "Pyrotechnic Strike DMG",
+  "プロップアローダメージ": "Prop Arrow DMG",
+
+  // Sigewinne
+  "ミニ泡沫弾ダメージ": "Mini-Stration Bubble DMG",
+
+  // Sethos
+  "影刺し狙い撃ちダメージ": "Shadowpiercing Shot DMG",
+
+  // Yoimiya
+  "焔硝の矢ダメージ": "Blazing Arrow DMG",
+
+  // Chevreuse
+  "爆発グレネードダメージ": "Explosive Grenade DMG",
+
+  // Varesa
+  "炎情1段ダメージ": "Fiery Passion 1-Hit DMG",
+  "炎情2段ダメージ": "Fiery Passion 2-Hit DMG",
+  "炎情3段ダメージ": "Fiery Passion 3-Hit DMG",
+  "炎情重撃ダメージ": "Fiery Passion Charged Attack DMG",
+  "炎情低空落下攻撃ダメージ": "Fiery Passion Low Plunge DMG",
+  "炎情高空落下攻撃ダメージ": "Fiery Passion High Plunge DMG",
+
+  // Iansan
+  "疾風翔撃ダメージ": "Swift Stormflight DMG",
+
+  // Lauma
+  "狩りの讃歌ダメージ": "Hymn of Hunting DMG",
 };
 
 export default TALENT_NAMES_EN;

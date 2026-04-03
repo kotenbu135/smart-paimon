@@ -89,7 +89,7 @@ export function CharacterProfile({ build }: CharacterProfileProps) {
               <div className="text-right flex-shrink-0">
                 <div className="text-[12px] font-mono font-semibold text-gold">{localizeWeaponStat(statName, t)}</div>
                 <div className="text-[12px] font-mono text-text-primary">
-                  {statName.includes("Percent") || statName === "CritRate" || statName === "CritDMG" || statName === "EnergyRecharge"
+                  {statName.includes("Percent") || statName === "CritRate" || statName === "CritDmg" || statName === "EnergyRecharge"
                     ? `${(statValue * 100).toFixed(1)}%`
                     : Math.round(statValue).toLocaleString()}
                 </div>
