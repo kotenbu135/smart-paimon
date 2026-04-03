@@ -1,14 +1,14 @@
 # smart-paimon
 
 Genshin Impact damage calculator Web UI.
-Uses `@kotenbu/genshin-calc` (WASM) for calculations.
+Uses `@kotenbu135/genshin-calc-wasm` (WASM) for calculations.
 
 ## Tech Stack
 Vite + React 19 + TypeScript, Tailwind CSS v4, Zustand, Radix UI, Framer Motion, react-i18next
 
 ## Related
 - Calculation engine: https://github.com/kotenbu135/genshin-calc
-- npm package: @kotenbu/genshin-calc (WASM bindings)
+- npm package: @kotenbu135/genshin-calc-wasm (WASM bindings)
 - GOOD format: Genshin Open Object Description (player data import format)
 
 ## Key Decisions

@@ -24,8 +24,6 @@ export function CharacterDetailPage() {
 
   if (!build || !stats) return <Navigate to="/characters" replace />;
 
-  const elementDmgLabel = `${build.character.element} DMG Bonus`;
-
   return (
     <div className="max-w-[1440px] mx-auto px-6 py-6">
       {/* Breadcrumb */}
@@ -41,7 +39,7 @@ export function CharacterDetailPage() {
         {/* Left Column: Profile & Stats */}
         <aside className="w-full lg:w-[360px] flex-shrink-0 space-y-3 lg:sticky lg:top-20 h-fit">
           <CharacterProfile build={build} />
-          <StatsPanel stats={stats} elementDmgLabel={elementDmgLabel} />
+          <StatsPanel stats={stats} />
         </aside>
 
         {/* Right Column: Calculator */}

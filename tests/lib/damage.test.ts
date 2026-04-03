@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 
-vi.mock("@kotenbu/genshin-calc", () => ({
+vi.mock("@kotenbu135/genshin-calc-wasm", () => ({
   calculate_damage: vi.fn(),
   calculate_transformative: vi.fn(),
   calculate_lunar: vi.fn(),

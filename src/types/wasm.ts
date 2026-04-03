@@ -1,5 +1,5 @@
 // genshin-calc-wasm TypeScript type definitions (local)
-// Migrated from @kotenbu/genshin-calc/types.ts and extended for v0.2.4
+// Migrated from @kotenbu135/genshin-calc-wasm types and extended for v0.2.4
 
 export interface ExtendedStats {
   hp: number;

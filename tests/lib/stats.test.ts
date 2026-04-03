@@ -16,6 +16,14 @@ const mockStats = {
   crit_dmg: 1.546,
   energy_recharge: 1.0,
   dmg_bonus: 0.466,
+  pyro_dmg_bonus: 0,
+  hydro_dmg_bonus: 0,
+  electro_dmg_bonus: 0,
+  cryo_dmg_bonus: 0,
+  dendro_dmg_bonus: 0,
+  anemo_dmg_bonus: 0,
+  geo_dmg_bonus: 0,
+  physical_dmg_bonus: 0,
 };
 
 describe("buildStats", () => {
