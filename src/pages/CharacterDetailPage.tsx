@@ -14,9 +14,13 @@ export function CharacterDetailPage() {
   const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const getBuild = useGoodStore((s) => s.getBuild);
+  const rawJson = useGoodStore((s) => s.rawJson);
   const { enemyConfig, selectedReaction } = useCalcStore();
   const build = id ? getBuild(id) : undefined;
-  const stats = useMemo(() => (build ? buildStats(build) : null), [build]);
+  const stats = useMemo(
+    () => (build && rawJson && id ? buildStats(rawJson, id) : null),
+    [build, rawJson, id]
+  );
 
   if (!build || !stats) return <Navigate to="/characters" replace />;
 
