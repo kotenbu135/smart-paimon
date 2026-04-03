@@ -63,7 +63,15 @@ export function GoodImporter() {
       </motion.div>
 
       {/* Sample Data CTA */}
-      <button className="w-full h-[44px] bg-gold hover:bg-gold-light text-navy-page font-semibold text-[15px] rounded-md transition-all active:scale-[0.98]">
+      <button
+        className="w-full h-[44px] bg-gold hover:bg-gold-light text-navy-page font-semibold text-[15px] rounded-md transition-all active:scale-[0.98]"
+        onClick={async () => {
+          const res = await fetch(`${import.meta.env.BASE_URL}sample.json`);
+          const text = await res.text();
+          importGood(text);
+          if (useGoodStore.getState().builds.length > 0) navigate("/characters");
+        }}
+      >
         {t("import.sampleData")}
       </button>
 

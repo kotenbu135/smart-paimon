@@ -34,7 +34,9 @@ export function StatsPanel({ stats }: StatsPanelProps) {
     { label: t("stats.critRate"), value: stats.crit_rate,         pct: true  },
     { label: t("stats.critDmg"),  value: stats.crit_dmg,          pct: true  },
     { label: t("stats.er"),       value: stats.energy_recharge,   pct: true  },
-    { label: t("stats.dmgBonus"), value: stats.dmg_bonus, pct: true, highlight: true },
+    ...(stats.dmg_bonus > 0
+      ? [{ label: t("stats.dmgBonus"), value: stats.dmg_bonus, pct: true, highlight: true }]
+      : []),
   ];
 
   const activeElementBonuses = ELEMENT_BONUSES.filter(

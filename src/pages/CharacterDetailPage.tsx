@@ -8,14 +8,13 @@ import { CharacterProfile } from "../components/detail/CharacterProfile";
 import { StatsPanel } from "../components/detail/StatsPanel";
 import { DamageTable } from "../components/detail/DamageTable";
 import { EnemyConfig } from "../components/detail/EnemyConfig";
-import { ReactionSelector } from "../components/detail/ReactionSelector";
 
 export function CharacterDetailPage() {
   const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const getBuild = useGoodStore((s) => s.getBuild);
   const rawJson = useGoodStore((s) => s.rawJson);
-  const { enemyConfig, selectedReaction } = useCalcStore();
+  const { enemyConfig } = useCalcStore();
   const build = id ? getBuild(id) : undefined;
   const stats = useMemo(
     () => (build && rawJson && id ? buildStats(rawJson, id) : null),
@@ -25,9 +24,9 @@ export function CharacterDetailPage() {
   if (!build || !stats) return <Navigate to="/characters" replace />;
 
   return (
-    <div className="max-w-[1440px] mx-auto px-6 py-6">
+    <div className="max-w-[1440px] mx-auto px-6 flex flex-col h-[calc(100vh-56px)]">
       {/* Breadcrumb */}
-      <div className="mb-6 flex items-center gap-2 text-xs font-label uppercase tracking-widest text-text-secondary">
+      <div className="py-6 pb-0 mb-6 flex items-center gap-2 text-xs font-label uppercase tracking-widest text-text-secondary">
         <Link to="/characters" className="hover:text-text-primary transition-colors">
           {t("nav.characters")}
         </Link>
@@ -35,22 +34,21 @@ export function CharacterDetailPage() {
         <span className="text-gold">{build.character.name}</span>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-6">
+      <div className="flex flex-col lg:flex-row gap-6 min-h-0 flex-1 pb-6">
         {/* Left Column: Profile & Stats */}
-        <aside className="w-full lg:w-[360px] flex-shrink-0 space-y-3 lg:sticky lg:top-20 h-fit">
+        <aside className="w-full lg:w-[360px] flex-shrink-0 space-y-3">
           <CharacterProfile build={build} />
           <StatsPanel stats={stats} />
         </aside>
 
         {/* Right Column: Calculator */}
-        <div className="flex-grow space-y-6">
-          <EnemyConfig />
-          <ReactionSelector />
+        <div className="flex-grow flex flex-col min-h-0">
           <DamageTable
             build={build}
             stats={stats}
             enemy={enemyConfig}
-            reaction={selectedReaction}
+            reaction={null}
+            stickyHeader={<EnemyConfig />}
           />
         </div>
       </div>

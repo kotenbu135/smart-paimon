@@ -20,9 +20,10 @@ interface DamageTableProps {
   readonly stats: Readonly<Stats>;
   readonly enemy: Readonly<Enemy>;
   readonly reaction: Reaction | null;
+  readonly stickyHeader?: React.ReactNode;
 }
 
-export function DamageTable({ build, stats, enemy, reaction }: DamageTableProps) {
+export function DamageTable({ build, stats, enemy, reaction, stickyHeader }: DamageTableProps) {
   const { t } = useTranslation();
   const el = build.character.element;
   const tw = ELEMENT_TW[el];
@@ -36,9 +37,11 @@ export function DamageTable({ build, stats, enemy, reaction }: DamageTableProps)
   const [normalLv, skillLv, burstLv] = build.talent_levels;
 
   const talentRows = useMemo(() => {
-    if (!talents) return { normal: [], skill: [], burst: [] };
+    if (!talents) return { normal: [], charged: [], plunging: [], skill: [], burst: [] };
     return {
       normal: computeTalentDamage(talents.normal_attack?.hits, normalLv, stats, build.level, el, enemy, reaction, "Normal", reactionBonus),
+      charged: computeTalentDamage(talents.normal_attack?.charged, normalLv, stats, build.level, el, enemy, reaction, "Charged", reactionBonus),
+      plunging: computeTalentDamage(talents.normal_attack?.plunging, normalLv, stats, build.level, el, enemy, reaction, "Plunging", reactionBonus),
       skill: computeTalentDamage(talents.elemental_skill?.scalings, skillLv, stats, build.level, el, enemy, reaction, "Skill", reactionBonus),
       burst: computeTalentDamage(talents.elemental_burst?.scalings, burstLv, stats, build.level, el, enemy, reaction, "Burst", reactionBonus),
     };
@@ -59,48 +62,63 @@ export function DamageTable({ build, stats, enemy, reaction }: DamageTableProps)
     { key: "burst", label: t("detail.elementalBurst") },
   ];
 
+  const colGroup = (
+    <colgroup>
+      <col className="w-[40%]" />
+      <col className="w-[15%]" />
+      <col className="w-[15%]" />
+      <col className="w-[15%]" />
+      <col className="w-[15%]" />
+    </colgroup>
+  );
+
+  const renderRows = (rows: TalentRow[]) =>
+    rows.map((row, i) => (
+      <tr key={i} className="hover:bg-navy-hover/30 transition-colors">
+        <td className="px-6 py-4 text-[14px] font-medium text-text-primary">{row.name}</td>
+        <td className="px-6 py-4 text-[14px] font-mono text-text-secondary text-right">
+          {(row.multiplier * 100).toFixed(1)}%
+        </td>
+        <td className="px-6 py-4 text-[14px] font-mono text-text-primary text-right">
+          {Math.round(row.nonCrit).toLocaleString()}
+        </td>
+        <td className={`px-6 py-4 text-[15px] font-mono font-bold text-right ${tw?.text ?? "text-gold"}`}>
+          {Math.round(row.crit).toLocaleString()}
+        </td>
+        <td className="px-6 py-4 text-[14px] font-mono text-text-primary text-right">
+          {Math.round(row.average).toLocaleString()}
+        </td>
+      </tr>
+    ));
+
+  const tableHeader = (
+    <tr className="bg-navy-hover/50 border-b border-navy-border">
+      <th className="px-6 py-4 text-[11px] font-label font-bold uppercase tracking-widest text-text-secondary">
+        {t("detail.talentName")}
+      </th>
+      <th className="px-6 py-4 text-[11px] font-label font-bold uppercase tracking-widest text-text-secondary text-right">
+        {t("detail.multiplier")}
+      </th>
+      <th className="px-6 py-4 text-[11px] font-label font-bold uppercase tracking-widest text-text-secondary text-right">
+        {t("detail.nonCrit")}
+      </th>
+      <th className="px-6 py-4 text-[11px] font-label font-bold uppercase tracking-widest text-text-secondary text-right">
+        {t("detail.crit")}
+      </th>
+      <th className="px-6 py-4 text-[11px] font-label font-bold uppercase tracking-widest text-text-secondary text-right">
+        {t("detail.average")}
+      </th>
+    </tr>
+  );
+
   const renderTable = (rows: TalentRow[]) => (
     <div className="bg-navy-card border border-navy-border rounded-lg overflow-hidden">
       <div className="overflow-x-auto">
-        <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="bg-navy-hover/50 border-b border-navy-border">
-              <th className="px-6 py-4 text-[11px] font-label font-bold uppercase tracking-widest text-text-secondary">
-                {t("detail.talentName")}
-              </th>
-              <th className="px-6 py-4 text-[11px] font-label font-bold uppercase tracking-widest text-text-secondary">
-                {t("detail.multiplier")}
-              </th>
-              <th className="px-6 py-4 text-[11px] font-label font-bold uppercase tracking-widest text-text-secondary">
-                {t("detail.nonCrit")}
-              </th>
-              <th className="px-6 py-4 text-[11px] font-label font-bold uppercase tracking-widest text-text-secondary text-right">
-                {t("detail.crit")}
-              </th>
-              <th className="px-6 py-4 text-[11px] font-label font-bold uppercase tracking-widest text-text-secondary text-right">
-                {t("detail.average")}
-              </th>
-            </tr>
-          </thead>
+        <table className="w-full text-left border-collapse table-fixed">
+          {colGroup}
+          <thead>{tableHeader}</thead>
           <tbody className="divide-y divide-navy-border/50">
-            {rows.map((row, i) => (
-              <tr key={i} className="hover:bg-navy-hover/30 transition-colors">
-                <td className="px-6 py-4 text-[14px] font-medium text-text-primary">{row.name}</td>
-                <td className="px-6 py-4 text-[14px] font-mono text-text-secondary">
-                  {(row.multiplier * 100).toFixed(1)}%
-                </td>
-                <td className="px-6 py-4 text-[14px] font-mono text-text-primary">
-                  {Math.round(row.nonCrit).toLocaleString()}
-                </td>
-                <td className={`px-6 py-4 text-[15px] font-mono font-bold text-right ${tw?.text ?? "text-gold"}`}>
-                  {Math.round(row.crit).toLocaleString()}
-                </td>
-                <td className="px-6 py-4 text-[14px] font-mono text-text-primary text-right">
-                  {Math.round(row.average).toLocaleString()}
-                </td>
-              </tr>
-            ))}
-            {rows.length === 0 && (
+            {rows.length > 0 ? renderRows(rows) : (
               <tr>
                 <td colSpan={5} className="px-6 py-8 text-center text-text-muted">
                   {!talents ? t("detail.noTalentData") : t("detail.noScalings")}
@@ -128,26 +146,98 @@ export function DamageTable({ build, stats, enemy, reaction }: DamageTableProps)
     </div>
   );
 
+  const renderNormalAttackTab = () => (
+    <div className="space-y-3">
+      <div className="bg-navy-card border border-navy-border rounded-lg overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse table-fixed">
+            {colGroup}
+            <thead>{tableHeader}</thead>
+            <tbody className="divide-y divide-navy-border/50">
+              {talentRows.normal.length > 0 ? renderRows(talentRows.normal) : (
+                <tr>
+                  <td colSpan={5} className="px-6 py-8 text-center text-text-muted">
+                    {!talents ? t("detail.noTalentData") : t("detail.noScalings")}
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+        {reactionRow && (
+          <div className="px-6 py-4 border-t border-navy-border">
+            <h4 className="text-[11px] font-label font-bold text-text-muted uppercase tracking-widest mb-2">
+              {t("detail.reactionDamage")}
+            </h4>
+            <div className="flex justify-between text-sm">
+              <span className="text-hydro font-medium">{reactionRow.name}</span>
+              <span className="font-mono text-hydro font-bold">
+                {Math.round(reactionRow.damage).toLocaleString()}
+              </span>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {talentRows.charged.length > 0 && (
+        <div className="bg-navy-card border border-navy-border rounded-lg overflow-hidden">
+          <div className="px-6 py-3 border-b border-navy-border bg-navy-hover/30">
+            <span className="text-[11px] font-label font-bold uppercase tracking-widest text-text-secondary">
+              {t("detail.chargedAttack")}
+            </span>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse table-fixed">
+              {colGroup}
+              <tbody className="divide-y divide-navy-border/50">{renderRows(talentRows.charged)}</tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {talentRows.plunging.length > 0 && (
+        <div className="bg-navy-card border border-navy-border rounded-lg overflow-hidden">
+          <div className="px-6 py-3 border-b border-navy-border bg-navy-hover/30">
+            <span className="text-[11px] font-label font-bold uppercase tracking-widest text-text-secondary">
+              {t("detail.plungeAttack")}
+            </span>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse table-fixed">
+              {colGroup}
+              <tbody className="divide-y divide-navy-border/50">{renderRows(talentRows.plunging)}</tbody>
+            </table>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+
   return (
-    <div className="space-y-4">
-      <Tabs.Root defaultValue="normal">
+    <Tabs.Root defaultValue="normal" className="flex flex-col min-h-0 h-full">
+      <div className="flex-shrink-0 space-y-4 pb-4">
+        {stickyHeader}
         <Tabs.List className="flex gap-1 p-1 bg-navy-border/50 rounded-lg w-fit">
           {tabs.map(({ key, label }) => (
             <Tabs.Trigger
               key={key}
               value={key}
-              className={`px-6 py-2 rounded-md text-[13px] font-medium transition-colors
-                data-[state=active]:${tw?.bg ?? "bg-gold"} data-[state=active]:text-white data-[state=active]:font-bold
-                text-text-secondary hover:bg-navy-hover`}
+              className="px-6 py-2 rounded-md text-[13px] font-medium transition-colors
+                data-[state=active]:text-white data-[state=active]:font-bold
+                text-text-secondary hover:bg-navy-hover"
+              style={{ "--tab-active-bg": `var(--color-${el.toLowerCase()}, var(--color-gold))` } as React.CSSProperties}
+              data-element={el}
             >
               {label}
             </Tabs.Trigger>
           ))}
         </Tabs.List>
-        <Tabs.Content value="normal">{renderTable(talentRows.normal)}</Tabs.Content>
+      </div>
+      <div className="flex-1 min-h-0 overflow-y-auto space-y-3">
+        <Tabs.Content value="normal">{renderNormalAttackTab()}</Tabs.Content>
         <Tabs.Content value="skill">{renderTable(talentRows.skill)}</Tabs.Content>
         <Tabs.Content value="burst">{renderTable(talentRows.burst)}</Tabs.Content>
-      </Tabs.Root>
-    </div>
+      </div>
+    </Tabs.Root>
   );
 }

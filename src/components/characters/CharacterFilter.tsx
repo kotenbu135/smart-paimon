@@ -57,7 +57,7 @@ export function CharacterFilter({ elementFilter, weaponFilter, onElementChange, 
           })}
         </div>
         <span className="text-text-secondary text-xs font-label">
-          Sort: Level ▼
+          {t("characters.sortLevel")}
         </span>
       </div>
     </div>

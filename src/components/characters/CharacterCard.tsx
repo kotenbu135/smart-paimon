@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import type { CharacterBuild } from "../../types/wasm";
 import { ELEMENT_META, ELEMENT_TW, RARITY_COLORS } from "../../lib/elements";
 import { charIcon, elementIcon } from "../../lib/charAssets";
@@ -8,6 +9,7 @@ interface CharacterCardProps {
 }
 
 export function CharacterCard({ build }: CharacterCardProps) {
+  const { t } = useTranslation();
   const { character, level } = build;
   const el = character.element;
   const meta = ELEMENT_META[el];
@@ -42,7 +44,7 @@ export function CharacterCard({ build }: CharacterCardProps) {
             {"★".repeat(+character.rarity.replace("Star", ""))}
           </div>
           <span className="text-[11px] font-mono text-text-muted">
-            Lv.{level}
+            {t("detail.level", { level })}
           </span>
         </div>
       </div>

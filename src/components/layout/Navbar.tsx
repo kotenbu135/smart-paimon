@@ -34,10 +34,10 @@ export function Navbar() {
               {t("nav.characters")}
             </Link>
             <span className="text-text-muted text-sm font-semibold tracking-wide cursor-not-allowed">
-              Team
+              {t("nav.team")}
             </span>
             <span className="text-text-muted text-sm font-semibold tracking-wide cursor-not-allowed">
-              Compare
+              {t("nav.compare")}
             </span>
           </div>
         </div>
@@ -61,7 +61,7 @@ export function Navbar() {
             <Link
               to="/"
               className="p-1.5 text-text-secondary hover:text-text-primary hover:bg-navy-hover rounded transition-colors text-sm"
-              title="Re-import"
+              title={t("nav.reimport")}
             >
               ↻
             </Link>

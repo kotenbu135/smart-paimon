@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import i18n from "../i18n";
 
 interface UIState {
   locale: "ja" | "en";
@@ -13,7 +14,10 @@ export const useUIStore = create<UIState>((set) => ({
   locale: "ja",
   wasmReady: false,
   wasmError: null,
-  setLocale: (locale) => set({ locale }),
+  setLocale: (locale) => {
+    i18n.changeLanguage(locale);
+    set({ locale });
+  },
   setWasmReady: (wasmReady) => set({ wasmReady }),
   setWasmError: (wasmError) => set({ wasmError, wasmReady: false }),
 }));
