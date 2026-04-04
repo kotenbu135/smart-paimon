@@ -29,6 +29,7 @@
     "teamName": "チーム名",
     "addCharacter": "クリックして追加",
     "mainDps": "メインDPS",
+    "setDps": "DPS指定",
     "selectCharacter": "キャラクター選択",
     "select": "選択",
     "alreadyInTeam": "配置済み",

@@ -37,48 +37,55 @@ export function TeamSlot({ build, isMainDps, onRemove, onSetMainDps }: TeamSlotP
       ref={setNodeRef}
       style={style}
       {...attributes}
-      {...listeners}
-      className={`relative p-3 rounded-xl text-center cursor-grab transition-all
+      className={`relative p-3 rounded-xl text-center transition-all
         ${isMainDps
           ? `border-2 ${tw.border} shadow-lg shadow-${el.toLowerCase()}/15`
           : "border border-navy-border"
         } bg-navy-card`}
-      onDoubleClick={onSetMainDps}
     >
       {/* Remove button */}
       <button
         type="button"
-        onClick={(e) => { e.stopPropagation(); onRemove(); }}
-        className="absolute top-1.5 right-2 text-text-muted hover:text-text-primary text-[10px] transition-colors"
+        onClick={onRemove}
+        className="absolute top-1.5 right-2 text-text-muted hover:text-text-primary text-[10px] transition-colors z-10"
       >
         ✕
       </button>
 
-      {/* DPS badge */}
-      {isMainDps && (
+      {/* DPS badge — tap to set main DPS */}
+      {isMainDps ? (
         <span className={`absolute top-1.5 left-2 text-[8px] ${tw.text} bg-navy-page/80 px-1.5 py-0.5 rounded`}>
           {t("team.mainDps")}
         </span>
+      ) : (
+        <button
+          type="button"
+          onClick={onSetMainDps}
+          className="absolute top-1.5 left-2 text-[8px] text-text-muted hover:text-gold bg-navy-page/80 px-1.5 py-0.5 rounded transition-colors z-10"
+        >
+          {t("team.setDps")}
+        </button>
       )}
 
       {/* Moonsign badge — below DPS badge to avoid overlap */}
       {isMoonsign && (
         <span className={`absolute text-[8px] text-gold bg-navy-page/80 px-1.5 py-0.5 rounded
-          ${isMainDps ? "top-6 left-2" : "top-1.5 left-2"}`}
+          ${isMainDps ? "top-6 left-2" : "top-6 left-2"}`}
         >
           {t("team.moonsign")}
         </span>
       )}
 
-      {/* Character icon */}
+      {/* Character icon — drag handle */}
       <div
-        className={`w-[52px] h-[52px] rounded-full mx-auto mt-2 mb-1.5 border-2 overflow-hidden
+        {...listeners}
+        className={`w-[52px] h-[52px] rounded-full mx-auto mt-2 mb-1.5 border-2 overflow-hidden cursor-grab touch-none
           bg-gradient-to-br ${tw.gradient} to-transparent ${tw.border}`}
       >
         <img
           src={charIcon(build.character.id)}
           alt={build.character.name}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover pointer-events-none"
           loading="lazy"
         />
       </div>
