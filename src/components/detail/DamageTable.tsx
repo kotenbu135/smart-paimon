@@ -61,9 +61,9 @@ export function DamageTable({ build, stats, enemy, reaction, stickyHeader }: Dam
   }, [reaction, build.level, stats, enemy, reactionBonus]);
 
   const tabs = [
-    { key: "normal", label: t("detail.normalAttack") },
-    { key: "skill", label: t("detail.elementalSkill") },
-    { key: "burst", label: t("detail.elementalBurst") },
+    { key: "normal", label: t("detail.normalAttack"), lv: normalLv },
+    { key: "skill", label: t("detail.elementalSkill"), lv: skillLv },
+    { key: "burst", label: t("detail.elementalBurst"), lv: burstLv },
   ];
 
   const colGroup = (
@@ -239,7 +239,7 @@ export function DamageTable({ build, stats, enemy, reaction, stickyHeader }: Dam
       <div className="flex-shrink-0 space-y-4 pb-4">
         {stickyHeader}
         <Tabs.List className="flex gap-1 p-1 bg-navy-border/50 rounded-lg w-fit">
-          {tabs.map(({ key, label }) => (
+          {tabs.map(({ key, label, lv }) => (
             <Tabs.Trigger
               key={key}
               value={key}
@@ -250,6 +250,7 @@ export function DamageTable({ build, stats, enemy, reaction, stickyHeader }: Dam
               data-element={el}
             >
               {label}
+              <span className="ml-1.5 text-[11px] opacity-70">Lv.{lv}</span>
             </Tabs.Trigger>
           ))}
         </Tabs.List>
