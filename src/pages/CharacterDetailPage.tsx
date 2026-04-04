@@ -28,9 +28,9 @@ export function CharacterDetailPage() {
 
   return (
     <PageTransition>
-      <div className="max-w-[1440px] mx-auto px-6 flex flex-col">
+      <div className="max-w-[1440px] mx-auto px-4 md:px-6 flex flex-col">
         {/* Breadcrumb */}
-        <div className="py-6 pb-0 mb-6 flex items-center gap-2 text-xs font-label uppercase tracking-widest text-text-secondary">
+        <div className="py-4 md:py-6 pb-0 mb-4 md:mb-6 flex items-center gap-2 text-xs font-label uppercase tracking-widest text-text-secondary">
           <Link to="/characters" className="hover:text-text-primary transition-colors">
             {t("nav.characters")}
           </Link>

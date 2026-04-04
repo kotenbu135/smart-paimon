@@ -5,8 +5,8 @@ export function Footer() {
 
   return (
     <footer className="fixed bottom-0 w-full bg-navy-card border-t border-navy-border z-50">
-      <div className="max-w-7xl mx-auto px-6 py-2 flex justify-between items-center">
-        <span className="text-[11px] text-text-muted">
+      <div className="max-w-7xl mx-auto px-4 md:px-6 py-2 flex justify-between items-center gap-2">
+        <span className="text-[10px] sm:text-[11px] text-text-muted leading-tight">
           Smart Paimon — {t("footer.disclaimer")}
         </span>
         <div className="flex items-center gap-3">

@@ -91,13 +91,13 @@ export function CharacterProfile({ build }: CharacterProfileProps) {
             />
           </div>
           <div className="flex-grow min-w-0">
+            <div className="text-[14px] font-semibold text-text-primary truncate">{localizeWeaponName(weapon.weapon.id, weapon.weapon.name, locale)}</div>
             <div className="flex items-center gap-2">
-              <span className="text-[14px] font-semibold text-text-primary truncate">{localizeWeaponName(weapon.weapon.id, weapon.weapon.name, locale)}</span>
+              <span className="text-[12px] text-text-secondary">{t("detail.level", { level: weapon.level })} · {t("detail.refinement", { rank: weapon.refinement })}</span>
               <span className={`text-[10px] flex-shrink-0 ${RARITY_COLORS[+weapon.weapon.rarity.replace("Star", "")] ?? "text-text-muted"}`}>
                 {"★".repeat(+weapon.weapon.rarity.replace("Star", ""))}
               </span>
             </div>
-            <div className="text-[12px] text-text-secondary">{t("detail.level", { level: weapon.level })} · {t("detail.refinement", { rank: weapon.refinement })}</div>
           </div>
           {weapon.weapon.sub_stat && (() => {
             const [statName, statValues] = Object.entries(weapon.weapon.sub_stat)[0];

@@ -20,9 +20,9 @@ export function CharacterFilter({ elementFilter, weaponFilter, onElementChange, 
   const { t } = useTranslation();
 
   return (
-    <div className="sticky top-14 z-30 bg-navy-page/95 backdrop-blur-md px-6 py-4 border-b border-navy-border flex flex-col gap-3">
+    <div className="sticky top-14 z-30 bg-navy-page/95 backdrop-blur-md px-4 md:px-6 py-3 md:py-4 border-b border-navy-border flex flex-col gap-2 md:gap-3">
       {/* Row 1: Element filters */}
-      <div className="flex items-center gap-2 overflow-x-auto">
+      <div className="flex items-center gap-1.5 md:gap-2 overflow-x-auto scrollbar-none">
         {ALL_ELEMENTS.map((el) => {
           const active = elementFilter === el;
           const tw = ELEMENT_TW[el];
@@ -30,28 +30,28 @@ export function CharacterFilter({ elementFilter, weaponFilter, onElementChange, 
             <button
               key={el}
               onClick={() => onElementChange(active ? null : el as Element)}
-              className={`px-4 py-1.5 rounded text-xs font-label uppercase tracking-wider transition-all active:scale-95 whitespace-nowrap flex items-center gap-1.5 ${
+              className={`px-2.5 md:px-4 py-1.5 rounded text-xs font-label uppercase tracking-wider transition-all active:scale-95 whitespace-nowrap flex items-center gap-1 md:gap-1.5 ${
                 active
                   ? `${tw.bg} text-white`
                   : "bg-navy-card text-text-secondary hover:bg-navy-hover"
               }`}
             >
               <img src={elementIcon(el)} alt={el} className="w-4 h-4 inline-block" />
-              <span>{t(`element.${el.toLowerCase()}`)}</span>
+              <span className="hidden sm:inline">{t(`element.${el.toLowerCase()}`)}</span>
             </button>
           );
         })}
       </div>
       {/* Row 2: Weapon filters + Sort */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
+      <div className="flex items-center justify-between gap-2 overflow-x-auto scrollbar-none">
+        <div className="flex items-center gap-1.5 md:gap-2">
           {ALL_WEAPONS.map((wt) => {
             const active = weaponFilter === wt;
             return (
               <button
                 key={wt}
                 onClick={() => onWeaponChange(active ? null : wt as WeaponType)}
-                className={`px-3 py-1 rounded text-[11px] font-label uppercase tracking-widest transition-all active:scale-95 ${
+                className={`px-2 md:px-3 py-1 rounded text-[11px] font-label uppercase tracking-widest transition-all active:scale-95 whitespace-nowrap ${
                   active
                     ? "bg-gold text-navy-page font-bold"
                     : "bg-navy-card text-text-secondary hover:bg-navy-hover"
@@ -62,14 +62,14 @@ export function CharacterFilter({ elementFilter, weaponFilter, onElementChange, 
             );
           })}
         </div>
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1 md:gap-1.5 flex-shrink-0">
           {SORT_KEYS.map((key) => {
             const active = sortKey === key;
             return (
               <button
                 key={key}
                 onClick={() => onSortChange(key)}
-                className={`px-2.5 py-1 rounded text-[11px] font-label transition-all active:scale-95 ${
+                className={`px-2 md:px-2.5 py-1 rounded text-[11px] font-label transition-all active:scale-95 whitespace-nowrap ${
                   active
                     ? "bg-navy-hover text-text-primary"
                     : "text-text-secondary hover:text-text-primary"
