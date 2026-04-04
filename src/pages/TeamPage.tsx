@@ -1,9 +1,16 @@
+import { useState } from "react";
+import * as Tabs from "@radix-ui/react-tabs";
+import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { PageTransition } from "../components/ui/PageTransition";
 import { TeamSidebar } from "../components/team/TeamSidebar";
+import { DamageSummary } from "../components/team/DamageSummary";
+import { BuffDetailTab } from "../components/team/BuffDetailTab";
+import { TeamDamageTable } from "../components/team/TeamDamageTable";
 
 export function TeamPage() {
   const { t } = useTranslation();
+  const [activeTab, setActiveTab] = useState("buffs");
 
   return (
     <PageTransition>
@@ -17,11 +24,47 @@ export function TeamPage() {
         <div className="flex flex-col lg:flex-row gap-6 pb-6">
           <TeamSidebar />
 
-          {/* Right Main Panel — placeholder */}
           <div className="flex-grow flex flex-col gap-4">
-            <div className="bg-navy-card border border-navy-border rounded-lg p-4 text-text-muted text-sm">
-              {t("team.damageSummary")}
-            </div>
+            <DamageSummary />
+
+            <Tabs.Root value={activeTab} onValueChange={setActiveTab}>
+              <Tabs.List className="flex gap-1 p-1 bg-navy-border/50 rounded-lg w-fit">
+                <Tabs.Trigger
+                  value="buffs"
+                  className="px-6 py-2 rounded-md text-[12px] font-medium transition-all active:scale-95
+                    data-[state=active]:bg-gold data-[state=active]:text-navy-page data-[state=active]:font-bold
+                    text-text-secondary hover:bg-navy-hover"
+                >
+                  {t("team.buffDetail")}
+                </Tabs.Trigger>
+                <Tabs.Trigger
+                  value="damage"
+                  className="px-6 py-2 rounded-md text-[12px] font-medium transition-all active:scale-95
+                    data-[state=active]:bg-gold data-[state=active]:text-navy-page data-[state=active]:font-bold
+                    text-text-secondary hover:bg-navy-hover"
+                >
+                  {t("team.damageTable")}
+                </Tabs.Trigger>
+              </Tabs.List>
+
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div
+                  key={activeTab}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.15, ease: "easeOut" }}
+                  className="mt-4"
+                >
+                  <Tabs.Content value="buffs" forceMount={activeTab === "buffs" ? true : undefined}>
+                    <BuffDetailTab />
+                  </Tabs.Content>
+                  <Tabs.Content value="damage" forceMount={activeTab === "damage" ? true : undefined}>
+                    <TeamDamageTable />
+                  </Tabs.Content>
+                </motion.div>
+              </AnimatePresence>
+            </Tabs.Root>
           </div>
         </div>
       </div>
