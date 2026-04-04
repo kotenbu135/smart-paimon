@@ -148,7 +148,7 @@ export const useTeamStore = create<TeamState>((set, get) => ({
         soloResults: result.soloResults,
         teamResults: result.teamResults,
         resolvedStats: result.resolvedStats,
-        buffBreakdown: result.buffBreakdown,
+        buffBreakdown: [...result.buffBreakdown],
         isResolving: false,
       });
     } catch (e) {
