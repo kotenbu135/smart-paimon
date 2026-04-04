@@ -1,4 +1,6 @@
 import { useTranslation } from "react-i18next";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import type { CharacterBuild } from "../../types/wasm";
 import { ELEMENT_TW } from "../../lib/elements";
 import { localizeCharacterName } from "../../lib/localize";
@@ -20,8 +22,22 @@ export function TeamSlot({ build, isMainDps, onRemove, onSetMainDps }: TeamSlotP
   const weaponName = build.weapon?.weapon.name ?? "—";
   const refinement = build.weapon?.refinement ?? 0;
 
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: build.character.id,
+  });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
   return (
     <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
       className={`relative p-3 rounded-xl text-center cursor-grab transition-all
         ${isMainDps
           ? `border-2 ${tw.border} shadow-lg shadow-${el.toLowerCase()}/15`
