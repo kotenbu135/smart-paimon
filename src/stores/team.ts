@@ -8,6 +8,8 @@ import type {
   BuffableStat,
   BuffTarget,
 } from "../types/wasm";
+import { resolveTeamDamage } from "../lib/team";
+import { useGoodStore } from "./good";
 
 export interface BuffBreakdownEntry {
   readonly name: string;
@@ -127,12 +129,28 @@ export const useTeamStore = create<TeamState>((set, get) => ({
   setEnemy: (enemyConfig) => set({ enemyConfig }),
   setReaction: (selectedReaction) => set({ selectedReaction }),
 
-  // NOTE: resolveTeam is a placeholder. The WASM integration depends on Open Questions
-  // in the spec (buffs_provided assembly, element resonance handling).
   resolveTeam: async () => {
     set({ isResolving: true, resolveError: null });
     try {
-      set({ isResolving: false });
+      const { members, mainDpsIndex, enemyConfig, selectedReaction } = get();
+      const goodStore = useGoodStore.getState();
+
+      const result = resolveTeamDamage({
+        members,
+        mainDpsIndex,
+        enemyConfig,
+        selectedReaction,
+        getBuild: goodStore.getBuild,
+        rawJson: goodStore.rawJson,
+      });
+
+      set({
+        soloResults: result.soloResults,
+        teamResults: result.teamResults,
+        resolvedStats: result.resolvedStats,
+        buffBreakdown: result.buffBreakdown,
+        isResolving: false,
+      });
     } catch (e) {
       const message = e instanceof Error ? e.message : "Team calculation failed";
       set({ isResolving: false, resolveError: message });
