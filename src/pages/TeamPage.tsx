@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { PageTransition } from "../components/ui/PageTransition";
+import { TeamSidebar } from "../components/team/TeamSidebar";
 
 export function TeamPage() {
   const { t } = useTranslation();
@@ -14,12 +15,7 @@ export function TeamPage() {
         </div>
 
         <div className="flex flex-col lg:flex-row gap-6 pb-6">
-          {/* Left Sidebar — placeholder */}
-          <aside className="w-full lg:w-[200px] flex-shrink-0 space-y-3">
-            <div className="bg-navy-card border border-navy-border rounded-lg p-4 text-text-muted text-sm">
-              {t("team.noTeamMembers")}
-            </div>
-          </aside>
+          <TeamSidebar />
 
           {/* Right Main Panel — placeholder */}
           <div className="flex-grow flex flex-col gap-4">
