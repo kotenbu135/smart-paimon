@@ -26,7 +26,7 @@ export function ReactionSelector() {
     JSON.stringify(value) === JSON.stringify(selectedReaction);
 
   return (
-    <section className="bg-navy-card border border-navy-border rounded-lg p-5">
+    <section className="glass-card p-5">
       <div className="flex flex-wrap gap-2">
         {REACTIONS.map(({ key, value }) => (
           <button
@@ -35,7 +35,7 @@ export function ReactionSelector() {
             className={`px-3 py-1.5 rounded text-[12px] font-medium transition-colors ${
               isSelected(value)
                 ? "bg-pyro text-white"
-                : "bg-navy-border text-text-secondary hover:bg-navy-hover"
+                : "glass-inner text-text-secondary hover:bg-white/[0.08]"
             }`}
           >
             {t(`reaction.${key}`)}

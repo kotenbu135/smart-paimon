@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import type { CharacterBuild } from "../../types/wasm";
-import { ELEMENT_TW, RARITY_COLORS } from "../../lib/elements";
+import { ELEMENT_TW, ELEMENT_COLORS, RARITY_COLORS } from "../../lib/elements";
 import { charIcon, charBanner, elementIcon, weaponIcon, artifactIcon } from "../../lib/charAssets";
 import type { ArtifactSlot } from "../../lib/charAssets";
 import { getCharacterArtifacts, setKeyToAssetId } from "../../lib/goodArtifacts";
@@ -35,7 +35,7 @@ export function CharacterProfile({ build }: CharacterProfileProps) {
   return (
     <div className="space-y-3">
       {/* Profile Card */}
-      <section className="relative bg-navy-card border border-navy-border rounded-lg p-4 flex flex-col items-center text-center overflow-hidden">
+      <section className="relative glass-card p-4 flex flex-col items-center text-center overflow-hidden">
         {/* Namecard banner background */}
         <div className="absolute inset-0 h-32">
           <img
@@ -43,13 +43,13 @@ export function CharacterProfile({ build }: CharacterProfileProps) {
             alt=""
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent to-navy-card" />
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[rgba(37,42,64,0.4)]" />
         </div>
 
         <div className="relative mb-2 mt-2">
           <div
             className={`w-[96px] h-[96px] rounded-full overflow-hidden border-[3px] bg-navy-card ${tw?.border ?? "border-navy-border"}`}
-            style={{ boxShadow: `0 0 15px ${getElementColor(el)}30` }}
+            style={{ boxShadow: `0 0 20px ${ELEMENT_COLORS[el] ?? "#3A3F5C"}40` }}
           >
             <img
               src={charIcon(character.id)}
@@ -58,7 +58,7 @@ export function CharacterProfile({ build }: CharacterProfileProps) {
             />
           </div>
           <div
-            className="absolute -bottom-1 -right-1 bg-navy-card w-7 h-7 rounded-full flex items-center justify-center border-2 border-navy-border p-1"
+            className="absolute -bottom-1 -right-1 glass-inner w-7 h-7 rounded-full flex items-center justify-center border-2 p-1"
           >
             <img src={elementIcon(el)} alt={el} className="w-full h-full" />
           </div>
@@ -81,9 +81,9 @@ export function CharacterProfile({ build }: CharacterProfileProps) {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-50px" }}
-          className="bg-navy-card border border-navy-border rounded-lg p-4 flex items-center gap-4"
+          className="glass-card p-4 flex items-center gap-4"
         >
-          <div className="w-12 h-12 bg-navy-hover rounded-lg border border-navy-border flex-shrink-0 overflow-hidden">
+          <div className="w-12 h-12 glass-inner rounded-lg flex-shrink-0 overflow-hidden">
             <img
               src={weaponIcon(weapon.weapon.id, weapon.refinement >= 5)}
               alt={weapon.weapon.name}
@@ -122,7 +122,7 @@ export function CharacterProfile({ build }: CharacterProfileProps) {
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: "-50px" }}
-        className="bg-navy-card border border-navy-border rounded-lg p-4"
+        className="glass-card p-4"
       >
         <div className="flex justify-between items-center mb-3">
           <h3 className="text-[14px] font-semibold text-text-primary truncate">
@@ -144,7 +144,7 @@ export function CharacterProfile({ build }: CharacterProfileProps) {
                 key={slot}
                 type="button"
                 onClick={() => art && setSelectedSlot(isSelected ? null : slot)}
-                className={`w-10 h-10 bg-navy-hover rounded-lg border overflow-hidden transition-colors ${isSelected ? "border-gold/60" : "border-navy-border"} ${art ? "cursor-pointer hover:border-gold/40" : "cursor-default"}`}
+                className={`w-10 h-10 glass-inner rounded-lg overflow-hidden transition-colors ${isSelected ? "!border-[color-mix(in_srgb,var(--element-color)_60%,transparent)]" : ""} ${art ? "cursor-pointer hover:!border-[color-mix(in_srgb,var(--element-color)_40%,transparent)]" : "cursor-default"}`}
               >
                 {assetId ? (
                   <img
@@ -167,12 +167,4 @@ export function CharacterProfile({ build }: CharacterProfileProps) {
       </motion.section>
     </div>
   );
-}
-
-function getElementColor(element: string): string {
-  const colors: Record<string, string> = {
-    Pyro: "#EF7938", Hydro: "#4CC2F1", Electro: "#B57EDC",
-    Cryo: "#9FD6E3", Dendro: "#A5C83B", Anemo: "#74C2A8", Geo: "#F0B232",
-  };
-  return colors[element] ?? "#3A3F5C";
 }

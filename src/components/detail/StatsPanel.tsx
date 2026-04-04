@@ -44,8 +44,8 @@ export function StatsPanel({ stats }: StatsPanelProps) {
   );
 
   return (
-    <section className="bg-navy-card border border-navy-border rounded-lg overflow-hidden">
-      <div className="bg-navy-hover/50 px-4 py-2 border-b border-navy-border">
+    <section className="glass-card overflow-hidden">
+      <div className="glass-header px-4 py-2 border-b border-white/[0.06]">
         <span className="text-[11px] font-label font-bold tracking-widest text-text-secondary uppercase">
           {t("detail.stats")}
         </span>
@@ -54,7 +54,7 @@ export function StatsPanel({ stats }: StatsPanelProps) {
         {baseRows.map(({ label, value, pct, highlight }) => (
           <div
             key={label}
-            className="flex justify-between items-center h-9 px-3 border-b border-navy-border/50 last:border-0"
+            className="glass-row-hover flex justify-between items-center h-9 px-3"
           >
             <span className="text-[13px] text-text-secondary">{label}</span>
             <span className={`text-[14px] font-mono ${highlight ? "text-pyro" : "text-text-primary"}`}>
@@ -65,13 +65,13 @@ export function StatsPanel({ stats }: StatsPanelProps) {
 
         {activeElementBonuses.length > 0 && (
           <>
-            <div className="px-3 py-1 text-[10px] font-bold tracking-widest text-text-muted uppercase border-b border-navy-border/50">
+            <div className="px-3 py-1 text-[10px] font-bold tracking-widest text-text-muted uppercase border-b border-white/[0.06]">
               {t("stats.elementDmgBonus")}
             </div>
             {activeElementBonuses.map(({ key, labelKey, color }) => (
               <div
                 key={key}
-                className="flex justify-between items-center h-9 px-3 border-b border-navy-border/50 last:border-0"
+                className="glass-row-hover flex justify-between items-center h-9 px-3"
               >
                 <span className="text-[13px] text-text-secondary flex items-center gap-1.5">
                   <span

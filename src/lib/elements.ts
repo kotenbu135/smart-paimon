@@ -24,5 +24,10 @@ export const RARITY_COLORS: Record<number, string> = {
   3: "text-hydro",
 };
 
+export const ELEMENT_COLORS: Record<string, string> = {
+  Pyro: "#EF7938", Hydro: "#4CC2F1", Electro: "#B57EDC",
+  Cryo: "#9FD6E3", Dendro: "#A5C83B", Anemo: "#74C2A8", Geo: "#F0B232",
+};
+
 export const ALL_ELEMENTS = ["Pyro", "Hydro", "Electro", "Cryo", "Dendro", "Anemo", "Geo"] as const;
 export const ALL_WEAPONS = ["Sword", "Claymore", "Polearm", "Bow", "Catalyst"] as const;

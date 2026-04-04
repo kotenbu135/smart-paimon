@@ -80,7 +80,7 @@ export function DamageTable({ build, stats, enemy, reaction, stickyHeader }: Dam
 
   const renderRows = (rows: TalentRow[]) =>
     rows.map((row, i) => (
-      <tr key={i} className="hover:bg-navy-hover/30 transition-colors">
+      <tr key={i} className="glass-row-hover">
         <td className="px-6 py-4 text-[14px] font-medium text-text-primary">{localizeTalentName(row.name, locale)}</td>
         <td className="px-6 py-4 text-[14px] font-mono text-text-secondary text-right">
           <AnimatedNumber value={row.multiplier * 100} formatFn={fmtPct} />
@@ -98,7 +98,7 @@ export function DamageTable({ build, stats, enemy, reaction, stickyHeader }: Dam
     ));
 
   const tableHeader = (
-    <tr className="bg-navy-hover/50 border-b border-navy-border">
+    <tr className="glass-header border-b border-white/[0.06]">
       <th className="px-6 py-4 text-[11px] font-label font-bold uppercase tracking-widest text-text-secondary">
         {t("detail.talentName")}
       </th>
@@ -118,12 +118,12 @@ export function DamageTable({ build, stats, enemy, reaction, stickyHeader }: Dam
   );
 
   const renderTable = (rows: TalentRow[]) => (
-    <div className="bg-navy-card border border-navy-border rounded-lg overflow-hidden">
+    <div className="glass-card overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse table-fixed">
           {colGroup}
           <thead>{tableHeader}</thead>
-          <tbody className="divide-y divide-navy-border/50">
+          <tbody>
             {rows.length > 0 ? renderRows(rows) : (
               <tr>
                 <td colSpan={5} className="px-6 py-8 text-center text-text-muted">
@@ -137,7 +137,7 @@ export function DamageTable({ build, stats, enemy, reaction, stickyHeader }: Dam
 
       {/* Transformative / Lunar reaction row */}
       {reactionRow && (
-        <div className="px-6 py-4 border-t border-navy-border">
+        <div className="px-6 py-4 border-t border-white/[0.06]">
           <h4 className="text-[11px] font-label font-bold text-text-muted uppercase tracking-widest mb-2">
             {t("detail.reactionDamage")}
           </h4>
@@ -154,12 +154,12 @@ export function DamageTable({ build, stats, enemy, reaction, stickyHeader }: Dam
 
   const renderNormalAttackTab = () => (
     <div className="space-y-3">
-      <div className="bg-navy-card border border-navy-border rounded-lg overflow-hidden">
+      <div className="glass-card overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse table-fixed">
             {colGroup}
             <thead>{tableHeader}</thead>
-            <tbody className="divide-y divide-navy-border/50">
+            <tbody>
               {talentRows.normal.length > 0 ? renderRows(talentRows.normal) : (
                 <tr>
                   <td colSpan={5} className="px-6 py-8 text-center text-text-muted">
@@ -171,7 +171,7 @@ export function DamageTable({ build, stats, enemy, reaction, stickyHeader }: Dam
           </table>
         </div>
         {reactionRow && (
-          <div className="px-6 py-4 border-t border-navy-border">
+          <div className="px-6 py-4 border-t border-white/[0.06]">
             <h4 className="text-[11px] font-label font-bold text-text-muted uppercase tracking-widest mb-2">
               {t("detail.reactionDamage")}
             </h4>
@@ -186,8 +186,8 @@ export function DamageTable({ build, stats, enemy, reaction, stickyHeader }: Dam
       </div>
 
       {talentRows.charged.length > 0 && (
-        <div className="bg-navy-card border border-navy-border rounded-lg overflow-hidden">
-          <div className="px-6 py-3 border-b border-navy-border bg-navy-hover/30">
+        <div className="glass-card overflow-hidden">
+          <div className="px-6 py-3 border-b border-white/[0.06] glass-header">
             <span className="text-[11px] font-label font-bold uppercase tracking-widest text-text-secondary">
               {t("detail.chargedAttack")}
             </span>
@@ -195,15 +195,15 @@ export function DamageTable({ build, stats, enemy, reaction, stickyHeader }: Dam
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse table-fixed">
               {colGroup}
-              <tbody className="divide-y divide-navy-border/50">{renderRows(talentRows.charged)}</tbody>
+              <tbody>{renderRows(talentRows.charged)}</tbody>
             </table>
           </div>
         </div>
       )}
 
       {talentRows.plunging.length > 0 && (
-        <div className="bg-navy-card border border-navy-border rounded-lg overflow-hidden">
-          <div className="px-6 py-3 border-b border-navy-border bg-navy-hover/30">
+        <div className="glass-card overflow-hidden">
+          <div className="px-6 py-3 border-b border-white/[0.06] glass-header">
             <span className="text-[11px] font-label font-bold uppercase tracking-widest text-text-secondary">
               {t("detail.plungeAttack")}
             </span>
@@ -211,7 +211,7 @@ export function DamageTable({ build, stats, enemy, reaction, stickyHeader }: Dam
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse table-fixed">
               {colGroup}
-              <tbody className="divide-y divide-navy-border/50">{renderRows(talentRows.plunging)}</tbody>
+              <tbody>{renderRows(talentRows.plunging)}</tbody>
             </table>
           </div>
         </div>
@@ -238,14 +238,14 @@ export function DamageTable({ build, stats, enemy, reaction, stickyHeader }: Dam
     <Tabs.Root value={activeTab} onValueChange={handleTabChange} className="flex flex-col">
       <div className="flex-shrink-0 space-y-4 pb-4">
         {stickyHeader}
-        <Tabs.List className="flex gap-1 p-1 bg-navy-border/50 rounded-lg w-fit">
+        <Tabs.List className="flex gap-1 p-1 glass-inner rounded-lg w-fit">
           {tabs.map(({ key, label, lv }) => (
             <Tabs.Trigger
               key={key}
               value={key}
               className="px-6 py-2 rounded-md text-[13px] font-medium transition-all active:scale-95
                 data-[state=active]:text-white data-[state=active]:font-bold
-                text-text-secondary hover:bg-navy-hover"
+                text-text-secondary hover:bg-white/[0.05]"
               style={{ "--tab-active-bg": `var(--color-${el.toLowerCase()}, var(--color-gold))` } as React.CSSProperties}
               data-element={el}
             >
