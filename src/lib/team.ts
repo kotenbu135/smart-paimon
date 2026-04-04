@@ -24,8 +24,11 @@ import type { BuffBreakdown, TalentCategoryResults } from "../stores/team";
 
 const STAT_KEY_MAP: Record<string, keyof StatProfile> = {
   Hp: "hp_percent",
+  HpPercent: "hp_percent",
   Atk: "atk_percent",
+  AtkPercent: "atk_percent",
   Def: "def_percent",
+  DefPercent: "def_percent",
   CritRate: "crit_rate",
   CritDmg: "crit_dmg",
   EnergyRecharge: "energy_recharge",
