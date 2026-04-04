@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import * as Tabs from "@radix-ui/react-tabs";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
@@ -7,10 +7,27 @@ import { TeamSidebar } from "../components/team/TeamSidebar";
 import { DamageSummary } from "../components/team/DamageSummary";
 import { BuffDetailTab } from "../components/team/BuffDetailTab";
 import { TeamDamageTable } from "../components/team/TeamDamageTable";
+import { useTeamStore } from "../stores/team";
+import { useGoodStore } from "../stores/good";
+import { useUIStore } from "../stores/ui";
 
 export function TeamPage() {
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState("buffs");
+
+  const members = useTeamStore((s) => s.members);
+  const mainDpsIndex = useTeamStore((s) => s.mainDpsIndex);
+  const enemyConfig = useTeamStore((s) => s.enemyConfig);
+  const selectedReaction = useTeamStore((s) => s.selectedReaction);
+  const resolveTeam = useTeamStore((s) => s.resolveTeam);
+  const rawJson = useGoodStore((s) => s.rawJson);
+  const wasmReady = useUIStore((s) => s.wasmReady);
+
+  useEffect(() => {
+    const filledCount = members.filter((m) => m !== null).length;
+    if (!wasmReady || !rawJson || filledCount === 0) return;
+    resolveTeam();
+  }, [members, mainDpsIndex, enemyConfig, selectedReaction, rawJson, wasmReady, resolveTeam]);
 
   return (
     <PageTransition>
