@@ -34,9 +34,18 @@ export function Navbar() {
             >
               {t("nav.characters")}
             </Link>
-            <span className="text-text-muted text-sm font-semibold tracking-wide cursor-not-allowed">
+            <Link
+              to={builds.length > 0 ? "/team" : "#"}
+              className={`h-full flex items-center text-sm font-semibold tracking-wide transition-colors ${
+                isActive("/team")
+                  ? "text-text-primary border-b-2 border-gold"
+                  : builds.length > 0
+                    ? "text-text-secondary hover:text-text-primary"
+                    : "text-text-muted cursor-not-allowed pointer-events-none"
+              }`}
+            >
               {t("nav.team")}
-            </span>
+            </Link>
             <span className="text-text-muted text-sm font-semibold tracking-wide cursor-not-allowed">
               {t("nav.compare")}
             </span>
