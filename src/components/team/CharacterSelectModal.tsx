@@ -53,10 +53,11 @@ export function CharacterSelectModal({
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-black/60 z-50" />
         <Dialog.Content className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50
-          w-[calc(100vw-2rem)] sm:w-[460px] max-h-[80vh] bg-navy-card border border-navy-border rounded-xl p-4 sm:p-5 overflow-y-auto">
+          w-[calc(100vw-2rem)] sm:w-[460px] max-h-[80vh] bg-navy-card border border-navy-border rounded-xl
+          flex flex-col overflow-hidden">
 
           {/* Header */}
-          <div className="flex justify-between items-center mb-4">
+          <div className="flex justify-between items-center p-4 sm:p-5 pb-0">
             <Dialog.Title className="text-[14px] font-bold text-gold font-label">
               {t("team.selectCharacter")}
             </Dialog.Title>
@@ -66,7 +67,7 @@ export function CharacterSelectModal({
           </div>
 
           {/* Element filters */}
-          <div className="flex gap-1.5 flex-wrap mb-4">
+          <div className="flex gap-1.5 flex-wrap px-4 sm:px-5 py-3">
             {ALL_ELEMENTS.map((el) => {
               const active = elementFilters.has(el as GenshinElement);
               const tw = ELEMENT_TW[el];
@@ -86,44 +87,46 @@ export function CharacterSelectModal({
             })}
           </div>
 
-          {/* Character grid */}
-          <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
-            {filtered.map((build) => {
-              const id = build.character.id;
-              const disabled = disabledIds.has(id);
-              const selected = selectedId === id;
+          {/* Character grid — scrollable */}
+          <div className="flex-1 overflow-y-auto px-4 sm:px-5">
+            <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
+              {filtered.map((build) => {
+                const id = build.character.id;
+                const disabled = disabledIds.has(id);
+                const selected = selectedId === id;
 
-              return (
-                <button
-                  key={id}
-                  type="button"
-                  disabled={disabled}
-                  onClick={() => !disabled && setSelectedId(id)}
-                  className={`text-center p-1.5 rounded-lg transition-all
-                    ${disabled ? "opacity-30 cursor-not-allowed" : "cursor-pointer hover:bg-navy-hover"}
-                    ${selected ? "ring-2 ring-gold" : ""}`}
-                >
-                  <div className="w-12 h-12 rounded-lg overflow-hidden mx-auto mb-1 bg-navy-hover">
-                    <img
-                      src={charIcon(id)}
-                      alt={build.character.name}
-                      className="w-full h-full object-cover"
-                      loading="lazy"
-                    />
-                  </div>
-                  <div className="text-[9px] text-text-primary truncate">
-                    {localizeCharacterName(id, build.character.name, i18n.language)}
-                  </div>
-                  {disabled && (
-                    <div className="text-[8px] text-text-muted">{t("team.alreadyInTeam")}</div>
-                  )}
-                </button>
-              );
-            })}
+                return (
+                  <button
+                    key={id}
+                    type="button"
+                    disabled={disabled}
+                    onClick={() => !disabled && setSelectedId(id)}
+                    className={`text-center p-1.5 rounded-lg transition-all
+                      ${disabled ? "opacity-30 cursor-not-allowed" : "cursor-pointer hover:bg-navy-hover"}
+                      ${selected ? "ring-2 ring-gold" : ""}`}
+                  >
+                    <div className="w-12 h-12 rounded-lg overflow-hidden mx-auto mb-1 bg-navy-hover">
+                      <img
+                        src={charIcon(id)}
+                        alt={build.character.name}
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                      />
+                    </div>
+                    <div className="text-[9px] text-text-primary truncate">
+                      {localizeCharacterName(id, build.character.name, i18n.language)}
+                    </div>
+                    {disabled && (
+                      <div className="text-[8px] text-text-muted">{t("team.alreadyInTeam")}</div>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
-          {/* Confirm button */}
-          <div className="mt-4 flex justify-end">
+          {/* Confirm button — fixed at bottom */}
+          <div className="p-4 sm:p-5 pt-3 flex justify-end border-t border-navy-border">
             <button
               type="button"
               onClick={handleConfirm}
