@@ -11,7 +11,6 @@ import { EnemyConfig } from "../components/detail/EnemyConfig";
 import { motion } from "framer-motion";
 import { localizeCharacterName } from "../lib/localize";
 import { PageTransition } from "../components/ui/PageTransition";
-import { ELEMENT_COLORS } from "../lib/elements";
 
 export function CharacterDetailPage() {
   const { t, i18n } = useTranslation();
@@ -29,10 +28,7 @@ export function CharacterDetailPage() {
 
   return (
     <PageTransition>
-      <div
-        className="max-w-[1440px] mx-auto px-6 flex flex-col"
-        style={{ '--element-color': ELEMENT_COLORS[build.character.element] ?? '#3A3F5C' } as React.CSSProperties}
-      >
+      <div className="max-w-[1440px] mx-auto px-6 flex flex-col">
         {/* Breadcrumb */}
         <div className="py-6 pb-0 mb-6 flex items-center gap-2 text-xs font-label uppercase tracking-widest text-text-secondary">
           <Link to="/characters" className="hover:text-text-primary transition-colors">
