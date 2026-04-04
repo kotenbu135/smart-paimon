@@ -53,7 +53,7 @@ export function CharacterSelectModal({
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-black/60 z-50" />
         <Dialog.Content className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50
-          w-[460px] max-h-[80vh] bg-navy-card border border-navy-border rounded-xl p-5 overflow-y-auto">
+          w-[calc(100vw-2rem)] sm:w-[460px] max-h-[80vh] bg-navy-card border border-navy-border rounded-xl p-4 sm:p-5 overflow-y-auto">
 
           {/* Header */}
           <div className="flex justify-between items-center mb-4">
@@ -87,7 +87,7 @@ export function CharacterSelectModal({
           </div>
 
           {/* Character grid */}
-          <div className="grid grid-cols-5 gap-2">
+          <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
             {filtered.map((build) => {
               const id = build.character.id;
               const disabled = disabledIds.has(id);
