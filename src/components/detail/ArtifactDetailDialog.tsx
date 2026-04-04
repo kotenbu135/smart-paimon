@@ -30,7 +30,7 @@ export function ArtifactDetailPopover({ artifact }: ArtifactDetailPopoverProps) 
     <div className="pt-3 space-y-2">
       {/* Header row */}
       <div className="flex items-center gap-2.5">
-        <div className="w-10 h-10 bg-navy-hover rounded-lg border border-navy-border overflow-hidden flex-shrink-0">
+        <div className="w-10 h-10 glass-inner rounded-lg overflow-hidden flex-shrink-0">
           <img
             src={artifactIcon(assetId, artifact.slotKey)}
             alt={artifact.slotKey}
@@ -59,7 +59,7 @@ export function ArtifactDetailPopover({ artifact }: ArtifactDetailPopoverProps) 
 
       {/* Substats */}
       {artifact.substats.length > 0 && (
-        <div className="grid grid-cols-2 gap-x-3 gap-y-1 pt-1 border-t border-navy-border/40">
+        <div className="grid grid-cols-2 gap-x-3 gap-y-1 pt-1 border-t border-white/[0.06]">
           {artifact.substats.map((sub) => (
             <div key={sub.key} className="flex justify-between items-center">
               <span className="text-[11px] text-text-muted">{t(statI18nKey(sub.key))}</span>

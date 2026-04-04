@@ -22,15 +22,15 @@ function Stepper({ label, value, onChange, min = 0, max = 200, step = 1, suffix 
   return (
     <div className="flex flex-col gap-1">
       <label className="text-[10px] text-text-muted uppercase font-label">{label}</label>
-      <div className="flex items-center h-8 rounded-md border border-navy-border overflow-hidden">
+      <div className="flex items-center h-8 rounded-md glass-inner overflow-hidden">
         <button
           type="button"
           onClick={decrement}
-          className="w-7 h-full flex items-center justify-center bg-navy-hover text-text-secondary hover:text-text-primary hover:bg-navy-border transition-colors text-sm font-bold select-none"
+          className="w-7 h-full flex items-center justify-center bg-white/[0.04] text-text-secondary hover:text-text-primary hover:bg-white/[0.08] transition-colors text-sm font-bold select-none"
         >
           −
         </button>
-        <div className="flex items-center bg-navy-card px-1">
+        <div className="flex items-center bg-transparent px-1">
           <input
             type="number"
             value={value}
@@ -42,7 +42,7 @@ function Stepper({ label, value, onChange, min = 0, max = 200, step = 1, suffix 
         <button
           type="button"
           onClick={increment}
-          className="w-7 h-full flex items-center justify-center bg-navy-hover text-text-secondary hover:text-text-primary hover:bg-navy-border transition-colors text-sm font-bold select-none"
+          className="w-7 h-full flex items-center justify-center bg-white/[0.04] text-text-secondary hover:text-text-primary hover:bg-white/[0.08] transition-colors text-sm font-bold select-none"
         >
           +
         </button>
@@ -56,7 +56,7 @@ export function EnemyConfig() {
   const { enemyConfig, setEnemy } = useCalcStore();
 
   return (
-    <section className="bg-navy-card border border-navy-border rounded-lg p-4 flex flex-wrap gap-6 items-center">
+    <section className="glass-card p-4 flex flex-wrap gap-6 items-center">
       <span className="text-[12px] font-label font-bold text-text-secondary uppercase tracking-wider">
         {t("enemy.title")}
       </span>
