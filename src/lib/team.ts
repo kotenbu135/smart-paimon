@@ -26,7 +26,7 @@ export function buildTeamMember(
   activations?: MemberActivations | null,
   travelerElement?: string | null,
 ): TeamMember {
-  const [weaponActs, artifactActs, talentActs] = activations ?? [[], [], []];
+  const [weaponActs = [], artifactActs = [], talentActs = []] = activations ?? [[], [], []];
   return wasmBuildTeamMember(rawJson, build.character.id, weaponActs, artifactActs, talentActs, travelerElement) as TeamMember;
 }
 

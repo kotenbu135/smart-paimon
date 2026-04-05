@@ -32,7 +32,7 @@ export function ActivationPanel({ build, memberIndex }: ActivationPanelProps) {
 
   if (conditionals.length === 0) return null;
 
-  const [weaponActs, artifactActs, talentActs] = stored ?? [[], [], []];
+  const [weaponActs = [], artifactActs = [], talentActs = []] = stored ?? [[], [], []];
 
   const getList = (kind: ConditionalBuffInfo["kind"]): readonly BuffActivation[] => {
     if (kind === "weapon") return weaponActs;
