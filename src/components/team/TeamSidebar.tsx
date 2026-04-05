@@ -18,8 +18,6 @@ import { TeamSlot } from "./TeamSlot";
 import { TeamSlotEmpty } from "./TeamSlotEmpty";
 import { TeamSaveLoad } from "./TeamSaveLoad";
 import { CharacterSelectModal } from "./CharacterSelectModal";
-import { TeamEnemyConfig } from "./TeamEnemyConfig";
-import { ReactionSelector } from "./ReactionSelector";
 
 export function TeamSidebar() {
   const { members, mainDpsIndex, setMember, setMainDps, swapMembers } = useTeamStore();
@@ -84,12 +82,6 @@ export function TeamSidebar() {
           })}
         </SortableContext>
       </DndContext>
-
-      {/* Enemy Config + Reaction — pushed to bottom */}
-      <div className="mt-auto space-y-2">
-        <TeamEnemyConfig />
-        <ReactionSelector />
-      </div>
 
       <CharacterSelectModal
         open={modalOpen}

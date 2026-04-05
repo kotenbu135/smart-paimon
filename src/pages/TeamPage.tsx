@@ -4,7 +4,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { PageTransition } from "../components/ui/PageTransition";
 import { TeamSidebar } from "../components/team/TeamSidebar";
-import { DamageSummary } from "../components/team/DamageSummary";
+import { TeamEnemyConfig } from "../components/team/TeamEnemyConfig";
+import { ReactionSelector } from "../components/team/ReactionSelector";
 import { BuffDetailTab } from "../components/team/BuffDetailTab";
 import { TeamDamageTable } from "../components/team/TeamDamageTable";
 import { useTeamStore } from "../stores/team";
@@ -42,7 +43,10 @@ export function TeamPage() {
           <TeamSidebar />
 
           <div className="flex-grow flex flex-col gap-4">
-            <DamageSummary />
+            <div className="flex flex-col sm:flex-row gap-3">
+              <TeamEnemyConfig />
+              <ReactionSelector />
+            </div>
 
             <Tabs.Root value={activeTab} onValueChange={setActiveTab}>
               <Tabs.List className="flex gap-1 p-1 bg-navy-border/50 rounded-lg w-fit">
