@@ -44,8 +44,8 @@ export interface TalentCategoryResults {
   readonly burst: readonly DamageResult[];
 }
 
-// Per-member activation state: [weaponActivations, artifactActivations]
-export type MemberActivations = readonly [readonly BuffActivation[], readonly BuffActivation[]];
+// Per-member activation state: [weaponActivations, artifactActivations, talentActivations]
+export type MemberActivations = readonly [readonly BuffActivation[], readonly BuffActivation[], readonly BuffActivation[]];
 
 interface TeamState {
   members: (string | null)[];

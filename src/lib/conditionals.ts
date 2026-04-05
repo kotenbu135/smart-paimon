@@ -1,10 +1,10 @@
-import { find_artifact_set, find_weapon } from "@kotenbu135/genshin-calc-wasm";
-import type { CharacterBuild, ConditionalBuff } from "../types/wasm";
+import { find_artifact_set, find_weapon, get_talent_conditional_buffs } from "@kotenbu135/genshin-calc-wasm";
+import type { CharacterBuild, ConditionalBuff, TalentConditionalBuff } from "../types/wasm";
 
 export interface ConditionalBuffInfo {
-  readonly kind: "weapon" | "artifact";
+  readonly kind: "weapon" | "artifact" | "talent";
   readonly label: string;
-  readonly buff: ConditionalBuff;
+  readonly buff: ConditionalBuff | TalentConditionalBuff;
   readonly refinement?: number;
 }
 
@@ -40,6 +40,22 @@ export function getConditionalBuffs(build: CharacterBuild): readonly Conditional
           buff: cb,
         });
       }
+    }
+  }
+
+  // Talent conditional buffs (v0.5.3)
+  const talentConditionals = get_talent_conditional_buffs(
+    build.character.id,
+    build.constellation,
+    new Uint32Array(build.talent_levels),
+  ) as TalentConditionalBuff[];
+  if (talentConditionals) {
+    for (const cb of talentConditionals) {
+      results.push({
+        kind: "talent",
+        label: build.character.name,
+        buff: cb,
+      });
     }
   }
 

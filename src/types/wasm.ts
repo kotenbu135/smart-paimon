@@ -244,3 +244,14 @@ export interface BuffActivation {
   readonly active: boolean;
   readonly stacks?: number;
 }
+
+// Talent conditional buff returned by get_talent_conditional_buffs (v0.5.3)
+export interface TalentConditionalBuff {
+  readonly name: string;
+  readonly description: string;
+  readonly stat: BuffableStat;
+  readonly value: number;
+  readonly target: BuffTarget;
+  readonly activation: { Manual: "Toggle" } | { Manual: { Stacks: number } };
+  readonly scales_on: string | null;
+}

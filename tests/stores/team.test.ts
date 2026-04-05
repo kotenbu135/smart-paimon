@@ -83,7 +83,7 @@ describe("TeamStore", () => {
     expect(saved[0].name).toBe("Test Team");
     expect(saved[0].members[0]).toBe("hu_tao");
 
-    const raw = localStorage.getItem("smart-paimon-teams");
+    const raw = localStorage.getItem("smart-paimon-team");
     expect(raw).toBeTruthy();
     expect(JSON.parse(raw!)).toHaveLength(1);
   });

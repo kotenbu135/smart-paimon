@@ -20,26 +20,32 @@ export function ActivationPanel({ build, memberIndex }: ActivationPanelProps) {
 
     const weaponActs: BuffActivation[] = [];
     const artifactActs: BuffActivation[] = [];
+    const talentActs: BuffActivation[] = [];
     for (const c of conditionals) {
       const act: BuffActivation = { name: c.buff.name, active: false };
       if (c.kind === "weapon") weaponActs.push(act);
-      else artifactActs.push(act);
+      else if (c.kind === "artifact") artifactActs.push(act);
+      else talentActs.push(act);
     }
-    setActivation(memberIndex, [weaponActs, artifactActs]);
+    setActivation(memberIndex, [weaponActs, artifactActs, talentActs]);
   }, [conditionals, memberIndex, setActivation, stored]);
 
   if (conditionals.length === 0) return null;
 
-  const [weaponActs, artifactActs] = stored ?? [[], []];
+  const [weaponActs, artifactActs, talentActs] = stored ?? [[], [], []];
+
+  const getList = (kind: ConditionalBuffInfo["kind"]): readonly BuffActivation[] => {
+    if (kind === "weapon") return weaponActs;
+    if (kind === "artifact") return artifactActs;
+    return talentActs;
+  };
 
   const findActivation = (buff: ConditionalBuffInfo): BuffActivation | undefined => {
-    const list = buff.kind === "weapon" ? weaponActs : artifactActs;
-    return list.find((a) => a.name === buff.buff.name);
+    return getList(buff.kind).find((a) => a.name === buff.buff.name);
   };
 
   const toggleActivation = (info: ConditionalBuffInfo) => {
-    const isWeapon = info.kind === "weapon";
-    const list = isWeapon ? [...weaponActs] : [...artifactActs];
+    const list = [...getList(info.kind)];
     const idx = list.findIndex((a) => a.name === info.buff.name);
     if (idx === -1) return;
 
@@ -61,9 +67,11 @@ export function ActivationPanel({ build, memberIndex }: ActivationPanelProps) {
       list[idx] = { name: current.name, active: !current.active };
     }
 
-    const next: MemberActivations = isWeapon
-      ? [list, [...artifactActs]]
-      : [[...weaponActs], list];
+    const next: MemberActivations = info.kind === "weapon"
+      ? [list, [...artifactActs], [...talentActs]]
+      : info.kind === "artifact"
+        ? [[...weaponActs], list, [...talentActs]]
+        : [[...weaponActs], [...artifactActs], list];
     setActivation(memberIndex, next);
   };
 
