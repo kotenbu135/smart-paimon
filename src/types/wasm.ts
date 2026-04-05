@@ -132,6 +132,14 @@ export interface StatProfile {
   crit_dmg: number;
   energy_recharge: number;
   dmg_bonus: number;
+  pyro_dmg_bonus: number;
+  hydro_dmg_bonus: number;
+  electro_dmg_bonus: number;
+  cryo_dmg_bonus: number;
+  dendro_dmg_bonus: number;
+  anemo_dmg_bonus: number;
+  geo_dmg_bonus: number;
+  physical_dmg_bonus: number;
 }
 
 export interface ResolvedBuff {

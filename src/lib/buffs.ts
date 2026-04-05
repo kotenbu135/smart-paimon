@@ -2,14 +2,14 @@ import type { CharacterBuild, Element as GenshinElement, ResolvedBuff } from "..
 import type { BuffBreakdown, BuffBreakdownEntry } from "../stores/team";
 import { getResonanceBuffs } from "../data/resonance";
 import { getArtifactTeamBuffs } from "../data/artifact-buffs";
-import { getCharacterBuffs } from "../data/character-buffs";
 import { getWeaponTeamBuffs } from "../data/weapon-buffs";
 
 // ---------- Buff assembly for TeamMember.buffs_provided ----------
+// Character buffs are now computed by WASM (get_character_team_buffs) in buildTeamMember.
+// This function assembles only weapon and artifact buffs.
 
 export function assembleBuffsProvided(build: CharacterBuild): readonly ResolvedBuff[] {
   return [
-    ...getCharacterBuffs(build),
     ...getWeaponTeamBuffs(build),
     ...getArtifactTeamBuffs(build.artifacts.four_piece_set?.id, build.character.id),
   ];

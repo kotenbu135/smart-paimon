@@ -1,4 +1,4 @@
-import { resolve_team_stats, apply_team_debuffs, find_character } from "@kotenbu135/genshin-calc-wasm";
+import { resolve_team_stats, apply_team_debuffs, find_character, build_member_stats, get_character_team_buffs } from "@kotenbu135/genshin-calc-wasm";
 import { buildStats } from "./stats";
 import {
   computeTalentDamage,
@@ -21,114 +21,25 @@ import type {
 } from "../types/wasm";
 import type { BuffBreakdown, TalentCategoryResults } from "../stores/team";
 
-// ---------- StatProfile assembly ----------
-
-const STAT_KEY_MAP: Record<string, keyof StatProfile> = {
-  Hp: "hp_percent",
-  HpPercent: "hp_percent",
-  Atk: "atk_percent",
-  AtkPercent: "atk_percent",
-  Def: "def_percent",
-  DefPercent: "def_percent",
-  CritRate: "crit_rate",
-  CritDmg: "crit_dmg",
-  EnergyRecharge: "energy_recharge",
-  ElementalMastery: "elemental_mastery",
-  PhysicalDmgBonus: "dmg_bonus",
-  PyroDmgBonus: "dmg_bonus",
-  HydroDmgBonus: "dmg_bonus",
-  ElectroDmgBonus: "dmg_bonus",
-  CryoDmgBonus: "dmg_bonus",
-  DendroDmgBonus: "dmg_bonus",
-  AnemoDmgBonus: "dmg_bonus",
-  GeoDmgBonus: "dmg_bonus",
-};
-
-export function levelToAscension(level: number): number {
-  if (level <= 20) return 0;
-  if (level <= 40) return 1;
-  if (level <= 50) return 2;
-  if (level <= 60) return 3;
-  if (level <= 70) return 4;
-  if (level <= 80) return 5;
-  return 6;
-}
-
-// Character base stat arrays have 18 entries (2 per ascension phase: pre/post ascension).
-// Ascension N at max level maps to index N * 2 + 1.
-function ascensionToBaseStatIndex(ascension: number): number {
-  return ascension * 2 + 1;
-}
-
-function clampIndex(arr: number[], index: number): number {
-  return arr[Math.min(index, arr.length - 1)] ?? 0;
-}
-
-function addStatBonus(
-  profile: StatProfile,
-  statKey: string,
-  value: number,
-): StatProfile {
-  const field = STAT_KEY_MAP[statKey];
-  if (!field) return profile;
-  return { ...profile, [field]: (profile[field] as number) + value };
-}
-
-export function buildStatProfile(build: CharacterBuild): StatProfile {
-  const { character, weapon, artifacts } = build;
-
-  // import_good does not return ascension — derive from level
-  const ascension = build.ascension ?? levelToAscension(build.level);
-  const baseIdx = ascensionToBaseStatIndex(ascension);
-
-  const baseHp = clampIndex(character.base_hp, baseIdx);
-  const baseAtk = clampIndex(character.base_atk, baseIdx);
-  const baseDef = clampIndex(character.base_def, baseIdx);
-
-  let weaponBaseAtk = 0;
-  if (weapon) {
-    const wAsc = levelToAscension(weapon.level);
-    weaponBaseAtk = clampIndex(weapon.weapon.base_atk, wAsc);
-  }
-
-  // Start with artifact stats, then overlay base stats and character innate values
-  let profile: StatProfile = {
-    ...artifacts.stats,
-    base_hp: baseHp,
-    base_atk: baseAtk + weaponBaseAtk,
-    base_def: baseDef,
-    // All characters have innate crit_rate 5%, crit_dmg 50%, ER 100%
-    crit_rate: artifacts.stats.crit_rate + 0.05,
-    crit_dmg: artifacts.stats.crit_dmg + 0.5,
-    energy_recharge: artifacts.stats.energy_recharge + 1.0,
-  };
-
-  // Add weapon substat
-  if (weapon?.weapon.sub_stat) {
-    const wAsc = levelToAscension(weapon.level);
-    for (const [statKey, values] of Object.entries(weapon.weapon.sub_stat)) {
-      if (Array.isArray(values)) {
-        profile = addStatBonus(profile, statKey, clampIndex(values, wAsc));
-      }
-    }
-  }
-
-  // Add character ascension stat
-  for (const [statKey, value] of Object.entries(character.ascension_stat)) {
-    profile = addStatBonus(profile, statKey, value);
-  }
-
-  return profile;
-}
-
 // ---------- TeamMember assembly ----------
 
-export function buildTeamMember(build: CharacterBuild): TeamMember {
+export function buildTeamMember(
+  build: CharacterBuild,
+  rawJson: string,
+): TeamMember {
+  const stats = build_member_stats(rawJson, build.character.id) as StatProfile;
+  const charBuffs = get_character_team_buffs(
+    rawJson,
+    build.character.id,
+    build.constellation,
+    new Uint32Array(build.talent_levels),
+  ) as ResolvedBuff[];
+
   return {
     element: build.character.element,
     weapon_type: build.character.weapon_type,
-    stats: buildStatProfile(build),
-    buffs_provided: [...assembleBuffsProvided(build)],
+    stats,
+    buffs_provided: [...charBuffs, ...assembleBuffsProvided(build)],
     is_moonsign: isMoonsignCharacter(build.character.id),
   };
 }
@@ -303,7 +214,7 @@ export function resolveTeamDamage(input: ResolveTeamInput): ResolveTeamOutput {
     if (!id) continue;
     const build = getBuild(id);
     if (!build) continue;
-    const member = buildTeamMember(build);
+    const member = buildTeamMember(build, rawJson);
     teamMembers.push(member);
     indexMap.push(i);
     memberBuilds.push({
