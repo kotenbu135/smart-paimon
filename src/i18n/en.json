@@ -50,6 +50,7 @@
     "moonsign": "Moonsign",
     "enemyConfig": "Enemy Config",
     "resolving": "Resolving team stats...",
-    "resolveError": "Team calculation failed"
+    "resolveError": "Team calculation failed",
+    "resonance": "Element Resonance"
   }
 }

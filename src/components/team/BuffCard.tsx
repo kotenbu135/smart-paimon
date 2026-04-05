@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { ELEMENT_TW } from "../../lib/elements";
-import { charIcon } from "../../lib/charAssets";
+import { charIcon, elementIcon } from "../../lib/charAssets";
 import { localizeCharacterName } from "../../lib/localize";
 import type { BuffBreakdown } from "../../stores/team";
 import type { BuffableStat } from "../../types/wasm";
@@ -12,13 +12,19 @@ interface BuffCardProps {
 export function BuffCard({ breakdown }: BuffCardProps) {
   const { t, i18n } = useTranslation();
   const tw = ELEMENT_TW[breakdown.sourceElement];
-  const name = localizeCharacterName(breakdown.sourceCharacterId, breakdown.sourceCharacterName, i18n.language);
+  const isResonance = breakdown.sourceCharacterId === "resonance";
+  const name = isResonance
+    ? t("team.resonance")
+    : localizeCharacterName(breakdown.sourceCharacterId, breakdown.sourceCharacterName, i18n.language);
+  const iconSrc = isResonance
+    ? elementIcon(breakdown.sourceElement)
+    : charIcon(breakdown.sourceCharacterId);
 
   return (
     <div className="bg-navy-card border border-navy-border rounded-xl p-3.5">
       <div className="flex items-center gap-2.5 mb-3">
-        <div className={`w-8 h-8 rounded-full overflow-hidden border-2 ${tw.border} bg-gradient-to-br ${tw.gradient} to-transparent`}>
-          <img src={charIcon(breakdown.sourceCharacterId)} alt={name} className="w-full h-full object-cover" loading="lazy" />
+        <div className={`w-8 h-8 rounded-full overflow-hidden border-2 ${tw.border} bg-gradient-to-br ${tw.gradient} to-transparent flex items-center justify-center`}>
+          <img src={iconSrc} alt={name} className={isResonance ? "w-5 h-5 object-contain" : "w-full h-full object-cover"} loading="lazy" />
         </div>
         <div>
           <div className={`text-[12px] font-bold ${tw.text}`}>{name}</div>

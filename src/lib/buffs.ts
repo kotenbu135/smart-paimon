@@ -75,22 +75,32 @@ export function buildBuffBreakdown(
     });
   }
 
-  // Element resonance buffs (grouped under "resonance" source)
+  // Element resonance buffs (grouped by element)
   if (resonanceBuffs.length > 0) {
-    breakdowns.push({
-      sourceCharacterId: "resonance",
-      sourceCharacterName: "Element Resonance",
-      sourceElement: "Pyro", // placeholder — UI should handle "resonance" specially
-      buffs: resonanceBuffs.map((b): BuffBreakdownEntry => {
-        const { label } = parseBuffSource(b.source);
-        return {
-          name: label,
-          stat: b.stat,
-          value: b.value,
-          target: b.target,
-        };
-      }),
-    });
+    const byElement = new Map<GenshinElement, ResolvedBuff[]>();
+    for (const b of resonanceBuffs) {
+      const { label } = parseBuffSource(b.source);
+      const element = (label.charAt(0).toUpperCase() + label.slice(1)) as GenshinElement;
+      const arr = byElement.get(element);
+      if (arr) arr.push(b);
+      else byElement.set(element, [b]);
+    }
+    for (const [element, buffs] of byElement) {
+      breakdowns.push({
+        sourceCharacterId: "resonance",
+        sourceCharacterName: "Element Resonance",
+        sourceElement: element,
+        buffs: buffs.map((b): BuffBreakdownEntry => {
+          const { label } = parseBuffSource(b.source);
+          return {
+            name: label,
+            stat: b.stat,
+            value: b.value,
+            target: b.target,
+          };
+        }),
+      });
+    }
   }
 
   return breakdowns;

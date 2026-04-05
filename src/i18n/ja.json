@@ -50,6 +50,7 @@
     "moonsign": "ムーンサイン",
     "enemyConfig": "敵設定",
     "resolving": "チームステータスを計算中...",
-    "resolveError": "チーム計算に失敗しました"
+    "resolveError": "チーム計算に失敗しました",
+    "resonance": "元素共鳴"
   }
 }

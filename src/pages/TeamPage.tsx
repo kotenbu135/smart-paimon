@@ -8,6 +8,7 @@ import { TeamEnemyConfig } from "../components/team/TeamEnemyConfig";
 import { ReactionSelector } from "../components/team/ReactionSelector";
 import { BuffDetailTab } from "../components/team/BuffDetailTab";
 import { TeamDamageTable } from "../components/team/TeamDamageTable";
+import { StatsPanel } from "../components/detail/StatsPanel";
 import { useTeamStore } from "../stores/team";
 import { useGoodStore } from "../stores/good";
 import { useUIStore } from "../stores/ui";
@@ -21,6 +22,7 @@ export function TeamPage() {
   const enemyConfig = useTeamStore((s) => s.enemyConfig);
   const selectedReaction = useTeamStore((s) => s.selectedReaction);
   const resolveTeam = useTeamStore((s) => s.resolveTeam);
+  const resolvedStats = useTeamStore((s) => s.resolvedStats);
   const rawJson = useGoodStore((s) => s.rawJson);
   const wasmReady = useUIStore((s) => s.wasmReady);
 
@@ -48,8 +50,8 @@ export function TeamPage() {
                 {t("enemy.title")}
               </span>
               <TeamEnemyConfig />
-              <ReactionSelector />
             </section>
+            <ReactionSelector />
 
             <Tabs.Root value={activeTab} onValueChange={setActiveTab}>
               <Tabs.List className="flex gap-1 p-1 bg-navy-border/50 rounded-lg w-fit">
@@ -81,7 +83,18 @@ export function TeamPage() {
                   className="mt-4"
                 >
                   <Tabs.Content value="buffs" forceMount={activeTab === "buffs" ? true : undefined}>
-                    <BuffDetailTab />
+                    <div className="flex flex-col lg:flex-row gap-4">
+                      {resolvedStats && (
+                        <div className="lg:w-72 flex-shrink-0">
+                          <div className="lg:sticky lg:top-4">
+                            <StatsPanel stats={resolvedStats} />
+                          </div>
+                        </div>
+                      )}
+                      <div className="flex-grow min-w-0">
+                        <BuffDetailTab />
+                      </div>
+                    </div>
                   </Tabs.Content>
                   <Tabs.Content value="damage" forceMount={activeTab === "damage" ? true : undefined}>
                     <TeamDamageTable />
