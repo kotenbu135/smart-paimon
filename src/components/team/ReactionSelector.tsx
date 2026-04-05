@@ -21,16 +21,14 @@ export function ReactionSelector() {
   const currentKey = REACTIONS.find((r) => r.value === selectedReaction)?.key ?? "none";
 
   return (
-    <section className="bg-navy-card border border-navy-border rounded-xl p-3">
-      <div className="text-[8px] text-text-muted uppercase font-label mb-1">
-        {t("reaction.title")}
-      </div>
+    <div className="flex flex-col gap-1">
+      <label className="text-[10px] text-text-muted uppercase font-label">{t("reaction.title")}</label>
       <Select.Root value={currentKey} onValueChange={(v) => {
         const found = REACTIONS.find((r) => r.key === v);
         setReaction(found?.value ?? null);
       }}>
-        <Select.Trigger className="w-full bg-navy-page border border-navy-border rounded-md px-2 py-1.5
-          text-[10px] text-text-primary text-left focus:outline-none focus:border-gold transition-colors">
+        <Select.Trigger className="h-8 bg-navy-card border border-navy-border rounded-md px-3
+          text-[13px] text-text-primary text-left focus:outline-none focus:border-gold transition-colors">
           <Select.Value />
         </Select.Trigger>
         <Select.Portal>
@@ -50,6 +48,6 @@ export function ReactionSelector() {
           </Select.Content>
         </Select.Portal>
       </Select.Root>
-    </section>
+    </div>
   );
 }

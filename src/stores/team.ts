@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 import type {
   Enemy,
   Reaction,
@@ -66,26 +67,9 @@ interface TeamState {
   deleteTeam: (index: number) => void;
 }
 
-const STORAGE_KEY = "smart-paimon-teams";
-
-function loadSavedTeams(): SavedTeam[] {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : [];
-  } catch {
-    return [];
-  }
-}
-
-function persistTeams(teams: SavedTeam[]): void {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(teams));
-  } catch {
-    /* quota exceeded */
-  }
-}
-
-export const useTeamStore = create<TeamState>((set, get) => ({
+export const useTeamStore = create<TeamState>()(
+  persist(
+    (set, get) => ({
   members: [null, null, null, null],
   mainDpsIndex: 0,
   enemyConfig: { level: 90, resistance: 0.1, def_reduction: 0 },
@@ -94,7 +78,7 @@ export const useTeamStore = create<TeamState>((set, get) => ({
   soloResults: {},
   teamResults: {},
   buffBreakdown: [],
-  savedTeams: loadSavedTeams(),
+  savedTeams: [],
   isResolving: false,
   resolveError: null,
 
@@ -160,9 +144,7 @@ export const useTeamStore = create<TeamState>((set, get) => ({
   saveTeam: (name) => {
     const { members, mainDpsIndex, enemyConfig, savedTeams } = get();
     const newTeam: SavedTeam = { name, members: [...members], mainDpsIndex, enemyConfig };
-    const updated = [...savedTeams, newTeam];
-    persistTeams(updated);
-    set({ savedTeams: updated });
+    set({ savedTeams: [...savedTeams, newTeam] });
   },
 
   loadTeam: (index) => {
@@ -177,8 +159,18 @@ export const useTeamStore = create<TeamState>((set, get) => ({
   },
 
   deleteTeam: (index) => {
-    const updated = get().savedTeams.filter((_, i) => i !== index);
-    persistTeams(updated);
-    set({ savedTeams: updated });
+    set({ savedTeams: get().savedTeams.filter((_, i) => i !== index) });
   },
-}));
+    }),
+    {
+      name: "smart-paimon-team",
+      partialize: (state) => ({
+        members: state.members,
+        mainDpsIndex: state.mainDpsIndex,
+        enemyConfig: state.enemyConfig,
+        selectedReaction: state.selectedReaction,
+        savedTeams: state.savedTeams,
+      }),
+    },
+  ),
+);

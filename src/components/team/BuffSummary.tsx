@@ -21,7 +21,7 @@ export function BuffSummary({ breakdowns }: BuffSummaryProps) {
 
     for (const bd of breakdowns) {
       for (const buff of bd.buffs) {
-        const key = String(buff.stat);
+        const key = statToKey(buff.stat);
         if (!totals[key]) {
           totals[key] = { value: 0, isPercent: isPercentStat(buff.stat), label: key };
         }
@@ -51,6 +51,14 @@ export function BuffSummary({ breakdowns }: BuffSummaryProps) {
       </div>
     </div>
   );
+}
+
+function statToKey(stat: BuffableStat): string {
+  if (typeof stat === "object") {
+    const [key, value] = Object.entries(stat)[0];
+    return `${key}:${value}`;
+  }
+  return stat;
 }
 
 function isPercentStat(stat: BuffableStat): boolean {

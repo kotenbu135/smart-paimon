@@ -43,10 +43,13 @@ export function TeamPage() {
           <TeamSidebar />
 
           <div className="flex-grow flex flex-col gap-4">
-            <div className="flex flex-col sm:flex-row gap-3">
+            <section className="bg-navy-card border border-navy-border rounded-lg p-4 flex flex-wrap gap-6 items-center">
+              <span className="text-[12px] font-label font-bold text-text-secondary uppercase tracking-wider">
+                {t("enemy.title")}
+              </span>
               <TeamEnemyConfig />
               <ReactionSelector />
-            </div>
+            </section>
 
             <Tabs.Root value={activeTab} onValueChange={setActiveTab}>
               <Tabs.List className="flex gap-1 p-1 bg-navy-border/50 rounded-lg w-fit">
