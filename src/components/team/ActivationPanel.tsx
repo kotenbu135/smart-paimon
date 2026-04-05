@@ -1,7 +1,21 @@
 import { useEffect, useMemo } from "react";
-import type { CharacterBuild, BuffActivation } from "../../types/wasm";
+import type { CharacterBuild, BuffActivation, BuffActivationType, ManualActivation } from "../../types/wasm";
 import { getConditionalBuffs, type ConditionalBuffInfo } from "../../lib/conditionals";
 import { useTeamStore, type MemberActivations } from "../../stores/team";
+
+/** Extract the Manual activation part from any BuffActivationType */
+function getManualActivation(activation: BuffActivationType): ManualActivation | null {
+  if ("Manual" in activation) return activation.Manual;
+  if ("Both" in activation) return activation.Both[1];
+  return null; // Auto-only has no manual control
+}
+
+/** Check if an activation requires nightsoul */
+function isNightsoulRequired(activation: BuffActivationType): boolean {
+  if ("Auto" in activation) return activation.Auto === "NightsoulRequired";
+  if ("Both" in activation) return activation.Both[0] === "NightsoulRequired";
+  return false;
+}
 
 interface ActivationPanelProps {
   readonly build: Readonly<CharacterBuild>;
@@ -61,11 +75,13 @@ export function ActivationPanel({ build, memberIndex }: ActivationPanelProps) {
     if (idx === -1) return;
 
     const current = list[idx];
-    const activation = info.buff.activation;
-    const isStacks = typeof activation === "object" && "Manual" in activation && typeof activation.Manual === "object" && "Stacks" in activation.Manual;
+    const manual = getManualActivation(info.buff.activation);
+    if (!manual) return; // Auto-only buffs cannot be toggled
+
+    const isStacks = typeof manual === "object" && "Stacks" in manual;
 
     if (isStacks) {
-      const maxStacks = (activation.Manual as { Stacks: number }).Stacks;
+      const maxStacks = manual.Stacks;
       const currentStacks = current.stacks ?? 0;
       if (!current.active) {
         list[idx] = { name: current.name, active: true, stacks: maxStacks };
@@ -91,23 +107,28 @@ export function ActivationPanel({ build, memberIndex }: ActivationPanelProps) {
       {conditionals.map((info) => {
         const act = findActivation(info);
         const active = act?.active ?? false;
-        const activation = info.buff.activation;
-        const isStacks = typeof activation === "object" && "Manual" in activation && typeof activation.Manual === "object" && "Stacks" in activation.Manual;
-        const maxStacks = isStacks ? (activation.Manual as { Stacks: number }).Stacks : 0;
+        const manual = getManualActivation(info.buff.activation);
+        const nightsoul = isNightsoulRequired(info.buff.activation);
+        const isStacks = manual !== null && typeof manual === "object" && "Stacks" in manual;
+        const maxStacks = isStacks ? manual.Stacks : 0;
         const currentStacks = act?.stacks ?? 0;
+
+        // Auto-only buffs (no manual control) are not rendered
+        if (!manual) return null;
 
         return (
           <button
             key={info.buff.name}
             type="button"
             onClick={() => toggleActivation(info)}
-            title={info.buff.description}
+            title={`${info.buff.description}${nightsoul ? " (夜魂キャラのみ)" : ""}`}
             className={`px-2 py-0.5 rounded text-[9px] font-medium transition-colors
               ${active
                 ? "bg-gold/20 text-gold border border-gold/40"
                 : "bg-navy-border/50 text-text-muted border border-transparent hover:bg-navy-hover"
               }`}
           >
+            {nightsoul && <span className="mr-0.5" aria-label="夜魂キャラのみ">◆</span>}
             {info.label}
             {isStacks && active && (
               <span className="ml-0.5 text-[8px]">×{currentStacks}/{maxStacks}</span>

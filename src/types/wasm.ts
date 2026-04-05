@@ -148,6 +148,7 @@ export interface ResolvedBuff {
   stat: BuffableStat;
   value: number;
   target: BuffTarget;
+  origin: string | null;
 }
 
 export interface TeamMember {
@@ -156,6 +157,7 @@ export interface TeamMember {
   stats: StatProfile;
   buffs_provided: ResolvedBuff[];
   is_moonsign: boolean;
+  can_nightsoul: boolean;
 }
 
 export interface GoodImport {
@@ -229,14 +231,23 @@ export interface DynamicTalentBonus {
   per_stack: number[];
 }
 
+// Activation types for conditional buffs
+export type ManualActivation = "Toggle" | { Stacks: number };
+export type AutoCondition = "NightsoulRequired";
+export type BuffActivationType =
+  | { Manual: ManualActivation }
+  | { Auto: AutoCondition }
+  | { Both: [AutoCondition, ManualActivation] };
+
 // Conditional buff activation (weapon / artifact set)
 export interface ConditionalBuff {
   readonly name: string;
   readonly description: string;
   readonly stat: BuffableStat;
   readonly value: number;
+  readonly nightsoul_value: number | null;
   readonly target: BuffTarget;
-  readonly activation: { Manual: "Toggle" } | { Manual: { Stacks: number } };
+  readonly activation: BuffActivationType;
 }
 
 export interface BuffActivation {
@@ -251,7 +262,8 @@ export interface TalentConditionalBuff {
   readonly description: string;
   readonly stat: BuffableStat;
   readonly value: number;
+  readonly nightsoul_value: number | null;
   readonly target: BuffTarget;
-  readonly activation: { Manual: "Toggle" } | { Manual: { Stacks: number } };
+  readonly activation: BuffActivationType;
   readonly scales_on: string | null;
 }
