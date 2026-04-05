@@ -13,21 +13,32 @@ export function ActivationPanel({ build, memberIndex }: ActivationPanelProps) {
   const stored = useTeamStore((s) => s.activations[memberIndex]);
   const conditionals = useMemo(() => getConditionalBuffs(build), [build]);
 
-  // Initialize activations when conditionals change (all off by default)
+  // Initialize or reconcile activations when conditionals change
   useEffect(() => {
     if (conditionals.length === 0) return;
-    if (stored) return; // already initialized
 
-    const weaponActs: BuffActivation[] = [];
-    const artifactActs: BuffActivation[] = [];
-    const talentActs: BuffActivation[] = [];
-    for (const c of conditionals) {
-      const act: BuffActivation = { name: c.buff.name, active: false };
-      if (c.kind === "weapon") weaponActs.push(act);
-      else if (c.kind === "artifact") artifactActs.push(act);
-      else talentActs.push(act);
+    const [existingWeapon = [], existingArtifact = [], existingTalent = []] = stored ?? [[], [], []];
+
+    const reconcile = (kind: ConditionalBuffInfo["kind"], existing: readonly BuffActivation[]): BuffActivation[] => {
+      const names = conditionals.filter((c) => c.kind === kind).map((c) => c.buff.name);
+      const result: BuffActivation[] = names.map((name) => {
+        const found = existing.find((a) => a.name === name);
+        return found ? { ...found } : { name, active: false };
+      });
+      return result;
+    };
+
+    const weaponActs = reconcile("weapon", existingWeapon);
+    const artifactActs = reconcile("artifact", existingArtifact);
+    const talentActs = reconcile("talent", existingTalent);
+
+    // Only update if there's a mismatch
+    const match = (acts: BuffActivation[], existing: readonly BuffActivation[]) =>
+      acts.length === existing.length && acts.every((a, i) => a.name === existing[i]?.name);
+
+    if (!stored || !match(weaponActs, existingWeapon) || !match(artifactActs, existingArtifact) || !match(talentActs, existingTalent)) {
+      setActivation(memberIndex, [weaponActs, artifactActs, talentActs]);
     }
-    setActivation(memberIndex, [weaponActs, artifactActs, talentActs]);
   }, [conditionals, memberIndex, setActivation, stored]);
 
   if (conditionals.length === 0) return null;
