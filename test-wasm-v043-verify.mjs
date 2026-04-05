@@ -72,20 +72,30 @@ console.log('\n=== A. Furina burst: max fanfare ===');
     fail++;
   }
 
+  // v0.4.4: C1+ returns 2 entries (furina:burst + furina:c1), sum them
+  function furinaTotalDmgBonus(constellation, burstLv) {
+    const r = get_character_team_buffs(good, 'furina', constellation, new Uint32Array([1, 10, burstLv]));
+    return r.filter(b => b.stat === 'DmgBonus').reduce((a, b) => a + b.value, 0);
+  }
+
   // Test C0 Lv10: 300 * 0.0025 = 0.75
-  const r0 = get_character_team_buffs(good, 'furina', 0, new Uint32Array([1, 10, 10]));
-  const burst0 = r0.find(b => b.source === 'furina:burst');
-  expect('Furina C0 Burst Lv10 DmgBonus', burst0?.value ?? -1, 0.75, 0.05);
+  expect('Furina C0 Burst Lv10 total DmgBonus', furinaTotalDmgBonus(0, 10), 0.75, 0.05);
 
-  // Test C1 Lv10: 400 * 0.0025 = 1.00 (C1 raises max fanfare by 100)
-  const r1 = get_character_team_buffs(good, 'furina', 1, new Uint32Array([1, 10, 10]));
-  const burst1 = r1.find(b => b.source === 'furina:burst');
-  expect('Furina C1 Burst Lv10 DmgBonus (400pt max)', burst1?.value ?? -1, 1.00, 0.05);
+  // Test C1 Lv10: 400 * 0.0025 = 1.00 (split: burst=0.75 + c1=0.25)
+  expect('Furina C1 Burst Lv10 total DmgBonus', furinaTotalDmgBonus(1, 10), 1.00, 0.05);
 
-  // Test C2 Lv10: same as C1 (400 * 0.0025 = 1.00)
-  const r2 = get_character_team_buffs(good, 'furina', 2, new Uint32Array([1, 10, 10]));
-  const burst2 = r2.find(b => b.source === 'furina:burst');
-  expect('Furina C2 Burst Lv10 DmgBonus (400pt max)', burst2?.value ?? -1, 1.00, 0.05);
+  // Test C2 Lv10: same as C1
+  expect('Furina C2 Burst Lv10 total DmgBonus', furinaTotalDmgBonus(2, 10), 1.00, 0.05);
+
+  // Test C1 Lv13: 400 * 0.0031 = 1.24
+  expect('Furina C1 Burst Lv13 total DmgBonus', furinaTotalDmgBonus(1, 13), 1.24, 0.05);
+
+  // Verify C1 extra entry exists
+  {
+    const r1 = get_character_team_buffs(good, 'furina', 1, new Uint32Array([1, 10, 10]));
+    const c1entry = r1.find(b => b.source === 'furina:c1');
+    expectExists('Furina C1 extra entry (furina:c1)', c1entry);
+  }
 }
 
 // ============================================================
