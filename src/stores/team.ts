@@ -145,6 +145,7 @@ export const useTeamStore = create<TeamState>()(
         activations,
         getBuild: goodStore.getBuild,
         rawJson: goodStore.rawJson,
+        travelerElement: goodStore.travelerElement,
       });
 
       set({

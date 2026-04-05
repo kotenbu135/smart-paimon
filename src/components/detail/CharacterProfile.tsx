@@ -126,9 +126,9 @@ export function CharacterProfile({ build }: CharacterProfileProps) {
       >
         <div className="flex justify-between items-center mb-3">
           <h3 className="text-[14px] font-semibold text-text-primary truncate">
-            {artifacts.four_piece_set?.name ?? artifacts.sets[0]?.name ?? t("detail.artifacts")}
+            {artifacts.sets[0]?.set.name ?? t("detail.artifacts")}
           </h3>
-          {artifacts.four_piece_set && (
+          {artifacts.sets.length === 1 && artifacts.sets[0]?.piece_count >= 4 && (
             <span className="bg-gold/10 text-gold text-[10px] px-2 py-0.5 rounded border border-gold/30 font-bold">
               (4)
             </span>

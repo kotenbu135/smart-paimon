@@ -2,7 +2,6 @@ import { resolve_team_stats, apply_team_debuffs, find_character, build_team_memb
 import { buildStats } from "./stats";
 import {
   computeTalentDamage,
-  getReactionBonus,
   type TalentRow,
 } from "./damage";
 import { assembleResonanceBuffs, buildBuffBreakdown } from "./buffs";
@@ -25,9 +24,10 @@ export function buildTeamMember(
   build: CharacterBuild,
   rawJson: string,
   activations?: MemberActivations | null,
+  travelerElement?: string | null,
 ): TeamMember {
   const [weaponActs, artifactActs] = activations ?? [[], []];
-  return wasmBuildTeamMember(rawJson, build.character.id, weaponActs, artifactActs) as TeamMember;
+  return wasmBuildTeamMember(rawJson, build.character.id, weaponActs, artifactActs, travelerElement) as TeamMember;
 }
 
 // ---------- WASM v0.3.0 TeamResolveResult types ----------
@@ -119,8 +119,7 @@ function computeAllCategories(
   const talents = charData.talents;
   const [normalLv, skillLv, burstLv] = build.talent_levels;
   const el = build.character.element;
-  const reactionBonus = getReactionBonus(build.artifacts.four_piece_set, reaction)
-    + (damageContext?.amplifying_bonus ?? 0);
+  const reactionBonus = damageContext?.amplifying_bonus ?? 0;
 
   // Apply enemy debuffs via WASM (element-specific resistance + def reduction)
   const effectiveEnemy = enemyDebuffs
@@ -158,6 +157,7 @@ export interface ResolveTeamInput {
   readonly activations: readonly (MemberActivations | null)[];
   readonly getBuild: (id: string) => CharacterBuild | undefined;
   readonly rawJson: string | null;
+  readonly travelerElement?: string | null;
 }
 
 export interface ResolveTeamOutput {
@@ -168,7 +168,7 @@ export interface ResolveTeamOutput {
 }
 
 export function resolveTeamDamage(input: ResolveTeamInput): ResolveTeamOutput {
-  const { members, mainDpsIndex, enemyConfig, selectedReaction, activations, getBuild, rawJson } = input;
+  const { members, mainDpsIndex, enemyConfig, selectedReaction, activations, getBuild, rawJson, travelerElement } = input;
 
   const mainDpsId = members[mainDpsIndex];
   if (!mainDpsId || !rawJson) {
@@ -181,7 +181,7 @@ export function resolveTeamDamage(input: ResolveTeamInput): ResolveTeamOutput {
   }
 
   // 1. Solo stats via build_stats_from_good
-  const soloStats = buildStats(rawJson, mainDpsId);
+  const soloStats = buildStats(rawJson, mainDpsId, travelerElement);
   if (!soloStats) {
     return { soloResults: {}, teamResults: {}, resolvedStats: null, buffBreakdown: [] };
   }
@@ -202,7 +202,7 @@ export function resolveTeamDamage(input: ResolveTeamInput): ResolveTeamOutput {
     if (!id) continue;
     const build = getBuild(id);
     if (!build) continue;
-    const member = buildTeamMember(build, rawJson, activations[i]);
+    const member = buildTeamMember(build, rawJson, activations[i], travelerElement);
     teamMembers.push(member);
     indexMap.push(i);
     memberBuilds.push({
@@ -246,7 +246,7 @@ export function resolveTeamDamage(input: ResolveTeamInput): ResolveTeamOutput {
   };
 
   // 6. Build buff breakdown for UI
-  const buffBreakdown = buildBuffBreakdown(memberBuilds, memberBuffs, resonanceBuffs);
+  const buffBreakdown = buildBuffBreakdown(memberBuilds, memberBuffs, resonanceBuffs, targetIdx);
 
   return {
     soloResults,

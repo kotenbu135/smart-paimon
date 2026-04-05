@@ -11,14 +11,14 @@ export function BuffDetailTab() {
   return (
     <>
       <div className="flex flex-col gap-3">
-        {col1.map((bd) => (
-          <BuffCard key={bd.sourceCharacterId} breakdown={bd} />
+        {col1.map((bd, i) => (
+          <BuffCard key={`${bd.sourceCharacterId}-${i}`} breakdown={bd} />
         ))}
       </div>
       {col2.length > 0 && (
         <div className="flex flex-col gap-3">
-          {col2.map((bd) => (
-            <BuffCard key={bd.sourceCharacterId} breakdown={bd} />
+          {col2.map((bd, i) => (
+            <BuffCard key={`${bd.sourceCharacterId}-${mid + i}`} breakdown={bd} />
           ))}
         </div>
       )}

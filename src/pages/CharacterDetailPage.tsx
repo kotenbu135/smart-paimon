@@ -17,11 +17,12 @@ export function CharacterDetailPage() {
   const { id } = useParams<{ id: string }>();
   const getBuild = useGoodStore((s) => s.getBuild);
   const rawJson = useGoodStore((s) => s.rawJson);
+  const travelerElement = useGoodStore((s) => s.travelerElement);
   const { enemyConfig } = useCalcStore();
   const build = id ? getBuild(id) : undefined;
   const stats = useMemo(
-    () => (build && rawJson && id ? buildStats(rawJson, id) : null),
-    [build, rawJson, id]
+    () => (build && rawJson && id ? buildStats(rawJson, id, travelerElement) : null),
+    [build, rawJson, id, travelerElement]
   );
 
   if (!build || !stats) return <Navigate to="/characters" replace />;

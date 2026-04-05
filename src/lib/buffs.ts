@@ -22,8 +22,31 @@ export function buildBuffBreakdown(
   memberBuilds: readonly (BuildInfo | null)[],
   memberBuffs: readonly (readonly ResolvedBuff[])[],
   resonanceBuffs: readonly ResolvedBuff[],
+  targetIndex?: number,
 ): readonly BuffBreakdown[] {
   const breakdowns: BuffBreakdown[] = [];
+
+  // Self-buffs for the target (main DPS) character — weapon passives, artifact set effects, talent passives
+  if (targetIndex !== undefined) {
+    const targetInfo = memberBuilds[targetIndex];
+    const targetBuffs = memberBuffs[targetIndex];
+    if (targetInfo && targetBuffs) {
+      const selfBuffs = targetBuffs.filter((b) => b.target === "OnlySelf");
+      if (selfBuffs.length > 0) {
+        breakdowns.push({
+          sourceCharacterId: targetInfo.characterId,
+          sourceCharacterName: targetInfo.characterName,
+          sourceElement: targetInfo.element,
+          buffs: selfBuffs.map((b): BuffBreakdownEntry => ({
+            name: b.source,
+            stat: b.stat,
+            value: b.value,
+            target: b.target,
+          })),
+        });
+      }
+    }
+  }
 
   // Per-character buffs (exclude OnlySelf — those are self-buffs, not team contributions)
   for (let i = 0; i < memberBuilds.length; i++) {

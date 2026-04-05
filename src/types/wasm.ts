@@ -181,9 +181,13 @@ export interface WeaponBuild {
   refinement: number;
 }
 
+export interface ArtifactSetEntry {
+  set: ArtifactSetData;
+  piece_count: number;
+}
+
 export interface ArtifactsBuild {
-  sets: ArtifactSetData[];
-  four_piece_set: ArtifactSetData | null;
+  sets: ArtifactSetEntry[];
   stats: StatProfile;
 }
 
@@ -216,6 +220,13 @@ export interface WeaponData {
 export interface ArtifactSetData {
   id: string;
   name: string;
+}
+
+// Dynamic talent multiplier bonus (e.g. Mavuika Fighting Spirit, Raiden Resolve)
+export interface DynamicTalentBonus {
+  name: string;
+  max_stacks: number;
+  per_stack: number[];
 }
 
 // Conditional buff activation (weapon / artifact set)

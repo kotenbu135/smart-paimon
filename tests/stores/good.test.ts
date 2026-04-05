@@ -2,10 +2,10 @@ import { describe, it, expect, beforeEach, vi } from "vitest";
 import { useGoodStore } from "../../src/stores/good";
 
 vi.mock("@kotenbu135/genshin-calc-wasm", () => ({
-  import_good: vi.fn(),
+  import_good_with_options: vi.fn(),
 }));
 
-import { import_good } from "@kotenbu135/genshin-calc-wasm";
+import { import_good_with_options } from "@kotenbu135/genshin-calc-wasm";
 
 const mockBuild = {
   character: {
@@ -21,8 +21,7 @@ const mockBuild = {
   },
   artifacts: {
     stats: { base_hp: 0, base_atk: 0, base_def: 0, hp_percent: 0, atk_percent: 0.466, def_percent: 0, hp_flat: 4780, atk_flat: 311, def_flat: 0, elemental_mastery: 40, crit_rate: 0.331, crit_dmg: 0.662, energy_recharge: 0, dmg_bonus: 0.466 },
-    sets: [{ id: "crimson_witch", name: "Crimson Witch of Flames" }],
-    four_piece_set: { id: "crimson_witch", name: "Crimson Witch of Flames" },
+    sets: [{ set: { id: "crimson_witch", name: "Crimson Witch of Flames" }, piece_count: 4 }],
   },
 };
 
@@ -38,7 +37,7 @@ describe("GoodStore", () => {
   });
 
   it("imports GOOD data", () => {
-    vi.mocked(import_good).mockReturnValue({ source: "test", version: 1, builds: [mockBuild], warnings: [] });
+    vi.mocked(import_good_with_options).mockReturnValue({ source: "test", version: 1, builds: [mockBuild], warnings: [] });
     useGoodStore.getState().importGood('{"foo":"bar"}');
     expect(useGoodStore.getState().builds).toHaveLength(1);
     expect(useGoodStore.getState().builds[0].character.id).toBe("diluc");
@@ -46,13 +45,13 @@ describe("GoodStore", () => {
   });
 
   it("stores warnings", () => {
-    vi.mocked(import_good).mockReturnValue({ source: "test", version: 1, builds: [], warnings: [{ kind: "unknown_character", message: "Unknown: Foo" }] });
+    vi.mocked(import_good_with_options).mockReturnValue({ source: "test", version: 1, builds: [], warnings: [{ kind: "unknown_character", message: "Unknown: Foo" }] });
     useGoodStore.getState().importGood("{}");
     expect(useGoodStore.getState().warnings).toHaveLength(1);
   });
 
   it("handles import errors", () => {
-    vi.mocked(import_good).mockImplementation(() => { throw new Error("Invalid GOOD format"); });
+    vi.mocked(import_good_with_options).mockImplementation(() => { throw new Error("Invalid GOOD format"); });
     useGoodStore.getState().importGood("bad");
     expect(useGoodStore.getState().builds).toEqual([]);
     expect(useGoodStore.getState().error).toBe("Invalid GOOD format");
@@ -60,14 +59,14 @@ describe("GoodStore", () => {
   });
 
   it("finds build by ID", () => {
-    vi.mocked(import_good).mockReturnValue({ source: "test", version: 1, builds: [mockBuild], warnings: [] });
+    vi.mocked(import_good_with_options).mockReturnValue({ source: "test", version: 1, builds: [mockBuild], warnings: [] });
     useGoodStore.getState().importGood("{}");
     expect(useGoodStore.getState().getBuild("diluc")).toBeDefined();
     expect(useGoodStore.getState().getBuild("unknown")).toBeUndefined();
   });
 
   it("clears state", () => {
-    vi.mocked(import_good).mockReturnValue({ source: "test", version: 1, builds: [mockBuild], warnings: [] });
+    vi.mocked(import_good_with_options).mockReturnValue({ source: "test", version: 1, builds: [mockBuild], warnings: [] });
     useGoodStore.getState().importGood("{}");
     useGoodStore.getState().clear();
     expect(useGoodStore.getState().builds).toEqual([]);

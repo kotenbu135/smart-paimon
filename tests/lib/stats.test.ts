@@ -35,7 +35,7 @@ describe("buildStats", () => {
     vi.mocked(build_stats_from_good).mockReturnValue(mockStats);
     const stats = buildStats('{"test":"data"}', "diluc");
     expect(stats).toEqual(mockStats);
-    expect(build_stats_from_good).toHaveBeenCalledWith('{"test":"data"}', "diluc");
+    expect(build_stats_from_good).toHaveBeenCalledWith('{"test":"data"}', "diluc", undefined);
   });
 
   it("returns null on error", () => {

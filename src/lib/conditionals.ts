@@ -28,15 +28,15 @@ export function getConditionalBuffs(build: CharacterBuild): readonly Conditional
   }
 
   // Artifact 4-piece conditional buffs
-  const fourPiece = build.artifacts.four_piece_set;
+  const fourPiece = build.artifacts.sets.find((s) => s.piece_count >= 4);
   if (fourPiece) {
-    const setData = find_artifact_set(fourPiece.id);
+    const setData = find_artifact_set(fourPiece.set.id);
     const conditionals = setData?.four_piece?.conditional_buffs;
     if (conditionals) {
       for (const cb of conditionals) {
         results.push({
           kind: "artifact",
-          label: fourPiece.name,
+          label: fourPiece.set.name,
           buff: cb,
         });
       }

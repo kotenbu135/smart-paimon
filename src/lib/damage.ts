@@ -1,5 +1,5 @@
 import { calculate_damage, calculate_transformative, calculate_lunar, find_character } from "@kotenbu135/genshin-calc-wasm";
-import type { Stats, Enemy, DamageInput, Reaction, DamageType, ArtifactSetData } from "../types/wasm";
+import type { Stats, Enemy, DamageInput, Reaction, DamageType } from "../types/wasm";
 
 export interface TalentRow { name: string; multiplier: number; nonCrit: number; crit: number; average: number; }
 export interface TransformativeRow { name: string; damage: number; }
@@ -14,16 +14,6 @@ export function isTransformative(r: Reaction): boolean { return (typeof r === "s
 export function isLunar(r: Reaction): boolean { return typeof r === "string" && LUNAR_REACTIONS.has(r); }
 export function isAmplifyingOrAdditive(r: Reaction): boolean { return typeof r === "string" && (AMPLIFYING_REACTIONS.has(r) || ADDITIVE_REACTIONS.has(r)); }
 
-const REACTION_BONUS_MAP: Record<string, Record<string, number>> = {
-  crimson_witch: { Vaporize: 0.15, Melt: 0.15, Overloaded: 0.40, Burning: 0.40, Burgeon: 0.40 },
-  thundering_fury: { Overloaded: 0.40, ElectroCharged: 0.40, Superconduct: 0.40, Hyperbloom: 0.40, Aggravate: 0.20 },
-};
-
-export function getReactionBonus(fourPieceSet: ArtifactSetData | null, reaction: Reaction | null): number {
-  if (!fourPieceSet || !reaction || typeof reaction !== "string") return 0;
-  return REACTION_BONUS_MAP[fourPieceSet.id]?.[reaction] ?? 0;
-}
-
 export function getTalentData(characterId: string) {
   const full = find_character(characterId);
   if (!full?.talents) return null;
@@ -37,7 +27,11 @@ export function computeTalentDamage(
 ): TalentRow[] {
   if (!scalings || !Array.isArray(scalings)) return [];
   return scalings.map((s) => {
-    const multiplier = s.values?.[talentLevel - 1] ?? 0;
+    const baseMultiplier = s.values?.[talentLevel - 1] ?? 0;
+    const db = s.dynamic_bonus;
+    const multiplier = db
+      ? baseMultiplier + db.max_stacks * (db.per_stack[talentLevel - 1] ?? 0)
+      : baseMultiplier;
     const dmgReaction = reaction && isAmplifyingOrAdditive(reaction) ? reaction : null;
     const input: DamageInput = {
       character_level: characterLevel, stats, talent_multiplier: multiplier,
