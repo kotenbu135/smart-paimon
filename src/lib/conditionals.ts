@@ -27,18 +27,34 @@ export function getConditionalBuffs(build: CharacterBuild): readonly Conditional
     }
   }
 
-  // Artifact 4-piece conditional buffs
-  const fourPiece = build.artifacts.sets.find((s) => s.piece_count >= 4);
-  if (fourPiece) {
-    const setData = find_artifact_set(fourPiece.set.id);
-    const conditionals = setData?.four_piece?.conditional_buffs;
-    if (conditionals) {
-      for (const cb of conditionals) {
-        results.push({
-          kind: "artifact",
-          label: fourPiece.set.name,
-          buff: cb,
-        });
+  // Artifact conditional buffs (2-piece and 4-piece)
+  for (const entry of build.artifacts.sets) {
+    const setData = find_artifact_set(entry.set.id);
+    if (!setData) continue;
+
+    if (entry.piece_count >= 2) {
+      const twoPieceConditionals = setData.two_piece?.conditional_buffs;
+      if (twoPieceConditionals) {
+        for (const cb of twoPieceConditionals) {
+          results.push({
+            kind: "artifact",
+            label: entry.set.name,
+            buff: cb,
+          });
+        }
+      }
+    }
+
+    if (entry.piece_count >= 4) {
+      const fourPieceConditionals = setData.four_piece?.conditional_buffs;
+      if (fourPieceConditionals) {
+        for (const cb of fourPieceConditionals) {
+          results.push({
+            kind: "artifact",
+            label: entry.set.name,
+            buff: cb,
+          });
+        }
       }
     }
   }
