@@ -1,8 +1,12 @@
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import type { ExtendedStats } from "../../types/wasm";
+import type { TFunction } from "i18next";
+import type { ExtendedStats, BuffableStat } from "../../types/wasm";
+import type { BuffBreakdown } from "../../stores/team";
 
 interface StatsPanelProps {
   readonly stats: Readonly<ExtendedStats>;
+  readonly buffBreakdowns?: readonly Readonly<BuffBreakdown>[];
 }
 
 const fmt = (v: number, pct: boolean) =>
@@ -23,7 +27,59 @@ const ELEMENT_BONUSES: Array<{
   { key: "physical_dmg_bonus", labelKey: "element.physical", color: "#aabbcc" },
 ];
 
-export function StatsPanel({ stats }: StatsPanelProps) {
+const FLAT_BUFF_STATS = new Set([
+  "HpFlat", "AtkFlat", "DefFlat", "ElementalMastery",
+  "NormalAtkFlatDmg", "ChargedAtkFlatDmg", "PlungingAtkFlatDmg",
+  "SkillFlatDmg", "BurstFlatDmg",
+]);
+
+interface AggregatedBuff {
+  readonly label: string;
+  readonly value: number;
+  readonly isPercent: boolean;
+}
+
+function aggregateBuffs(breakdowns: readonly Readonly<BuffBreakdown>[], t: TFunction): AggregatedBuff[] {
+  const totals: Record<string, { value: number; isPercent: boolean; label: string }> = {};
+
+  for (const bd of breakdowns) {
+    for (const buff of bd.buffs) {
+      const key = statToKey(buff.stat);
+      if (!totals[key]) {
+        totals[key] = { value: 0, isPercent: isPercentStat(buff.stat), label: localizeBuffStat(buff.stat, t) };
+      }
+      totals[key].value += buff.value;
+    }
+  }
+
+  return Object.values(totals).map(({ label, value, isPercent }) => ({ label, value, isPercent }));
+}
+
+function statToKey(stat: BuffableStat): string {
+  if (typeof stat === "object") {
+    const [key, value] = Object.entries(stat)[0];
+    return `${key}:${value}`;
+  }
+  return stat;
+}
+
+function isPercentStat(stat: BuffableStat): boolean {
+  if (typeof stat === "object") return true;
+  return !FLAT_BUFF_STATS.has(stat as string);
+}
+
+function localizeBuffStat(stat: BuffableStat, t: TFunction): string {
+  if (typeof stat === "object") {
+    const [type, element] = Object.entries(stat)[0];
+    const elementLabel = t(`element.${(element as string).toLowerCase()}`);
+    return t(`buff.stat.${type}`, { element: elementLabel });
+  }
+  const key = `buff.stat.${stat}`;
+  const translated = t(key);
+  return translated !== key ? translated : stat;
+}
+
+export function StatsPanel({ stats, buffBreakdowns }: StatsPanelProps) {
   const { t } = useTranslation();
 
   const baseRows = [
@@ -41,6 +97,11 @@ export function StatsPanel({ stats }: StatsPanelProps) {
 
   const activeElementBonuses = ELEMENT_BONUSES.filter(
     ({ key }) => (stats[key] as number) > 0
+  );
+
+  const aggregated = useMemo(
+    () => (buffBreakdowns && buffBreakdowns.length > 0 ? aggregateBuffs(buffBreakdowns, t) : []),
+    [buffBreakdowns, t],
   );
 
   return (
@@ -82,6 +143,25 @@ export function StatsPanel({ stats }: StatsPanelProps) {
                 </span>
                 <span className="text-[14px] font-mono" style={{ color }}>
                   {fmt(stats[key] as number, true)}
+                </span>
+              </div>
+            ))}
+          </>
+        )}
+
+        {aggregated.length > 0 && (
+          <>
+            <div className="px-3 py-1 mt-1 text-[10px] font-bold tracking-widest text-gold uppercase border-b border-navy-border/50">
+              {t("team.buffTotal")}
+            </div>
+            {aggregated.map((buff) => (
+              <div
+                key={buff.label}
+                className="flex justify-between items-center h-9 px-3 border-b border-navy-border/50 last:border-0"
+              >
+                <span className="text-[13px] text-text-secondary">{buff.label}</span>
+                <span className="text-[14px] font-mono text-green-500">
+                  {buff.isPercent ? `+${(buff.value * 100).toFixed(1)}%` : `+${buff.value.toLocaleString()}`}
                 </span>
               </div>
             ))}

@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { AnimatedNumber } from "../ui/AnimatedNumber";
 import { useTeamStore, type TalentCategoryResults } from "../../stores/team";
 import { useGoodStore } from "../../stores/good";
+import { localizeTalentName } from "../../lib/localize";
 import type { DamageResult } from "../../types/wasm";
 
 const tabOrder = ["normal", "skill", "burst"] as const;
@@ -17,13 +18,12 @@ const TAB_TO_CATEGORY: Record<TabKey, (keyof TalentCategoryResults)[]> = {
 };
 
 export function TeamDamageTable() {
-  const { t } = useTranslation();
-  const { members, mainDpsIndex, soloResults, teamResults } = useTeamStore();
+  const { t, i18n } = useTranslation();
+  const { members, mainDpsIndex, teamResults } = useTeamStore();
   const getBuild = useGoodStore((s) => s.getBuild);
 
   const mainDpsId = members[mainDpsIndex];
   const build = mainDpsId ? getBuild(mainDpsId) : undefined;
-  const soloData = mainDpsId ? soloResults[mainDpsId] : undefined;
   const teamData = mainDpsId ? teamResults[mainDpsId] : undefined;
 
   const [activeTab, setActiveTab] = useState<TabKey>("normal");
@@ -35,7 +35,7 @@ export function TeamDamageTable() {
     setActiveTab(v);
   };
 
-  if (!build || !soloData) {
+  if (!build || !teamData) {
     return (
       <div className="text-text-muted text-[12px] text-center py-8">
         {t("team.noTeamMembers")}
@@ -43,9 +43,7 @@ export function TeamDamageTable() {
     );
   }
 
-  const soloRows: DamageResult[] = TAB_TO_CATEGORY[activeTab].flatMap((k) => soloData[k] ?? []);
-  const teamRows: DamageResult[] = TAB_TO_CATEGORY[activeTab].flatMap((k) => teamData?.[k] ?? []);
-
+  const rows: DamageResult[] = TAB_TO_CATEGORY[activeTab].flatMap((k) => teamData[k] ?? []);
   const el = build.character.element;
 
   const tabs = [
@@ -80,40 +78,24 @@ export function TeamDamageTable() {
           exit={{ opacity: 0, x: direction * -30 }}
           transition={{ duration: 0.2, ease: "easeOut" }}
         >
-          <div className="grid grid-cols-[1fr_repeat(7,minmax(0,1fr))] gap-px text-[10px] font-label text-text-muted uppercase tracking-wider mb-1">
+          <div className="grid grid-cols-[1fr_repeat(3,minmax(0,1fr))] gap-px text-[10px] font-label text-text-muted uppercase tracking-wider mb-1">
             <div className="px-2 py-1.5">{t("detail.talentName")}</div>
-            <div className="px-2 py-1.5 text-right">{t("team.solo")} NC</div>
-            <div className="px-2 py-1.5 text-right">{t("team.solo")} C</div>
-            <div className="px-2 py-1.5 text-right">{t("team.solo")} Avg</div>
-            <div className="px-2 py-1.5 text-right">{t("team.withTeam")} NC</div>
-            <div className="px-2 py-1.5 text-right">{t("team.withTeam")} C</div>
-            <div className="px-2 py-1.5 text-right">{t("team.withTeam")} Avg</div>
-            <div className="px-2 py-1.5 text-right">{t("team.diff")}</div>
+            <div className="px-2 py-1.5 text-right">{t("detail.nonCrit")}</div>
+            <div className="px-2 py-1.5 text-right">{t("detail.crit")}</div>
+            <div className="px-2 py-1.5 text-right">{t("detail.average")}</div>
           </div>
 
           <div className="space-y-0.5">
-            {soloRows.map((soloRow, i) => {
-              const teamRow = teamRows[i];
-              const diff = soloRow.average > 0 && teamRow
-                ? ((teamRow.average - soloRow.average) / soloRow.average) * 100
-                : 0;
-              const diffColor = diff >= 0 ? "text-green-500" : "text-red-400";
-
-              return (
-                <div key={i} className="grid grid-cols-[1fr_repeat(7,minmax(0,1fr))] gap-px bg-navy-card rounded-md">
-                  <div className="px-2 py-2 text-[11px] text-text-primary">Row {i + 1}</div>
-                  <DmgCell value={soloRow.non_crit} />
-                  <DmgCell value={soloRow.crit} />
-                  <DmgCell value={soloRow.average} bold />
-                  <DmgCell value={teamRow?.non_crit ?? 0} team />
-                  <DmgCell value={teamRow?.crit ?? 0} team />
-                  <DmgCell value={teamRow?.average ?? 0} team bold />
-                  <div className={`px-2 py-2 text-right text-[11px] font-mono font-bold ${diffColor}`}>
-                    {diff >= 0 ? "+" : ""}{diff.toFixed(0)}%
-                  </div>
+            {rows.map((row, i) => (
+              <div key={i} className="grid grid-cols-[1fr_repeat(3,minmax(0,1fr))] gap-px bg-navy-card rounded-md">
+                <div className="px-2 py-2 text-[11px] text-text-primary truncate">
+                  {localizeTalentName(row.name, i18n.language)}
                 </div>
-              );
-            })}
+                <DmgCell value={row.non_crit} />
+                <DmgCell value={row.crit} />
+                <DmgCell value={row.average} bold />
+              </div>
+            ))}
           </div>
         </motion.div>
       </AnimatePresence>
@@ -124,14 +106,12 @@ export function TeamDamageTable() {
 interface DmgCellProps {
   readonly value: number;
   readonly bold?: boolean;
-  readonly team?: boolean;
 }
 
-function DmgCell({ value, bold, team }: DmgCellProps) {
+function DmgCell({ value, bold }: DmgCellProps) {
   return (
-    <div className={`px-2 py-2 text-right text-[11px] font-mono
-      ${bold ? "font-bold" : ""}
-      ${team ? "text-green-400" : "text-text-primary"}`}
+    <div className={`px-2 py-2 text-right text-[11px] font-mono text-text-primary
+      ${bold ? "font-bold" : ""}`}
     >
       <AnimatedNumber value={value} formatFn={(v) => Math.round(v).toLocaleString()} />
     </div>

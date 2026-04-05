@@ -1,19 +1,6 @@
-import type { CharacterBuild, Element as GenshinElement, ResolvedBuff } from "../types/wasm";
+import type { Element as GenshinElement, ResolvedBuff } from "../types/wasm";
 import type { BuffBreakdown, BuffBreakdownEntry } from "../stores/team";
 import { getResonanceBuffs } from "../data/resonance";
-import { getArtifactTeamBuffs } from "../data/artifact-buffs";
-import { getWeaponTeamBuffs } from "../data/weapon-buffs";
-
-// ---------- Buff assembly for TeamMember.buffs_provided ----------
-// Character buffs are now computed by WASM (get_character_team_buffs) in buildTeamMember.
-// This function assembles only weapon and artifact buffs.
-
-export function assembleBuffsProvided(build: CharacterBuild): readonly ResolvedBuff[] {
-  return [
-    ...getWeaponTeamBuffs(build),
-    ...getArtifactTeamBuffs(build.artifacts.four_piece_set?.id, build.character.id),
-  ];
-}
 
 // ---------- Element resonance (applied as if from a virtual "resonance" member) ----------
 
@@ -24,21 +11,6 @@ export function assembleResonanceBuffs(
 }
 
 // ---------- BuffBreakdown for UI ----------
-
-function parseBuffSource(source: string): { characterId: string; label: string } {
-  // Formats:
-  //   "bennett:burst" → characterId=bennett, label=burst
-  //   "bennett:weapon:ttds" → characterId=bennett, label=weapon:ttds
-  //   "resonance:pyro" → characterId=resonance, label=pyro
-  //   "artifact:noblesse_oblige" → characterId=artifact, label=noblesse_oblige
-  //   "kazuha:artifact:noblesse_oblige" → characterId=kazuha, label=artifact:noblesse_oblige
-  const firstColon = source.indexOf(":");
-  if (firstColon === -1) return { characterId: source, label: source };
-  return {
-    characterId: source.slice(0, firstColon),
-    label: source.slice(firstColon + 1),
-  };
-}
 
 interface BuildInfo {
   readonly characterId: string;
@@ -53,25 +25,25 @@ export function buildBuffBreakdown(
 ): readonly BuffBreakdown[] {
   const breakdowns: BuffBreakdown[] = [];
 
-  // Per-character buffs
+  // Per-character buffs (exclude OnlySelf — those are self-buffs, not team contributions)
   for (let i = 0; i < memberBuilds.length; i++) {
     const info = memberBuilds[i];
     const buffs = memberBuffs[i];
-    if (!info || !buffs || buffs.length === 0) continue;
+    if (!info || !buffs) continue;
+
+    const teamBuffs = buffs.filter((b) => b.target !== "OnlySelf");
+    if (teamBuffs.length === 0) continue;
 
     breakdowns.push({
       sourceCharacterId: info.characterId,
       sourceCharacterName: info.characterName,
       sourceElement: info.element,
-      buffs: buffs.map((b): BuffBreakdownEntry => {
-        const { label } = parseBuffSource(b.source);
-        return {
-          name: label,
-          stat: b.stat,
-          value: b.value,
-          target: b.target,
-        };
-      }),
+      buffs: teamBuffs.map((b): BuffBreakdownEntry => ({
+        name: b.source,
+        stat: b.stat,
+        value: b.value,
+        target: b.target,
+      })),
     });
   }
 
@@ -79,7 +51,9 @@ export function buildBuffBreakdown(
   if (resonanceBuffs.length > 0) {
     const byElement = new Map<GenshinElement, ResolvedBuff[]>();
     for (const b of resonanceBuffs) {
-      const { label } = parseBuffSource(b.source);
+      // resonance source format: "resonance:pyro" → element = "Pyro"
+      const colonIdx = b.source.indexOf(":");
+      const label = colonIdx === -1 ? b.source : b.source.slice(colonIdx + 1);
       const element = (label.charAt(0).toUpperCase() + label.slice(1)) as GenshinElement;
       const arr = byElement.get(element);
       if (arr) arr.push(b);
@@ -90,15 +64,12 @@ export function buildBuffBreakdown(
         sourceCharacterId: "resonance",
         sourceCharacterName: "Element Resonance",
         sourceElement: element,
-        buffs: buffs.map((b): BuffBreakdownEntry => {
-          const { label } = parseBuffSource(b.source);
-          return {
-            name: label,
-            stat: b.stat,
-            value: b.value,
-            target: b.target,
-          };
-        }),
+        buffs: buffs.map((b): BuffBreakdownEntry => ({
+          name: b.source,
+          stat: b.stat,
+          value: b.value,
+          target: b.target,
+        })),
       });
     }
   }

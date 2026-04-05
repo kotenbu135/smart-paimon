@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import type { TFunction } from "i18next";
 import type { BuffBreakdown } from "../../stores/team";
 import type { BuffableStat } from "../../types/wasm";
 
@@ -23,14 +24,14 @@ export function BuffSummary({ breakdowns }: BuffSummaryProps) {
       for (const buff of bd.buffs) {
         const key = statToKey(buff.stat);
         if (!totals[key]) {
-          totals[key] = { value: 0, isPercent: isPercentStat(buff.stat), label: key };
+          totals[key] = { value: 0, isPercent: isPercentStat(buff.stat), label: localizeBuffStat(buff.stat, t) };
         }
         totals[key].value += buff.value;
       }
     }
 
     return Object.values(totals).map(({ label, value, isPercent }) => ({ label, value, isPercent }));
-  }, [breakdowns]);
+  }, [breakdowns, t]);
 
   if (aggregated.length === 0) return null;
 
@@ -65,4 +66,15 @@ function isPercentStat(stat: BuffableStat): boolean {
   if (typeof stat === "object") return true;
   return !["HpFlat", "AtkFlat", "DefFlat", "NormalAtkFlatDmg", "ChargedAtkFlatDmg",
     "PlungingAtkFlatDmg", "SkillFlatDmg", "BurstFlatDmg"].includes(stat as string);
+}
+
+function localizeBuffStat(stat: BuffableStat, t: TFunction): string {
+  if (typeof stat === "object") {
+    const [type, element] = Object.entries(stat)[0];
+    const elementLabel = t(`element.${(element as string).toLowerCase()}`);
+    return t(`buff.stat.${type}`, { element: elementLabel });
+  }
+  const key = `buff.stat.${stat}`;
+  const translated = t(key);
+  return translated !== key ? translated : stat;
 }

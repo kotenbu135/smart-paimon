@@ -82,6 +82,7 @@ export interface DamageInput {
 }
 
 export interface DamageResult {
+  name: string;
   non_crit: number;
   crit: number;
   average: number;
@@ -215,4 +216,20 @@ export interface WeaponData {
 export interface ArtifactSetData {
   id: string;
   name: string;
+}
+
+// Conditional buff activation (weapon / artifact set)
+export interface ConditionalBuff {
+  readonly name: string;
+  readonly description: string;
+  readonly stat: BuffableStat;
+  readonly value: number;
+  readonly target: BuffTarget;
+  readonly activation: { Manual: "Toggle" } | { Manual: { Stacks: number } };
+}
+
+export interface BuffActivation {
+  readonly name: string;
+  readonly active: boolean;
+  readonly stacks?: number;
 }

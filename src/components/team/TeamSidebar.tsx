@@ -18,6 +18,7 @@ import { TeamSlot } from "./TeamSlot";
 import { TeamSlotEmpty } from "./TeamSlotEmpty";
 import { TeamSaveLoad } from "./TeamSaveLoad";
 import { CharacterSelectModal } from "./CharacterSelectModal";
+import { ActivationPanel } from "./ActivationPanel";
 
 export function TeamSidebar() {
   const { members, mainDpsIndex, setMember, setMainDps, swapMembers } = useTeamStore();
@@ -57,7 +58,7 @@ export function TeamSidebar() {
   };
 
   return (
-    <aside className="w-full lg:w-[200px] flex-shrink-0 flex flex-col gap-3">
+    <aside className="flex flex-col gap-3">
       <TeamSaveLoad />
 
       {/* Slots */}
@@ -71,13 +72,15 @@ export function TeamSidebar() {
             if (!build) return null;
 
             return (
-              <TeamSlot
-                key={memberId}
-                build={build}
-                isMainDps={index === mainDpsIndex}
-                onRemove={() => setMember(index, null)}
-                onSetMainDps={() => setMainDps(index)}
-              />
+              <div key={memberId}>
+                <TeamSlot
+                  build={build}
+                  isMainDps={index === mainDpsIndex}
+                  onRemove={() => setMember(index, null)}
+                  onSetMainDps={() => setMainDps(index)}
+                />
+                <ActivationPanel build={build} memberIndex={index} />
+              </div>
             );
           })}
         </SortableContext>

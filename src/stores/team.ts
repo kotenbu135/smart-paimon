@@ -8,6 +8,7 @@ import type {
   Element as GenshinElement,
   BuffableStat,
   BuffTarget,
+  BuffActivation,
 } from "../types/wasm";
 import { resolveTeamDamage } from "../lib/team";
 import { useGoodStore } from "./good";
@@ -43,11 +44,15 @@ export interface TalentCategoryResults {
   readonly burst: readonly DamageResult[];
 }
 
+// Per-member activation state: [weaponActivations, artifactActivations]
+export type MemberActivations = readonly [readonly BuffActivation[], readonly BuffActivation[]];
+
 interface TeamState {
   members: (string | null)[];
   mainDpsIndex: number;
   enemyConfig: Enemy;
   selectedReaction: Reaction | null;
+  activations: (MemberActivations | null)[];
   resolvedStats: Stats | null;
   soloResults: Record<string, TalentCategoryResults>;
   teamResults: Record<string, TalentCategoryResults>;
@@ -61,6 +66,7 @@ interface TeamState {
   setMainDps: (index: number) => void;
   setEnemy: (config: Enemy) => void;
   setReaction: (reaction: Reaction | null) => void;
+  setActivation: (memberIndex: number, activations: MemberActivations) => void;
   resolveTeam: () => Promise<void>;
   saveTeam: (name: string) => void;
   loadTeam: (index: number) => void;
@@ -74,6 +80,7 @@ export const useTeamStore = create<TeamState>()(
   mainDpsIndex: 0,
   enemyConfig: { level: 90, resistance: 0.1, def_reduction: 0 },
   selectedReaction: null,
+  activations: [null, null, null, null],
   resolvedStats: null,
   soloResults: {},
   teamResults: {},
@@ -86,6 +93,9 @@ export const useTeamStore = create<TeamState>()(
     const members = [...get().members];
     members[index] = characterId;
 
+    const activations = [...get().activations];
+    activations[index] = null; // reset activations when member changes
+
     let { mainDpsIndex } = get();
     if (characterId !== null && members[mainDpsIndex] === null) {
       mainDpsIndex = index;
@@ -95,28 +105,36 @@ export const useTeamStore = create<TeamState>()(
       mainDpsIndex = nextIdx === -1 ? 0 : nextIdx;
     }
 
-    set({ members, mainDpsIndex });
+    set({ members, mainDpsIndex, activations });
   },
 
   swapMembers: (fromIndex, toIndex) => {
     const members = [...get().members];
     [members[fromIndex], members[toIndex]] = [members[toIndex], members[fromIndex]];
 
+    const activations = [...get().activations];
+    [activations[fromIndex], activations[toIndex]] = [activations[toIndex], activations[fromIndex]];
+
     let { mainDpsIndex } = get();
     if (mainDpsIndex === fromIndex) mainDpsIndex = toIndex;
     else if (mainDpsIndex === toIndex) mainDpsIndex = fromIndex;
 
-    set({ members, mainDpsIndex });
+    set({ members, mainDpsIndex, activations });
   },
 
   setMainDps: (index) => set({ mainDpsIndex: index }),
   setEnemy: (enemyConfig) => set({ enemyConfig }),
   setReaction: (selectedReaction) => set({ selectedReaction }),
+  setActivation: (memberIndex, acts) => {
+    const activations = [...get().activations];
+    activations[memberIndex] = acts;
+    set({ activations });
+  },
 
   resolveTeam: async () => {
     set({ isResolving: true, resolveError: null });
     try {
-      const { members, mainDpsIndex, enemyConfig, selectedReaction } = get();
+      const { members, mainDpsIndex, enemyConfig, selectedReaction, activations } = get();
       const goodStore = useGoodStore.getState();
 
       const result = resolveTeamDamage({
@@ -124,6 +142,7 @@ export const useTeamStore = create<TeamState>()(
         mainDpsIndex,
         enemyConfig,
         selectedReaction,
+        activations,
         getBuild: goodStore.getBuild,
         rawJson: goodStore.rawJson,
       });
@@ -169,6 +188,7 @@ export const useTeamStore = create<TeamState>()(
         mainDpsIndex: state.mainDpsIndex,
         enemyConfig: state.enemyConfig,
         selectedReaction: state.selectedReaction,
+        activations: state.activations,
         savedTeams: state.savedTeams,
       }),
     },

@@ -44,3 +44,5 @@ sample/.worktrees/
 
 dist/
 .playwright-mcp
+
+.ignore/

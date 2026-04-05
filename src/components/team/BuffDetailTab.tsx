@@ -1,16 +1,27 @@
 import { useTeamStore } from "../../stores/team";
 import { BuffCard } from "./BuffCard";
-import { BuffSummary } from "./BuffSummary";
 
 export function BuffDetailTab() {
   const { buffBreakdown } = useTeamStore();
 
+  const mid = Math.ceil(buffBreakdown.length / 2);
+  const col1 = buffBreakdown.slice(0, mid);
+  const col2 = buffBreakdown.slice(mid);
+
   return (
-    <div className="space-y-3">
-      {buffBreakdown.map((bd) => (
-        <BuffCard key={bd.sourceCharacterId} breakdown={bd} />
-      ))}
-      <BuffSummary breakdowns={buffBreakdown} />
-    </div>
+    <>
+      <div className="flex flex-col gap-3">
+        {col1.map((bd) => (
+          <BuffCard key={bd.sourceCharacterId} breakdown={bd} />
+        ))}
+      </div>
+      {col2.length > 0 && (
+        <div className="flex flex-col gap-3">
+          {col2.map((bd) => (
+            <BuffCard key={bd.sourceCharacterId} breakdown={bd} />
+          ))}
+        </div>
+      )}
+    </>
   );
 }

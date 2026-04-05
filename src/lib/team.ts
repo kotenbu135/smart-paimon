@@ -1,47 +1,33 @@
-import { resolve_team_stats, apply_team_debuffs, find_character, build_member_stats, get_character_team_buffs } from "@kotenbu135/genshin-calc-wasm";
+import { resolve_team_stats, apply_team_debuffs, find_character, build_team_member as wasmBuildTeamMember } from "@kotenbu135/genshin-calc-wasm";
 import { buildStats } from "./stats";
 import {
   computeTalentDamage,
   getReactionBonus,
   type TalentRow,
 } from "./damage";
-import { assembleBuffsProvided, assembleResonanceBuffs, buildBuffBreakdown } from "./buffs";
-import { isMoonsignCharacter } from "../utils/moonsign";
+import { assembleResonanceBuffs, buildBuffBreakdown } from "./buffs";
 import type {
   CharacterBuild,
   Enemy,
   Reaction,
   Stats,
-  StatProfile,
   TeamMember,
   DamageResult,
   DamageType,
   Element as GenshinElement,
   ResolvedBuff,
 } from "../types/wasm";
-import type { BuffBreakdown, TalentCategoryResults } from "../stores/team";
+import type { BuffBreakdown, MemberActivations, TalentCategoryResults } from "../stores/team";
 
-// ---------- TeamMember assembly ----------
+// ---------- TeamMember assembly (WASM v0.5.0) ----------
 
 export function buildTeamMember(
   build: CharacterBuild,
   rawJson: string,
+  activations?: MemberActivations | null,
 ): TeamMember {
-  const stats = build_member_stats(rawJson, build.character.id) as StatProfile;
-  const charBuffs = get_character_team_buffs(
-    rawJson,
-    build.character.id,
-    build.constellation,
-    new Uint32Array(build.talent_levels),
-  ) as ResolvedBuff[];
-
-  return {
-    element: build.character.element,
-    weapon_type: build.character.weapon_type,
-    stats,
-    buffs_provided: [...charBuffs, ...assembleBuffsProvided(build)],
-    is_moonsign: isMoonsignCharacter(build.character.id),
-  };
+  const [weaponActs, artifactActs] = activations ?? [[], []];
+  return wasmBuildTeamMember(rawJson, build.character.id, weaponActs, artifactActs) as TeamMember;
 }
 
 // ---------- WASM v0.3.0 TeamResolveResult types ----------
@@ -108,6 +94,7 @@ function getDmgBonus(ctx: DamageContext, dmgType: DamageType): number {
 
 function talentRowsToDamageResults(rows: TalentRow[]): DamageResult[] {
   return rows.map((r) => ({
+    name: r.name,
     non_crit: r.nonCrit,
     crit: r.crit,
     average: r.average,
@@ -168,6 +155,7 @@ export interface ResolveTeamInput {
   readonly mainDpsIndex: number;
   readonly enemyConfig: Enemy;
   readonly selectedReaction: Reaction | null;
+  readonly activations: readonly (MemberActivations | null)[];
   readonly getBuild: (id: string) => CharacterBuild | undefined;
   readonly rawJson: string | null;
 }
@@ -180,7 +168,7 @@ export interface ResolveTeamOutput {
 }
 
 export function resolveTeamDamage(input: ResolveTeamInput): ResolveTeamOutput {
-  const { members, mainDpsIndex, enemyConfig, selectedReaction, getBuild, rawJson } = input;
+  const { members, mainDpsIndex, enemyConfig, selectedReaction, activations, getBuild, rawJson } = input;
 
   const mainDpsId = members[mainDpsIndex];
   if (!mainDpsId || !rawJson) {
@@ -214,7 +202,7 @@ export function resolveTeamDamage(input: ResolveTeamInput): ResolveTeamOutput {
     if (!id) continue;
     const build = getBuild(id);
     if (!build) continue;
-    const member = buildTeamMember(build, rawJson);
+    const member = buildTeamMember(build, rawJson, activations[i]);
     teamMembers.push(member);
     indexMap.push(i);
     memberBuilds.push({

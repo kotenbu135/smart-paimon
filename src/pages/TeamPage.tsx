@@ -21,8 +21,10 @@ export function TeamPage() {
   const mainDpsIndex = useTeamStore((s) => s.mainDpsIndex);
   const enemyConfig = useTeamStore((s) => s.enemyConfig);
   const selectedReaction = useTeamStore((s) => s.selectedReaction);
+  const activations = useTeamStore((s) => s.activations);
   const resolveTeam = useTeamStore((s) => s.resolveTeam);
   const resolvedStats = useTeamStore((s) => s.resolvedStats);
+  const buffBreakdown = useTeamStore((s) => s.buffBreakdown);
   const rawJson = useGoodStore((s) => s.rawJson);
   const wasmReady = useUIStore((s) => s.wasmReady);
 
@@ -30,7 +32,7 @@ export function TeamPage() {
     const filledCount = members.filter((m) => m !== null).length;
     if (!wasmReady || !rawJson || filledCount === 0) return;
     resolveTeam();
-  }, [members, mainDpsIndex, enemyConfig, selectedReaction, rawJson, wasmReady, resolveTeam]);
+  }, [members, mainDpsIndex, enemyConfig, selectedReaction, activations, rawJson, wasmReady, resolveTeam]);
 
   return (
     <PageTransition>
@@ -41,19 +43,29 @@ export function TeamPage() {
           </h1>
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-6 pb-6">
-          <TeamSidebar />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <section className="bg-navy-card border border-navy-border rounded-lg p-4 flex flex-wrap gap-6 items-center">
+            <span className="text-[12px] font-label font-bold text-text-secondary uppercase tracking-wider">
+              {t("enemy.title")}
+            </span>
+            <TeamEnemyConfig />
+          </section>
+          <section className="bg-navy-card border border-navy-border rounded-lg p-4 flex items-center">
+            <ReactionSelector inline />
+          </section>
+        </div>
 
-          <div className="flex-grow flex flex-col gap-4">
-            <section className="bg-navy-card border border-navy-border rounded-lg p-4 flex flex-wrap gap-6 items-center">
-              <span className="text-[12px] font-label font-bold text-text-secondary uppercase tracking-wider">
-                {t("enemy.title")}
-              </span>
-              <TeamEnemyConfig />
-            </section>
-            <ReactionSelector />
-
-            <Tabs.Root value={activeTab} onValueChange={setActiveTab}>
+        <Tabs.Root value={activeTab} onValueChange={setActiveTab}>
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 pb-6">
+            <TeamSidebar />
+            {resolvedStats && (
+              <div>
+                <div className="xl:sticky xl:top-[4.5rem]">
+                  <StatsPanel stats={resolvedStats} buffBreakdowns={buffBreakdown} />
+                </div>
+              </div>
+            )}
+            <div className="xl:col-span-2 flex flex-col gap-4">
               <Tabs.List className="flex gap-1 p-1 bg-navy-border/50 rounded-lg w-fit">
                 <Tabs.Trigger
                   value="buffs"
@@ -80,20 +92,10 @@ export function TeamPage() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.15, ease: "easeOut" }}
-                  className="mt-4"
                 >
                   <Tabs.Content value="buffs" forceMount={activeTab === "buffs" ? true : undefined}>
-                    <div className="flex flex-col lg:flex-row gap-4">
-                      {resolvedStats && (
-                        <div className="lg:w-72 flex-shrink-0">
-                          <div className="lg:sticky lg:top-4">
-                            <StatsPanel stats={resolvedStats} />
-                          </div>
-                        </div>
-                      )}
-                      <div className="flex-grow min-w-0">
-                        <BuffDetailTab />
-                      </div>
+                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                      <BuffDetailTab />
                     </div>
                   </Tabs.Content>
                   <Tabs.Content value="damage" forceMount={activeTab === "damage" ? true : undefined}>
@@ -101,9 +103,9 @@ export function TeamPage() {
                   </Tabs.Content>
                 </motion.div>
               </AnimatePresence>
-            </Tabs.Root>
+            </div>
           </div>
-        </div>
+        </Tabs.Root>
       </div>
     </PageTransition>
   );

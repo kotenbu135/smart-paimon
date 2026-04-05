@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import type { TFunction } from "i18next";
 import { ELEMENT_TW } from "../../lib/elements";
 import { charIcon, elementIcon } from "../../lib/charAssets";
 import { localizeCharacterName } from "../../lib/localize";
@@ -34,8 +35,9 @@ export function BuffCard({ breakdown }: BuffCardProps) {
       <div className="space-y-1.5">
         {breakdown.buffs.map((buff, i) => (
           <div key={i} className="flex justify-between items-center px-2.5 py-1.5 bg-navy-page rounded-md">
-            <div>
+            <div className="min-w-0">
               <div className="text-[11px] text-text-primary">{buff.name}</div>
+              <div className="text-[9px] text-text-muted">{localizeBuffStat(buff.stat, t)}</div>
               {buff.condition && (
                 <div className="text-[9px] text-text-muted">
                   {t("team.condition")}: {buff.condition}
@@ -43,7 +45,7 @@ export function BuffCard({ breakdown }: BuffCardProps) {
                 </div>
               )}
             </div>
-            <span className="text-[11px] font-bold text-green-500 font-mono">
+            <span className="text-[11px] font-bold text-green-500 font-mono shrink-0 ml-2">
               {buff.value > 0 ? "+" : ""}{formatBuffValue(buff.value, buff.stat)}
             </span>
           </div>
@@ -53,12 +55,25 @@ export function BuffCard({ breakdown }: BuffCardProps) {
   );
 }
 
+function localizeBuffStat(stat: BuffableStat, t: TFunction): string {
+  if (typeof stat === "object") {
+    const [type, element] = Object.entries(stat)[0];
+    const elementLabel = t(`element.${(element as string).toLowerCase()}`);
+    return t(`buff.stat.${type}`, { element: elementLabel });
+  }
+  const key = `buff.stat.${stat}`;
+  const translated = t(key);
+  return translated !== key ? translated : stat;
+}
+
+const FLAT_STATS = new Set([
+  "HpFlat", "AtkFlat", "DefFlat", "ElementalMastery",
+  "NormalAtkFlatDmg", "ChargedAtkFlatDmg", "PlungingAtkFlatDmg",
+  "SkillFlatDmg", "BurstFlatDmg",
+]);
+
 function formatBuffValue(value: number, stat: BuffableStat): string {
   if (typeof stat === "object") return `${(value * 100).toFixed(1)}%`;
-  if (stat === "HpFlat" || stat === "AtkFlat" || stat === "DefFlat"
-    || stat === "NormalAtkFlatDmg" || stat === "ChargedAtkFlatDmg"
-    || stat === "PlungingAtkFlatDmg" || stat === "SkillFlatDmg" || stat === "BurstFlatDmg") {
-    return value.toLocaleString();
-  }
+  if (FLAT_STATS.has(stat)) return value.toLocaleString();
   return `${(value * 100).toFixed(1)}%`;
 }
