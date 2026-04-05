@@ -33,6 +33,7 @@ export function getTalentData(characterId: string) {
 export function computeTalentDamage(
   scalings: any[] | undefined, talentLevel: number, stats: Stats, characterLevel: number,
   element: string, enemy: Enemy, reaction: Reaction | null, damageType: DamageType, reactionBonus: number,
+  flatDmg: number = 0,
 ): TalentRow[] {
   if (!scalings || !Array.isArray(scalings)) return [];
   return scalings.map((s) => {
@@ -42,7 +43,7 @@ export function computeTalentDamage(
       character_level: characterLevel, stats, talent_multiplier: multiplier,
       scaling_stat: s.scaling_stat ?? "Atk", damage_type: damageType,
       element: (s.damage_element ?? element) as any,
-      reaction: dmgReaction, reaction_bonus: reactionBonus, flat_dmg: 0,
+      reaction: dmgReaction, reaction_bonus: reactionBonus, flat_dmg: flatDmg,
     };
     try {
       const result = calculate_damage(input, enemy);

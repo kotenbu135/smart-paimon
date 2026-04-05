@@ -1,4 +1,4 @@
-import { resolve_team_stats, find_character } from "@kotenbu135/genshin-calc-wasm";
+import { resolve_team_stats, apply_team_debuffs, find_character } from "@kotenbu135/genshin-calc-wasm";
 import { buildStats } from "./stats";
 import {
   computeTalentDamage,
@@ -15,6 +15,7 @@ import type {
   StatProfile,
   TeamMember,
   DamageResult,
+  DamageType,
   Element as GenshinElement,
   ResolvedBuff,
 } from "../types/wasm";
@@ -43,7 +44,7 @@ const STAT_KEY_MAP: Record<string, keyof StatProfile> = {
   GeoDmgBonus: "dmg_bonus",
 };
 
-function weaponLevelToAscension(level: number): number {
+export function levelToAscension(level: number): number {
   if (level <= 20) return 0;
   if (level <= 40) return 1;
   if (level <= 50) return 2;
@@ -51,6 +52,12 @@ function weaponLevelToAscension(level: number): number {
   if (level <= 70) return 4;
   if (level <= 80) return 5;
   return 6;
+}
+
+// Character base stat arrays have 18 entries (2 per ascension phase: pre/post ascension).
+// Ascension N at max level maps to index N * 2 + 1.
+function ascensionToBaseStatIndex(ascension: number): number {
+  return ascension * 2 + 1;
 }
 
 function clampIndex(arr: number[], index: number): number {
@@ -68,29 +75,37 @@ function addStatBonus(
 }
 
 export function buildStatProfile(build: CharacterBuild): StatProfile {
-  const { character, ascension, weapon, artifacts } = build;
+  const { character, weapon, artifacts } = build;
 
-  const baseHp = clampIndex(character.base_hp, ascension);
-  const baseAtk = clampIndex(character.base_atk, ascension);
-  const baseDef = clampIndex(character.base_def, ascension);
+  // import_good does not return ascension — derive from level
+  const ascension = build.ascension ?? levelToAscension(build.level);
+  const baseIdx = ascensionToBaseStatIndex(ascension);
+
+  const baseHp = clampIndex(character.base_hp, baseIdx);
+  const baseAtk = clampIndex(character.base_atk, baseIdx);
+  const baseDef = clampIndex(character.base_def, baseIdx);
 
   let weaponBaseAtk = 0;
   if (weapon) {
-    const wAsc = weaponLevelToAscension(weapon.level);
+    const wAsc = levelToAscension(weapon.level);
     weaponBaseAtk = clampIndex(weapon.weapon.base_atk, wAsc);
   }
 
-  // Start with artifact stats, then overlay base stats
+  // Start with artifact stats, then overlay base stats and character innate values
   let profile: StatProfile = {
     ...artifacts.stats,
     base_hp: baseHp,
     base_atk: baseAtk + weaponBaseAtk,
     base_def: baseDef,
+    // All characters have innate crit_rate 5%, crit_dmg 50%, ER 100%
+    crit_rate: artifacts.stats.crit_rate + 0.05,
+    crit_dmg: artifacts.stats.crit_dmg + 0.5,
+    energy_recharge: artifacts.stats.energy_recharge + 1.0,
   };
 
   // Add weapon substat
   if (weapon?.weapon.sub_stat) {
-    const wAsc = weaponLevelToAscension(weapon.level);
+    const wAsc = levelToAscension(weapon.level);
     for (const [statKey, values] of Object.entries(weapon.weapon.sub_stat)) {
       if (Array.isArray(values)) {
         profile = addStatBonus(profile, statKey, clampIndex(values, wAsc));
@@ -118,6 +133,66 @@ export function buildTeamMember(build: CharacterBuild): TeamMember {
   };
 }
 
+// ---------- WASM v0.3.0 TeamResolveResult types ----------
+
+interface DamageContext {
+  readonly normal_atk_dmg_bonus: number;
+  readonly charged_atk_dmg_bonus: number;
+  readonly plunging_atk_dmg_bonus: number;
+  readonly skill_dmg_bonus: number;
+  readonly burst_dmg_bonus: number;
+  readonly normal_atk_flat_dmg: number;
+  readonly charged_atk_flat_dmg: number;
+  readonly plunging_atk_flat_dmg: number;
+  readonly skill_flat_dmg: number;
+  readonly burst_flat_dmg: number;
+  readonly amplifying_bonus: number;
+  readonly transformative_bonus: number;
+  readonly additive_bonus: number;
+}
+
+interface EnemyDebuffs {
+  readonly pyro_res_reduction: number;
+  readonly hydro_res_reduction: number;
+  readonly electro_res_reduction: number;
+  readonly cryo_res_reduction: number;
+  readonly dendro_res_reduction: number;
+  readonly anemo_res_reduction: number;
+  readonly geo_res_reduction: number;
+  readonly physical_res_reduction: number;
+  readonly def_reduction: number;
+}
+
+interface TeamResolveResult {
+  readonly base_stats: Stats;
+  readonly applied_buffs: readonly ResolvedBuff[];
+  readonly resonances: readonly string[];
+  readonly final_stats: Stats;
+  readonly damage_context: DamageContext;
+  readonly enemy_debuffs: EnemyDebuffs;
+}
+
+// Map DamageType to DamageContext fields
+function getFlatDmg(ctx: DamageContext, dmgType: DamageType): number {
+  switch (dmgType) {
+    case "Normal": return ctx.normal_atk_flat_dmg;
+    case "Charged": return ctx.charged_atk_flat_dmg;
+    case "Plunging": return ctx.plunging_atk_flat_dmg;
+    case "Skill": return ctx.skill_flat_dmg;
+    case "Burst": return ctx.burst_flat_dmg;
+  }
+}
+
+function getDmgBonus(ctx: DamageContext, dmgType: DamageType): number {
+  switch (dmgType) {
+    case "Normal": return ctx.normal_atk_dmg_bonus;
+    case "Charged": return ctx.charged_atk_dmg_bonus;
+    case "Plunging": return ctx.plunging_atk_dmg_bonus;
+    case "Skill": return ctx.skill_dmg_bonus;
+    case "Burst": return ctx.burst_dmg_bonus;
+  }
+}
+
 // ---------- Damage computation per category ----------
 
 function talentRowsToDamageResults(rows: TalentRow[]): DamageResult[] {
@@ -135,6 +210,8 @@ function computeAllCategories(
   stats: Stats,
   enemy: Enemy,
   reaction: Reaction | null,
+  damageContext?: DamageContext,
+  enemyDebuffs?: EnemyDebuffs,
 ): TalentCategoryResults {
   const charData = find_character(characterId);
   if (!charData?.talents) {
@@ -144,24 +221,32 @@ function computeAllCategories(
   const talents = charData.talents;
   const [normalLv, skillLv, burstLv] = build.talent_levels;
   const el = build.character.element;
-  const reactionBonus = getReactionBonus(build.artifacts.four_piece_set, reaction);
+  const reactionBonus = getReactionBonus(build.artifacts.four_piece_set, reaction)
+    + (damageContext?.amplifying_bonus ?? 0);
+
+  // Apply enemy debuffs via WASM (element-specific resistance + def reduction)
+  const effectiveEnemy = enemyDebuffs
+    ? apply_team_debuffs(enemy, enemyDebuffs, el) as Enemy
+    : enemy;
+
+  const compute = (scalings: any, lv: number, dmgType: DamageType) => {
+    const flatDmg = damageContext ? getFlatDmg(damageContext, dmgType) : 0;
+    const dmgBonus = damageContext ? getDmgBonus(damageContext, dmgType) : 0;
+    // Add damage-type bonus to stats
+    const effectiveStats = dmgBonus > 0
+      ? { ...stats, dmg_bonus: stats.dmg_bonus + dmgBonus }
+      : stats;
+    return talentRowsToDamageResults(
+      computeTalentDamage(scalings, lv, effectiveStats, build.level, el, effectiveEnemy, reaction, dmgType, reactionBonus, flatDmg),
+    );
+  };
 
   return {
-    normal: talentRowsToDamageResults(
-      computeTalentDamage(talents.normal_attack?.hits, normalLv, stats, build.level, el, enemy, reaction, "Normal", reactionBonus),
-    ),
-    charged: talentRowsToDamageResults(
-      computeTalentDamage(talents.normal_attack?.charged, normalLv, stats, build.level, el, enemy, reaction, "Charged", reactionBonus),
-    ),
-    plunging: talentRowsToDamageResults(
-      computeTalentDamage(talents.normal_attack?.plunging, normalLv, stats, build.level, el, enemy, reaction, "Plunging", reactionBonus),
-    ),
-    skill: talentRowsToDamageResults(
-      computeTalentDamage(talents.elemental_skill?.scalings, skillLv, stats, build.level, el, enemy, reaction, "Skill", reactionBonus),
-    ),
-    burst: talentRowsToDamageResults(
-      computeTalentDamage(talents.elemental_burst?.scalings, burstLv, stats, build.level, el, enemy, reaction, "Burst", reactionBonus),
-    ),
+    normal: compute(talents.normal_attack?.hits, normalLv, "Normal"),
+    charged: compute(talents.normal_attack?.charged, normalLv, "Charged"),
+    plunging: compute(talents.normal_attack?.plunging, normalLv, "Plunging"),
+    skill: compute(talents.elemental_skill?.scalings, skillLv, "Skill"),
+    burst: compute(talents.elemental_burst?.scalings, burstLv, "Burst"),
   };
 }
 
@@ -250,12 +335,15 @@ export function resolveTeamDamage(input: ResolveTeamInput): ResolveTeamOutput {
     return { soloResults, teamResults: {}, resolvedStats: null, buffBreakdown: [] };
   }
 
-  // 4. Call WASM resolve_team_stats
-  const teamStats: Stats = resolve_team_stats(teamMembers, targetIdx);
+  // 4. Call WASM resolve_team_stats (v0.3.0: returns TeamResolveResult)
+  const teamResult = resolve_team_stats(teamMembers, targetIdx) as TeamResolveResult;
 
-  // 5. Team damage
+  // 5. Team damage with damage_context and enemy_debuffs from WASM
   const teamResults: Record<string, TalentCategoryResults> = {
-    [mainDpsId]: computeAllCategories(mainDpsId, mainBuild, teamStats, enemyConfig, selectedReaction),
+    [mainDpsId]: computeAllCategories(
+      mainDpsId, mainBuild, teamResult.final_stats, enemyConfig, selectedReaction,
+      teamResult.damage_context, teamResult.enemy_debuffs,
+    ),
   };
 
   // 6. Build buff breakdown for UI
@@ -264,7 +352,7 @@ export function resolveTeamDamage(input: ResolveTeamInput): ResolveTeamOutput {
   return {
     soloResults,
     teamResults,
-    resolvedStats: teamStats,
+    resolvedStats: teamResult.final_stats,
     buffBreakdown,
   };
 }
