@@ -62,7 +62,7 @@ export function TeamEnemyConfig() {
         value={enemyConfig.level}
         onChange={(v) => setEnemy({ ...enemyConfig, level: v })}
         min={1}
-        max={100}
+        max={110}
       />
       <Stepper
         label={t("enemy.resistance")}
@@ -70,15 +70,6 @@ export function TeamEnemyConfig() {
         onChange={(v) => setEnemy({ ...enemyConfig, resistance: v / 100 })}
         min={-200}
         max={200}
-        step={5}
-        suffix="%"
-      />
-      <Stepper
-        label={t("enemy.defReduction")}
-        value={Math.round(enemyConfig.def_reduction * 100)}
-        onChange={(v) => setEnemy({ ...enemyConfig, def_reduction: v / 100 })}
-        min={-100}
-        max={100}
         step={5}
         suffix="%"
       />

@@ -29,6 +29,10 @@ const REACTION_I18N: Record<string, string> = {
   Burning: "reaction.burning",
   Aggravate: "reaction.aggravate",
   Spread: "reaction.spread",
+  LunarElectroCharged: "reaction.lunarElectroCharged",
+  LunarBloom: "reaction.lunarBloom",
+  LunarCrystallize: "reaction.lunarCrystallize",
+  LunarCrystallizeSecondary: "reaction.lunarCrystallizeSecondary",
 };
 
 export function localizeCharacterName(id: string, wasmName: string, locale: string): string {
@@ -61,8 +65,6 @@ export function localizeReactionName(name: string, t: TFunction): string {
     const elementLabel = t(`element.${element.toLowerCase()}`);
     return `${swirlLabel} (${elementLabel})`;
   }
-  // Handle Lunar reaction names
-  if (name.startsWith("Lunar")) return name;
   const i18nKey = REACTION_I18N[name];
   return i18nKey ? t(i18nKey) : name;
 }

@@ -28,10 +28,15 @@ Vite + React 19 + TypeScript, Tailwind CSS v4, Zustand, Radix UI, Framer Motion,
 - バフの source 名は WASM が生成する英語の説明的名前（例: "Fantastic Voyage ATK Bonus"）
 - Conditional buffs: `find_artifact_set().two_piece.conditional_buffs` / `find_artifact_set().four_piece.conditional_buffs` / `find_weapon().passive.effect.conditional_buffs` で取得、activation UI から `BuffActivation[]` として渡す
 - WASM can be tested in Node.js: `initSync({ module: fs.readFileSync('node_modules/@kotenbu135/genshin-calc-wasm/genshin_calc_wasm_bg.wasm') })`
+- Enemy 型の `def_reduction` はUIから削除済みだが、WASMが期待するため型定義とストア初期値(0)には残す
 
 ## Working with Genshin Data
 - 原神のゲーム仕様に関する質問は、知識に自信がなければ必ず Web 検索で確認してから回答する
 - 聖遺物・キャラ天賦の効果は頻繁に追加・変更されるため、推測で答えない
+
+## Development
+- TDD で実装する（テストを先に書く → 失敗確認 → 実装 → パス確認）
+- `npx vitest run` でテスト実行、`npx tsc --noEmit` で型チェック
 
 ## Design Spec
 See `docs/superpowers/specs/2026-03-31-smart-paimon-design.md`

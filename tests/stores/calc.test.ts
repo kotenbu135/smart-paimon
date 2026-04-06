@@ -18,8 +18,8 @@ describe("CalcStore", () => {
   });
 
   it("sets enemy config", () => {
-    useCalcStore.getState().setEnemy({ level: 100, resistance: 0.7, def_reduction: 0.1 });
-    expect(useCalcStore.getState().enemyConfig.level).toBe(100);
+    useCalcStore.getState().setEnemy({ level: 110, resistance: 0.7, def_reduction: 0 });
+    expect(useCalcStore.getState().enemyConfig.level).toBe(110);
   });
 
   it("sets reaction", () => {

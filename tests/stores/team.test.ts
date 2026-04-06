@@ -64,8 +64,8 @@ describe("TeamStore", () => {
   });
 
   it("sets enemy config", () => {
-    useTeamStore.getState().setEnemy({ level: 100, resistance: 0.7, def_reduction: 0.1 });
-    expect(useTeamStore.getState().enemyConfig.level).toBe(100);
+    useTeamStore.getState().setEnemy({ level: 110, resistance: 0.7, def_reduction: 0 });
+    expect(useTeamStore.getState().enemyConfig.level).toBe(110);
   });
 
   it("sets reaction", () => {
@@ -85,7 +85,8 @@ describe("TeamStore", () => {
 
     const raw = localStorage.getItem("smart-paimon-team");
     expect(raw).toBeTruthy();
-    expect(JSON.parse(raw!)).toHaveLength(1);
+    const persisted = JSON.parse(raw!);
+    expect(persisted.state.savedTeams).toHaveLength(1);
   });
 
   it("loads a saved team", () => {

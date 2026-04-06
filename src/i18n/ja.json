@@ -4,8 +4,8 @@
   "import": { "title": "GOODファイルを読み込む", "dragDrop": "ファイルをドラッグ＆ドロップ", "or": "または", "selectFile": "ファイルを選択", "sampleData": "サンプルデータで試す", "restoreSaved": "前回のデータを使用する", "supported": "対応ツール: Genshin Optimizer, Irminsul, Inventory Kamera, Amenoma", "error": "読み込みエラー", "warnings": "警告" },
   "characters": { "title": "キャラクター一覧", "filter": { "all": "すべて", "element": "元素", "weapon": "武器" }, "count": "{{count}}キャラ読み込み済み", "sort": { "label": "ソート", "default": "実装順", "level": "レベル", "rarity": "レアリティ", "name": "名前" } },
   "detail": { "level": "Lv.{{level}}", "constellation": "C{{count}}", "refinement": "R{{rank}}", "weapon": "武器", "artifacts": "聖遺物", "stats": "最終ステータス", "damage": "ダメージ計算", "normalAttack": "通常攻撃", "elementalSkill": "元素スキル", "elementalBurst": "元素爆発", "nonCrit": "非会心", "crit": "会心", "average": "期待値", "multiplier": "倍率", "talentName": "天賦名", "chargedAttack": "重撃", "plungeAttack": "落下攻撃", "noTalentData": "天賦データなし", "noScalings": "倍率データなし", "reactionDamage": "元素反応ダメージ" },
-  "enemy": { "title": "敵設定", "level": "レベル", "resistance": "耐性", "defReduction": "防御力減少" },
-  "reaction": { "title": "元素反応", "none": "なし", "vaporize": "蒸発", "melt": "溶解", "overloaded": "過負荷", "superconduct": "超電導", "electroCharged": "感電", "swirl": "拡散", "bloom": "開花", "hyperbloom": "超開花", "burgeon": "烈開花", "burning": "燃焼", "aggravate": "超激化", "spread": "草激化" },
+  "enemy": { "title": "敵設定", "level": "レベル", "resistance": "耐性" },
+  "reaction": { "title": "元素反応", "none": "なし", "vaporize": "蒸発", "melt": "溶解", "overloaded": "過負荷", "superconduct": "超電導", "electroCharged": "感電", "swirl": "拡散", "bloom": "開花", "hyperbloom": "超開花", "burgeon": "烈開花", "burning": "燃焼", "aggravate": "超激化", "spread": "草激化", "lunarElectroCharged": "月感電", "lunarBloom": "月開花", "lunarCrystallize": "月結晶", "lunarCrystallizeSecondary": "月結晶(二次)" },
   "stats": { "hp": "HP", "atk": "攻撃力", "def": "防御力", "em": "元素熟知", "critRate": "会心率", "critDmg": "会心ダメージ", "er": "元素チャージ効率", "dmgBonus": "ダメージバフ", "elementDmgBonus": "元素ダメージボーナス" },
   "artifact": {
     "slot": { "flower": "生の花", "plume": "死の羽", "sands": "時の砂", "goblet": "空の杯", "circlet": "理の冠" },

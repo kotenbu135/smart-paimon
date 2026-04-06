@@ -14,6 +14,20 @@ export function isTransformative(r: Reaction): boolean { return (typeof r === "s
 export function isLunar(r: Reaction): boolean { return typeof r === "string" && LUNAR_REACTIONS.has(r); }
 export function isAmplifyingOrAdditive(r: Reaction): boolean { return typeof r === "string" && (AMPLIFYING_REACTIONS.has(r) || ADDITIVE_REACTIONS.has(r)); }
 
+const ELEMENT_REACTION_KEYS: Record<import("../types/wasm").Element, readonly string[]> = {
+  Pyro:    ["vaporize", "melt", "overloaded", "burning", "burgeon"],
+  Hydro:   ["vaporize", "electroCharged", "bloom", "lunarElectroCharged", "lunarBloom"],
+  Electro: ["overloaded", "superconduct", "electroCharged", "aggravate", "hyperbloom", "lunarElectroCharged"],
+  Cryo:    ["melt", "superconduct"],
+  Dendro:  ["bloom", "burning", "spread", "lunarBloom"],
+  Anemo:   ["swirl"],
+  Geo:     ["lunarCrystallize", "lunarCrystallizeSecondary"],
+};
+
+export function getAvailableReactionKeys(element: import("../types/wasm").Element): readonly string[] {
+  return ELEMENT_REACTION_KEYS[element] ?? [];
+}
+
 export function getTalentData(characterId: string) {
   const full = find_character(characterId);
   if (!full?.talents) return null;
