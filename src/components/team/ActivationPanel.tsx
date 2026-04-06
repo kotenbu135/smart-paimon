@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from "react";
 import type { CharacterBuild, BuffActivation } from "../../types/wasm";
 import { getConditionalBuffs, type ConditionalBuffInfo } from "../../lib/conditionals";
-import { useTeamStore, type MemberActivations } from "../../stores/team";
+import { useTeamStore } from "../../stores/team";
 import { useGoodStore } from "../../stores/good";
 
 const CINDER_CITY_SET_ID = "scroll_of_the_hero_of_cinder_city";
