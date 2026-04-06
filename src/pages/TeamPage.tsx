@@ -59,11 +59,7 @@ export function TeamPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 pb-6">
             <TeamSidebar />
             {resolvedStats && (
-              <div>
-                <div className="xl:sticky xl:top-[4.5rem]">
-                  <StatsPanel stats={resolvedStats} buffBreakdowns={buffBreakdown} />
-                </div>
-              </div>
+              <StatsPanel stats={resolvedStats} buffBreakdowns={buffBreakdown} />
             )}
             <div className="xl:col-span-2 flex flex-col gap-4">
               <Tabs.List className="flex gap-1 p-1 bg-navy-border/50 rounded-lg w-fit">

@@ -49,13 +49,16 @@ export function buildBuffBreakdown(
   }
 
   // Per-character buffs (exclude OnlySelf — those are self-buffs, not team contributions)
+  // Always include members even with 0 buffs so conditional toggle buttons remain visible
   for (let i = 0; i < memberBuilds.length; i++) {
     const info = memberBuilds[i];
     const buffs = memberBuffs[i];
     if (!info || !buffs) continue;
 
     const teamBuffs = buffs.filter((b) => b.target !== "OnlySelf");
-    if (teamBuffs.length === 0) continue;
+
+    // Skip target character with no team buffs — they already have a self-buff card above
+    if (i === targetIndex && teamBuffs.length === 0) continue;
 
     breakdowns.push({
       sourceCharacterId: info.characterId,

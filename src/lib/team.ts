@@ -221,11 +221,11 @@ export function resolveTeamDamage(input: ResolveTeamInput): ResolveTeamOutput {
   });
   const resonanceBuffs = assembleResonanceBuffs(teamElements);
 
-  // Add resonance buffs to all team members
-  if (resonanceBuffs.length > 0) {
-    for (const member of teamMembers) {
-      member.buffs_provided = [...member.buffs_provided, ...resonanceBuffs];
-    }
+  // Add resonance buffs to only the first member to avoid duplication.
+  // resolve_team_stats aggregates buffs from ALL members, so adding to every member
+  // would count the resonance N times.
+  if (resonanceBuffs.length > 0 && teamMembers.length > 0) {
+    teamMembers[0].buffs_provided = [...teamMembers[0].buffs_provided, ...resonanceBuffs];
   }
 
   // Find the target index within the filtered teamMembers array

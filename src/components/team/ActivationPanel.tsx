@@ -1,19 +1,17 @@
 import { useEffect, useMemo } from "react";
-import type { CharacterBuild, BuffActivation, BuffActivationType, ManualActivation } from "../../types/wasm";
+import type { CharacterBuild, BuffActivation } from "../../types/wasm";
 import { getConditionalBuffs, type ConditionalBuffInfo } from "../../lib/conditionals";
 import { useTeamStore, type MemberActivations } from "../../stores/team";
+import { useGoodStore } from "../../stores/good";
 
-/** Extract the Manual activation part from any BuffActivationType */
-function getManualActivation(activation: BuffActivationType): ManualActivation | null {
-  if ("Manual" in activation) return activation.Manual;
-  if ("Both" in activation) return activation.Both[1];
-  return null; // Auto-only has no manual control
-}
+const CINDER_CITY_SET_ID = "scroll_of_the_hero_of_cinder_city";
 
-/** Check if an activation requires nightsoul */
-function isNightsoulRequired(activation: BuffActivationType): boolean {
-  if ("Auto" in activation) return activation.Auto === "NightsoulRequired";
-  if ("Both" in activation) return activation.Both[0] === "NightsoulRequired";
+/** Check if a conditional buff's stat matches a given element */
+function buffMatchesElement(info: ConditionalBuffInfo, element: string): boolean {
+  const stat = info.buff.stat;
+  if (typeof stat === "object" && "ElementalDmgBonus" in stat) {
+    return stat.ElementalDmgBonus.toLowerCase() === element.toLowerCase();
+  }
   return false;
 }
 
@@ -25,7 +23,17 @@ interface ActivationPanelProps {
 export function ActivationPanel({ build, memberIndex }: ActivationPanelProps) {
   const setActivation = useTeamStore((s) => s.setActivation);
   const stored = useTeamStore((s) => s.activations[memberIndex]);
+  const mainDpsIndex = useTeamStore((s) => s.mainDpsIndex);
+  const members = useTeamStore((s) => s.members);
+  const getBuild = useGoodStore((s) => s.getBuild);
   const conditionals = useMemo(() => getConditionalBuffs(build), [build]);
+
+  // Check if this member has the Cinder City artifact set (4-piece)
+  const hasCinderCity = useMemo(() => {
+    return build.artifacts.sets.some(
+      (entry) => entry.set.id === CINDER_CITY_SET_ID && entry.piece_count >= 4,
+    );
+  }, [build]);
 
   // Initialize or reconcile activations when conditionals change
   useEffect(() => {
@@ -33,11 +41,33 @@ export function ActivationPanel({ build, memberIndex }: ActivationPanelProps) {
 
     const [existingWeapon = [], existingArtifact = [], existingTalent = []] = stored ?? [[], [], []];
 
+    // Get main DPS element for Cinder City default activation
+    let mainElement: string | null = null;
+    if (hasCinderCity) {
+      const mainDpsId = members[mainDpsIndex];
+      if (mainDpsId) {
+        const mainBuild = getBuild(mainDpsId);
+        mainElement = mainBuild?.character.element ?? null;
+      }
+    }
+    const equippedElement = build.character.element;
+
     const reconcile = (kind: ConditionalBuffInfo["kind"], existing: readonly BuffActivation[]): BuffActivation[] => {
-      const names = conditionals.filter((c) => c.kind === kind).map((c) => c.buff.name);
-      const result: BuffActivation[] = names.map((name) => {
-        const found = existing.find((a) => a.name === name);
-        return found ? { ...found } : { name, active: false };
+      const infos = conditionals.filter((c) => c.kind === kind);
+      const result: BuffActivation[] = infos.map((info) => {
+        const found = existing.find((a) => a.name === info.buff.name);
+        if (found) return { ...found };
+
+        // Default activation for Cinder City artifact set
+        if (hasCinderCity && kind === "artifact") {
+          const matchesMainDps = mainElement !== null && buffMatchesElement(info, mainElement);
+          const matchesEquipped = buffMatchesElement(info, equippedElement);
+          if (matchesMainDps || matchesEquipped) {
+            return { name: info.buff.name, active: true };
+          }
+        }
+
+        return { name: info.buff.name, active: false };
       });
       return result;
     };
@@ -53,89 +83,8 @@ export function ActivationPanel({ build, memberIndex }: ActivationPanelProps) {
     if (!stored || !match(weaponActs, existingWeapon) || !match(artifactActs, existingArtifact) || !match(talentActs, existingTalent)) {
       setActivation(memberIndex, [weaponActs, artifactActs, talentActs]);
     }
-  }, [conditionals, memberIndex, setActivation, stored]);
+  }, [conditionals, memberIndex, setActivation, stored, hasCinderCity, members, mainDpsIndex, build.character.element, getBuild]);
 
-  if (conditionals.length === 0) return null;
-
-  const [weaponActs = [], artifactActs = [], talentActs = []] = stored ?? [[], [], []];
-
-  const getList = (kind: ConditionalBuffInfo["kind"]): readonly BuffActivation[] => {
-    if (kind === "weapon") return weaponActs;
-    if (kind === "artifact") return artifactActs;
-    return talentActs;
-  };
-
-  const findActivation = (buff: ConditionalBuffInfo): BuffActivation | undefined => {
-    return getList(buff.kind).find((a) => a.name === buff.buff.name);
-  };
-
-  const toggleActivation = (info: ConditionalBuffInfo) => {
-    const list = [...getList(info.kind)];
-    const idx = list.findIndex((a) => a.name === info.buff.name);
-    if (idx === -1) return;
-
-    const current = list[idx];
-    const manual = getManualActivation(info.buff.activation);
-    if (!manual) return; // Auto-only buffs cannot be toggled
-
-    const isStacks = typeof manual === "object" && "Stacks" in manual;
-
-    if (isStacks) {
-      const maxStacks = manual.Stacks;
-      const currentStacks = current.stacks ?? 0;
-      if (!current.active) {
-        list[idx] = { name: current.name, active: true, stacks: maxStacks };
-      } else if (currentStacks > 1) {
-        list[idx] = { name: current.name, active: true, stacks: currentStacks - 1 };
-      } else {
-        list[idx] = { name: current.name, active: false };
-      }
-    } else {
-      list[idx] = { name: current.name, active: !current.active };
-    }
-
-    const next: MemberActivations = info.kind === "weapon"
-      ? [list, [...artifactActs], [...talentActs]]
-      : info.kind === "artifact"
-        ? [[...weaponActs], list, [...talentActs]]
-        : [[...weaponActs], [...artifactActs], list];
-    setActivation(memberIndex, next);
-  };
-
-  return (
-    <div className="flex flex-wrap gap-1 mt-1.5">
-      {conditionals.map((info) => {
-        const act = findActivation(info);
-        const active = act?.active ?? false;
-        const manual = getManualActivation(info.buff.activation);
-        const nightsoul = isNightsoulRequired(info.buff.activation);
-        const isStacks = manual !== null && typeof manual === "object" && "Stacks" in manual;
-        const maxStacks = isStacks ? manual.Stacks : 0;
-        const currentStacks = act?.stacks ?? 0;
-
-        // Auto-only buffs (no manual control) are not rendered
-        if (!manual) return null;
-
-        return (
-          <button
-            key={info.buff.name}
-            type="button"
-            onClick={() => toggleActivation(info)}
-            title={`${info.buff.description}${nightsoul ? " (夜魂キャラのみ)" : ""}`}
-            className={`px-2 py-0.5 rounded text-[9px] font-medium transition-colors
-              ${active
-                ? "bg-gold/20 text-gold border border-gold/40"
-                : "bg-navy-border/50 text-text-muted border border-transparent hover:bg-navy-hover"
-              }`}
-          >
-            {nightsoul && <span className="mr-0.5" aria-label="夜魂キャラのみ">◆</span>}
-            {info.label}
-            {isStacks && active && (
-              <span className="ml-0.5 text-[8px]">×{currentStacks}/{maxStacks}</span>
-            )}
-          </button>
-        );
-      })}
-    </div>
-  );
+  // No visual UI - activation toggles are in BuffCard
+  return null;
 }

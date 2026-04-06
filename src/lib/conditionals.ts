@@ -1,11 +1,25 @@
 import { find_artifact_set, find_weapon, get_talent_conditional_buffs } from "@kotenbu135/genshin-calc-wasm";
-import type { CharacterBuild, ConditionalBuff, TalentConditionalBuff } from "../types/wasm";
+import type { CharacterBuild, ConditionalBuff, TalentConditionalBuff, BuffActivationType, ManualActivation } from "../types/wasm";
 
 export interface ConditionalBuffInfo {
   readonly kind: "weapon" | "artifact" | "talent";
   readonly label: string;
   readonly buff: ConditionalBuff | TalentConditionalBuff;
   readonly refinement?: number;
+}
+
+/** Extract the Manual activation part from any BuffActivationType */
+export function getManualActivation(activation: BuffActivationType): ManualActivation | null {
+  if ("Manual" in activation) return activation.Manual;
+  if ("Both" in activation) return activation.Both[1];
+  return null; // Auto-only has no manual control
+}
+
+/** Check if an activation requires nightsoul */
+export function isNightsoulRequired(activation: BuffActivationType): boolean {
+  if ("Auto" in activation) return activation.Auto === "NightsoulRequired";
+  if ("Both" in activation) return activation.Both[0] === "NightsoulRequired";
+  return false;
 }
 
 export function getConditionalBuffs(build: CharacterBuild): readonly ConditionalBuffInfo[] {
