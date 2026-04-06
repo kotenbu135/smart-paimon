@@ -14,13 +14,13 @@ const RESONANCE_DEFS: readonly ResonanceDef[] = [
     // Fervent Flames: ATK +25%
     elements: ["Pyro"],
     count: 2,
-    buffs: [{ source: "resonance:pyro", stat: "AtkPercent", value: 0.25, target: "Team" }],
+    buffs: [{ source: "resonance:pyro", stat: "AtkPercent", value: 0.25, target: "Team", origin: null }],
   },
   {
     // Soothing Water: HP +25%
     elements: ["Hydro"],
     count: 2,
-    buffs: [{ source: "resonance:hydro", stat: "HpPercent", value: 0.25, target: "Team" }],
+    buffs: [{ source: "resonance:hydro", stat: "HpPercent", value: 0.25, target: "Team", origin: null }],
   },
   {
     // High Voltage: no direct stat buff (particle generation)
@@ -32,7 +32,7 @@ const RESONANCE_DEFS: readonly ResonanceDef[] = [
     // Shattering Ice: CRIT Rate +15% (against Cryo-affected enemies)
     elements: ["Cryo"],
     count: 2,
-    buffs: [{ source: "resonance:cryo", stat: "CritRate", value: 0.15, target: "Team" }],
+    buffs: [{ source: "resonance:cryo", stat: "CritRate", value: 0.15, target: "Team", origin: null }],
   },
   {
     // Impetuous Winds: no direct damage stat buff (movement/stamina/CD)
@@ -44,14 +44,14 @@ const RESONANCE_DEFS: readonly ResonanceDef[] = [
     // Enduring Rock: DMG +15% when shielded
     elements: ["Geo"],
     count: 2,
-    buffs: [{ source: "resonance:geo", stat: "DmgBonus", value: 0.15, target: "Team" }],
+    buffs: [{ source: "resonance:geo", stat: "DmgBonus", value: 0.15, target: "Team", origin: null }],
   },
   {
     // Sprawling Greenery: EM +50 (base), +30 after Burning/Quicken/Bloom
     // Only applying the base +50 EM
     elements: ["Dendro"],
     count: 2,
-    buffs: [{ source: "resonance:dendro", stat: "ElementalMastery", value: 50, target: "Team" }],
+    buffs: [{ source: "resonance:dendro", stat: "ElementalMastery", value: 50, target: "Team", origin: null }],
   },
 ];
 

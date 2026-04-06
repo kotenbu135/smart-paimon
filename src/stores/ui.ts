@@ -29,8 +29,8 @@ export const useUIStore = create<UIState>()(
       partialize: (state) => ({
         locale: state.locale,
       }),
-      onRehydrate: () => {
-        return (state) => {
+      onRehydrateStorage: () => {
+        return (state: UIState | undefined) => {
           if (state?.locale) {
             i18n.changeLanguage(state.locale);
           }
