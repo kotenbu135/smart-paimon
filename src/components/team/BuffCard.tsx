@@ -5,7 +5,7 @@ import { ELEMENT_TW } from "../../lib/elements";
 import { charIcon, elementIcon } from "../../lib/charAssets";
 import { localizeCharacterName, localizeBuffSource, localizeWeaponName, localizeArtifactSetName } from "../../lib/localize";
 import { getConditionalBuffs, getManualActivation, isNightsoulRequired, type ConditionalBuffInfo } from "../../lib/conditionals";
-import type { BuffBreakdown } from "../../stores/team";
+import type { BuffBreakdown, BuffBreakdownEntry } from "../../stores/team";
 import { useTeamStore, type MemberActivations } from "../../stores/team";
 import { useGoodStore } from "../../stores/good";
 import type { BuffableStat, CharacterBuild, BuffActivation } from "../../types/wasm";

@@ -248,7 +248,7 @@ export function resolveTeamDamage(input: ResolveTeamInput): ResolveTeamOutput {
   // Find the target index within the filtered teamMembers array
   const targetIdx = indexMap.indexOf(mainDpsIndex);
   if (targetIdx === -1 || teamMembers.length === 0) {
-    return { soloResults, teamResults: {}, resolvedStats: null, buffBreakdown: [] };
+    return { soloResults, teamResults: {}, resolvedStats: null, buffBreakdown: [], nightsoulFlags: [] };
   }
 
   // 4. Call WASM resolve_team_stats (v0.3.0: returns TeamResolveResult)
