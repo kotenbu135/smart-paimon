@@ -1,14 +1,16 @@
 import type { Element as GenshinElement, ResolvedBuff } from "../types/wasm";
 import type { BuffBreakdown, BuffBreakdownEntry } from "../stores/team";
-import { getResonanceBuffs } from "../data/resonance";
 
-// ---------- Element resonance (applied as if from a virtual "resonance" member) ----------
-
-export function assembleResonanceBuffs(
-  elements: readonly (GenshinElement | null)[],
-): readonly ResolvedBuff[] {
-  return getResonanceBuffs(elements);
-}
+// Map WASM resonance source names to their element
+const RESONANCE_ELEMENT: Record<string, GenshinElement> = {
+  FerventFlames: "Pyro",
+  SoothingWater: "Hydro",
+  ShatteringIce: "Cryo",
+  HighVoltage: "Electro",
+  ImpetuousWinds: "Anemo",
+  EnduringRock: "Geo",
+  SprawlingGreenery: "Dendro",
+};
 
 // ---------- BuffBreakdown for UI ----------
 
@@ -52,14 +54,12 @@ export function buildBuffBreakdown(
     });
   }
 
-  // Element resonance buffs (grouped by element)
+  // Element resonance buffs from WASM (grouped by element)
   if (resonanceBuffs.length > 0) {
     const byElement = new Map<GenshinElement, ResolvedBuff[]>();
     for (const b of resonanceBuffs) {
-      // resonance source format: "resonance:pyro" → element = "Pyro"
-      const colonIdx = b.source.indexOf(":");
-      const label = colonIdx === -1 ? b.source : b.source.slice(colonIdx + 1);
-      const element = (label.charAt(0).toUpperCase() + label.slice(1)) as GenshinElement;
+      const element = RESONANCE_ELEMENT[b.source];
+      if (!element) continue;
       const arr = byElement.get(element);
       if (arr) arr.push(b);
       else byElement.set(element, [b]);

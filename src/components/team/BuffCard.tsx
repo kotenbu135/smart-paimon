@@ -7,6 +7,7 @@ import { localizeCharacterName } from "../../lib/localize";
 import { getConditionalBuffs, getManualActivation, isNightsoulRequired, type ConditionalBuffInfo } from "../../lib/conditionals";
 import type { BuffBreakdown } from "../../stores/team";
 import { useTeamStore, type MemberActivations } from "../../stores/team";
+import { useGoodStore } from "../../stores/good";
 import type { BuffableStat, CharacterBuild, BuffActivation } from "../../types/wasm";
 
 interface BuffCardProps {
@@ -87,14 +88,34 @@ export function BuffCard({ breakdown, memberIndex, build }: BuffCardProps) {
   // Filter to only manually toggleable conditionals
   const toggleableConditionals = conditionals.filter((info) => getManualActivation(info.buff.activation) !== null);
 
+  // Filter element-specific toggles to only show relevant elements (main DPS + self)
+  const mainDpsId = useTeamStore((s) => s.members[s.mainDpsIndex]);
+  const mainDpsBuild = useGoodStore((s) => mainDpsId ? s.getBuild(mainDpsId) : undefined);
+  const relevantConditionals = useMemo(() => {
+    const mainElement = mainDpsBuild?.character.element ?? null;
+    const selfElement = build?.character.element ?? null;
+    return toggleableConditionals.filter((info) => {
+      const el = getStatElement(info.buff.stat);
+      if (el === null) return true; // non-element stat → always show
+      return (mainElement !== null && el.toLowerCase() === mainElement.toLowerCase()) ||
+             (selfElement !== null && el.toLowerCase() === selfElement.toLowerCase());
+    });
+  }, [toggleableConditionals, mainDpsBuild?.character.element, build?.character.element]);
+
   /** Generate a distinct label for a conditional buff toggle */
   const getToggleLabel = (info: ConditionalBuffInfo): string => {
     const stat = info.buff.stat;
-    // For element-specific stats, show element name alongside the source label
+    // For element-specific stats, show full stat type name (e.g. "岩元素耐性減少")
+    // to distinguish between different stat types for the same element
     if (typeof stat === "object") {
-      const [, element] = Object.entries(stat)[0];
+      const [statType, element] = Object.entries(stat)[0];
       const elKey = `element.${(element as string).toLowerCase()}`;
       const elName = t(elKey);
+      const statKey = `buff.stat.${statType}`;
+      const statName = t(statKey, { element: elName });
+      if (statName !== statKey) {
+        return `${info.label} (${statName})`;
+      }
       return `${info.label} (${elName})`;
     }
     // For non-element stats, show the stat name
@@ -107,8 +128,8 @@ export function BuffCard({ breakdown, memberIndex, build }: BuffCardProps) {
   };
 
   // Check if there are duplicate labels to decide whether to show stat info
-  const hasDuplicateLabels = toggleableConditionals.length > 1 &&
-    new Set(toggleableConditionals.map((c) => c.label)).size < toggleableConditionals.length;
+  const hasDuplicateLabels = relevantConditionals.length > 1 &&
+    new Set(relevantConditionals.map((c) => c.label)).size < relevantConditionals.length;
 
   return (
     <div className="bg-navy-card border border-navy-border rounded-xl p-3.5">
@@ -123,9 +144,9 @@ export function BuffCard({ breakdown, memberIndex, build }: BuffCardProps) {
       </div>
 
       {/* Conditional buff toggles */}
-      {toggleableConditionals.length > 0 && (
+      {relevantConditionals.length > 0 && (
         <div className="flex flex-wrap gap-1.5 mb-3">
-          {toggleableConditionals.map((info) => {
+          {relevantConditionals.map((info) => {
             const act = findActivation(info);
             const active = act?.active ?? false;
             const nightsoul = isNightsoulRequired(info.buff.activation);
@@ -179,6 +200,16 @@ export function BuffCard({ breakdown, memberIndex, build }: BuffCardProps) {
       </div>
     </div>
   );
+}
+
+/** Extract element from an element-specific stat, or null for generic stats */
+function getStatElement(stat: BuffableStat): string | null {
+  if (typeof stat === "object") {
+    if ("ElementalDmgBonus" in stat) return stat.ElementalDmgBonus;
+    if ("ElementalRes" in stat) return stat.ElementalRes;
+    if ("ElementalResReduction" in stat) return stat.ElementalResReduction;
+  }
+  return null;
 }
 
 function localizeBuffStat(stat: BuffableStat, t: TFunction): string {

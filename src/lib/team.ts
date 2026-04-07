@@ -4,7 +4,7 @@ import {
   computeTalentDamage,
   type TalentRow,
 } from "./damage";
-import { assembleResonanceBuffs, buildBuffBreakdown } from "./buffs";
+import { buildBuffBreakdown } from "./buffs";
 import type {
   CharacterBuild,
   Enemy,
@@ -238,20 +238,9 @@ export function resolveTeamDamage(input: ResolveTeamInput): ResolveTeamOutput {
     memberBuffs.push(member.buffs_provided);
   }
 
-  // Element resonance
-  const teamElements: (GenshinElement | null)[] = members.map((id) => {
-    if (!id) return null;
-    const b = getBuild(id);
-    return b?.character.element ?? null;
-  });
-  const resonanceBuffs = assembleResonanceBuffs(teamElements);
-
-  // Add resonance buffs to only the first member to avoid duplication.
-  // resolve_team_stats aggregates buffs from ALL members, so adding to every member
-  // would count the resonance N times.
-  if (resonanceBuffs.length > 0 && teamMembers.length > 0) {
-    teamMembers[0].buffs_provided = [...teamMembers[0].buffs_provided, ...resonanceBuffs];
-  }
+  // Element resonance is handled entirely by WASM's resolve_team_stats.
+  // It detects resonances from team composition (requires 4 members) and applies buffs automatically.
+  // Do NOT add resonance buffs manually — that causes double-counting.
 
   // Find the target index within the filtered teamMembers array
   const targetIdx = indexMap.indexOf(mainDpsIndex);
@@ -271,7 +260,12 @@ export function resolveTeamDamage(input: ResolveTeamInput): ResolveTeamOutput {
   };
 
   // 6. Build buff breakdown for UI
-  const buffBreakdown = buildBuffBreakdown(memberBuilds, memberBuffs, resonanceBuffs, targetIdx);
+  // Extract resonance buffs from WASM applied_buffs using the resonances list
+  const resonanceNames = new Set(teamResult.resonances as string[]);
+  const wasmResonanceBuffs = teamResult.applied_buffs.filter(
+    (b: ResolvedBuff) => resonanceNames.has(b.source),
+  );
+  const buffBreakdown = buildBuffBreakdown(memberBuilds, memberBuffs, wasmResonanceBuffs, targetIdx);
 
   return {
     soloResults,
