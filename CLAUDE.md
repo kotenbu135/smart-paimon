@@ -33,6 +33,7 @@ Vite + React 19 + TypeScript, Tailwind CSS v4, Zustand, Radix UI, Framer Motion,
 ## Working with Genshin Data
 - 原神のゲーム仕様に関する質問は、知識に自信がなければ必ず Web 検索で確認してから回答する
 - 聖遺物・キャラ天賦の効果は頻繁に追加・変更されるため、推測で答えない
+- ゲームデータの詳細確認: honeyhunter-mirror/md リポジトリが参照可能
 
 ## Development
 - TDD で実装する（テストを先に書く → 失敗確認 → 実装 → パス確認）

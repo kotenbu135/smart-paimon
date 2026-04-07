@@ -12,7 +12,7 @@ const TALENT_NAMES_JA: Record<string, string> = {
   "Low Plunge DMG": "低空落下攻撃ダメージ",
   "High Plunge DMG": "高空落下攻撃ダメージ",
   "Skill DMG": "スキルダメージ",
-  "Burst DMG": "元素爆発ダメージ",
+  "Burst DMG": "爆発ダメージ",
 
   // Columbina (コロンビーナ)
   "Moondew Cleanse DMG": "月露浄化ダメージ",

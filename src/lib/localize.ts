@@ -3,6 +3,11 @@ import CHARACTER_NAMES_JA from "../data/characterNamesJa";
 import WEAPON_NAMES_JA from "../data/weaponNamesJa";
 import TALENT_NAMES_EN from "../data/talentNamesEn";
 import TALENT_NAMES_JA from "../data/talentNamesJa";
+import NORMAL_ATTACK_NAMES_JA from "../data/normalAttackNamesJa";
+import SKILL_NAMES_JA from "../data/skillNamesJa";
+import BURST_NAMES_JA from "../data/burstNamesJa";
+import PASSIVE_NAMES_JA from "../data/passiveNamesJa";
+import CONSTELLATION_NAMES_JA from "../data/constellationNamesJa";
 
 /** Map WASM weapon sub_stat keys to i18n artifact.stat keys */
 const WEAPON_STAT_I18N: Record<string, string> = {
@@ -53,6 +58,31 @@ export function localizeWeaponStat(statKey: string, t: TFunction): string {
 export function localizeTalentName(name: string, locale: string): string {
   if (locale === "en") return TALENT_NAMES_EN[name] ?? name;
   if (locale === "ja") return TALENT_NAMES_JA[name] ?? name;
+  return name;
+}
+
+export function localizeNormalAttackName(name: string, locale: string): string {
+  if (locale === "ja") return NORMAL_ATTACK_NAMES_JA[name] ?? name;
+  return name;
+}
+
+export function localizeSkillName(name: string, locale: string): string {
+  if (locale === "ja") return SKILL_NAMES_JA[name] ?? name;
+  return name;
+}
+
+export function localizeBurstName(name: string, locale: string): string {
+  if (locale === "ja") return BURST_NAMES_JA[name] ?? name;
+  return name;
+}
+
+export function localizePassiveName(name: string, locale: string): string {
+  if (locale === "ja") return PASSIVE_NAMES_JA[name] ?? name;
+  return name;
+}
+
+export function localizeConstellationName(name: string, locale: string): string {
+  if (locale === "ja") return CONSTELLATION_NAMES_JA[name] ?? name;
   return name;
 }
 

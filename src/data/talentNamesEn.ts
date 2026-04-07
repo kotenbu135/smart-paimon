@@ -10,10 +10,10 @@ const TALENT_NAMES_EN: Record<string, string> = {
   "4段ダメージ (×2)": "4-Hit DMG (x2)",
   "6段ダメージ(1)": "6-Hit DMG (1)",
   "6段ダメージ(2)": "6-Hit DMG (2)",
-  "1回のダメージ": "1-Hit DMG",
+  "1回のダメージ": "Single Instance DMG",
   "重撃ダメージ(1)": "Charged Attack DMG (1)",
   "重撃ダメージ(2)": "Charged Attack DMG (2)",
-  "重撃ダメージ": "Charged Attack DMG",
+  "重撃ダメージ": "Charged Attack",
   "重撃ダメージボーナス": "Charged Attack DMG Bonus",
   "落下攻撃ダメージ": "Plunge DMG",
 
@@ -43,11 +43,11 @@ const TALENT_NAMES_EN: Record<string, string> = {
   "バーストダメージ": "Burst DMG",
   "基礎ダメージ": "Base DMG",
   "合計ダメージ": "Total DMG",
-  "継続ダメージ": "Continuous DMG",
+  "継続ダメージ": "DoT",
   "継続攻撃ダメージ": "Continuous Attack DMG",
   "永続ダメージ": "Persistent DMG",
   "発動ダメージ": "Activation DMG",
-  "召喚ダメージ": "Summon DMG",
+  "召喚ダメージ": "Summoning DMG",
   "協同攻撃ダメージ": "Coordinated Attack DMG",
   "追撃ダメージ": "Follow-up DMG",
   "単発ダメージ": "Single-Hit DMG",
@@ -55,7 +55,7 @@ const TALENT_NAMES_EN: Record<string, string> = {
   "初撃ダメージ": "Initial Hit DMG",
   "共鳴ダメージ": "Resonance DMG",
   "領域ダメージ": "Domain DMG",
-  "噴火ダメージ": "Eruption DMG",
+  "噴火ダメージ": "Flame DMG",
 
   // Press/Hold variants
   "一回押しダメージ": "Press DMG",
@@ -134,11 +134,11 @@ const TALENT_NAMES_EN: Record<string, string> = {
   "付加元素ダメージ": "Additional Elemental DMG",
 
   // Xingqiu
-  "剣雨のダメージ": "Rain Sword DMG",
-  "水沫剣ダメージ": "Waterlight Sword DMG",
+  "剣雨のダメージ": "Sword Rain DMG",
+  "水沫剣ダメージ": "Bloomwater Blade DMG",
 
   // Diluc
-  "斬撃ダメージ": "Slash DMG",
+  "斬撃ダメージ": "Cutting DMG",
 
   // Klee
   "ドッカン花火ダメージ": "Sparks 'n' Splash DMG",
@@ -157,13 +157,13 @@ const TALENT_NAMES_EN: Record<string, string> = {
   // Eula
   "光臨の剣基礎ダメージ": "Lightfall Sword Base DMG",
   "光臨の剣スタックダメージ": "DMG Per Stack",
-  "連続重撃ダメージ": "Charged Attack Spinning DMG",
+  "連続重撃ダメージ": "Charged Attack Cyclic DMG",
   "重撃終了ダメージ": "Charged Attack Final DMG",
   "氷渦の剣ダメージ": "Icewhirl Brand DMG",
 
   // Ganyu
   "蓮灯ダメージ": "Ice Lotus DMG",
-  "氷嵐ダメージ": "Icicle DMG",
+  "氷嵐ダメージ": "Ice Shard DMG",
   "霜流矢ダメージ": "Frostflake Arrow DMG",
   "氷星の欠片ダメージ": "Ice Shard DMG",
   "氷星フレアダメージ": "Ice Star Flare DMG",
@@ -171,16 +171,16 @@ const TALENT_NAMES_EN: Record<string, string> = {
 
   // Ayaka
   "氷柱ダメージ": "Icicle DMG",
-  "氷槍継続ダメージ": "Ice Lance Continuous DMG",
+  "氷槍継続ダメージ": "Ice Lance DoT",
   "霜降嵐ダメージ": "Frostflake Seki no To DMG",
 
   // Keqing
-  "雷楔ダメージ": "Stiletto DMG",
+  "雷楔ダメージ": "Lightning Stiletto DMG",
   "連斬ダメージ": "Consecutive Slash DMG",
-  "最後の一撃ダメージ": "Final Attack DMG",
+  "最後の一撃ダメージ": "Last Attack DMG",
 
   // Lisa
-  "雷放電ダメージ": "Lightning Discharge DMG",
+  "雷放電ダメージ": "Discharge DMG",
 
   // Beidou
   "放電ダメージ": "Lightning Discharge DMG",
@@ -217,13 +217,13 @@ const TALENT_NAMES_EN: Record<string, string> = {
   "宝石ダメージ (1個)": "Crystal DMG (1 Hit)",
 
   // Mona
-  "泡影破裂ダメージ": "Bubble Burst DMG",
+  "泡影破裂ダメージ": "Illusory Bubble Explosion DMG",
 
   // Kazuha
   "上突きダメージ": "Upward Slash DMG",
 
   // Cyno
-  "刹那の花ダメージ": "Spirit Flower DMG",
+  "刹那の花ダメージ": "Transient Blossom DMG",
   "暗闘1段ダメージ": "Pactsworn 1-Hit DMG",
   "暗闘2段ダメージ": "Pactsworn 2-Hit DMG",
   "暗闘3段ダメージ": "Pactsworn 3-Hit DMG",
@@ -271,7 +271,7 @@ const TALENT_NAMES_EN: Record<string, string> = {
   "トニック弾ダメージ": "Tonic Shot DMG",
   "チルウォーター爆弾ダメージ": "Chillwater Bomb DMG",
   "トラブルシューター弾ダメージ": "Troubleshooter Shot DMG",
-  "アフターサービス弾ダメージ": "After-Service Shot DMG",
+  "アフターサービス弾ダメージ": "After-Sales Service Round DMG",
 
   // Mualani
   "鯊鯊バイトダメージ": "Sharky Bite DMG",
@@ -356,15 +356,15 @@ const TALENT_NAMES_EN: Record<string, string> = {
 
   // Sayu
   "蹴りダメージ": "Kick DMG",
-  "振り回しダメージ": "Whirl DMG",
+  "振り回しダメージ": "Swing DMG",
 
   // Yaoyao
   "白玉大根ダメージ": "Radish DMG",
   "白玉大根(爆発)ダメージ": "Radish (Explosion) DMG",
 
   // Gaming
-  "飛び蹴りダメージ": "Drop Kick DMG",
-  "ボンボン爆弾ダメージ": "Bouncing Bomb DMG",
+  "飛び蹴りダメージ": "Flying Kick DMG",
+  "ボンボン爆弾ダメージ": "Jumpy Dumpty DMG",
 
   // Xianyun
   "跳躍ダメージ": "Leap DMG",
@@ -380,10 +380,10 @@ const TALENT_NAMES_EN: Record<string, string> = {
   "灼熱の輪ダメージ": "Scorching Ring DMG",
 
   // Baizhu
-  "生滅の花ダメージ": "Life-Death Flower DMG",
+  "生滅の花ダメージ": "Fatal Blossom DMG",
 
   // Kirara
-  "ブービートラップダメージ": "Booby Trap DMG",
+  "ブービートラップダメージ": "Mine DMG",
   "出入りダメージ": "Entry-Exit DMG",
   "飛散する水刃ダメージ": "Scattering Water Blade DMG",
 
@@ -426,9 +426,9 @@ const TALENT_NAMES_EN: Record<string, string> = {
   "流湧の刃ダメージ": "Surging Blade DMG",
 
   // Neuvillette (continued)
-  "瞬水剣1段ダメージ": "Water Blade 1-Hit DMG",
-  "瞬水剣2段ダメージ": "Water Blade 2-Hit DMG",
-  "瞬水剣3段ダメージ": "Water Blade 3-Hit DMG",
+  "瞬水剣1段ダメージ": "Shunsuiken 1-Hit DMG",
+  "瞬水剣2段ダメージ": "Shunsuiken 2-Hit DMG",
+  "瞬水剣3段ダメージ": "Shunsuiken 3-Hit DMG",
   "滝ダメージ": "Waterfall DMG",
 
   // Electro-related
@@ -455,16 +455,16 @@ const TALENT_NAMES_EN: Record<string, string> = {
 
   // Various character-specific
   "殯儀の秘儀ダメージ": "Funerary Rite DMG",
-  "音波衝突ダメージ": "Sound Wave Collision DMG",
+  "音波衝突ダメージ": "Soundwave Collision DMG",
   "影狩シェルダメージ": "Shadow-Hunt Shell DMG",
   "輝く影狩シェルダメージ": "Shining Shadow-Hunt Shell DMG",
   "魂狩シェルダメージ": "Soul-Hunt Shell DMG",
   "輝く魂狩シェルダメージ": "Shining Soul-Hunt Shell DMG",
   "裂風シェルダメージ": "Wind-Cut Shell DMG",
   "永眠の讃歌ダメージ": "Eternal Rest Hymn DMG",
-  "星光弾ダメージ": "Starlight Bullet DMG",
+  "星光弾ダメージ": "Starlight Slug DMG",
   "星枝ダメージ": "Star Branch DMG",
-  "落雷ダメージ": "Lightning Strike DMG",
+  "落雷ダメージ": "Falling Thunder DMG",
   "迅捷の追撃ダメージ": "Swift Pursuit DMG",
   "迅捷の追撃貫通ダメージ": "Swift Pursuit Penetration DMG",
   "サージングブレードダメージ": "Surging Blade DMG",
@@ -538,7 +538,7 @@ const TALENT_NAMES_EN: Record<string, string> = {
   // Misc
   "剣舞ステップ1ダメージ": "Sword Dance Step 1 DMG",
   "剣舞ステップ2ダメージ": "Sword Dance Step 2 DMG",
-  "水の幻影ダメージ": "Water Phantom DMG",
+  "水の幻影ダメージ": "Water Illusion DMG",
 
   // ---- Common plunging variants ----
   "落下期間のダメージ": "Plunge DMG",
@@ -651,7 +651,7 @@ const TALENT_NAMES_EN: Record<string, string> = {
   "影刺し狙い撃ちダメージ": "Shadowpiercing Shot DMG",
 
   // Yoimiya
-  "焔硝の矢ダメージ": "Blazing Arrow DMG",
+  "焔硝の矢ダメージ": "Kindling Arrow DMG",
 
   // Chevreuse
   "爆発グレネードダメージ": "Explosive Grenade DMG",
