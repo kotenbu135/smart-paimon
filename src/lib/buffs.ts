@@ -26,45 +26,24 @@ export function buildBuffBreakdown(
 ): readonly BuffBreakdown[] {
   const breakdowns: BuffBreakdown[] = [];
 
-  // Self-buffs for the target (main DPS) character — weapon passives, artifact set effects, talent passives
-  if (targetIndex !== undefined) {
-    const targetInfo = memberBuilds[targetIndex];
-    const targetBuffs = memberBuffs[targetIndex];
-    if (targetInfo && targetBuffs) {
-      const selfBuffs = targetBuffs.filter((b) => b.target === "OnlySelf");
-      if (selfBuffs.length > 0) {
-        breakdowns.push({
-          sourceCharacterId: targetInfo.characterId,
-          sourceCharacterName: targetInfo.characterName,
-          sourceElement: targetInfo.element,
-          buffs: selfBuffs.map((b): BuffBreakdownEntry => ({
-            name: b.source,
-            stat: b.stat,
-            value: b.value,
-            target: b.target,
-          })),
-        });
-      }
-    }
-  }
-
-  // Per-character buffs (exclude OnlySelf — those are self-buffs, not team contributions)
+  // Per-character buffs
+  // For the target (main DPS): include both OnlySelf and team buffs in a single card
+  // For others: exclude OnlySelf (those are self-buffs irrelevant to the target)
   // Always include members even with 0 buffs so conditional toggle buttons remain visible
   for (let i = 0; i < memberBuilds.length; i++) {
     const info = memberBuilds[i];
     const buffs = memberBuffs[i];
     if (!info || !buffs) continue;
 
-    const teamBuffs = buffs.filter((b) => b.target !== "OnlySelf");
-
-    // Skip target character with no team buffs — they already have a self-buff card above
-    if (i === targetIndex && teamBuffs.length === 0) continue;
+    const filteredBuffs = i === targetIndex
+      ? buffs
+      : buffs.filter((b) => b.target !== "OnlySelf");
 
     breakdowns.push({
       sourceCharacterId: info.characterId,
       sourceCharacterName: info.characterName,
       sourceElement: info.element,
-      buffs: teamBuffs.map((b): BuffBreakdownEntry => ({
+      buffs: filteredBuffs.map((b): BuffBreakdownEntry => ({
         name: b.source,
         stat: b.stat,
         value: b.value,

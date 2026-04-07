@@ -2,10 +2,10 @@ import { useState, useMemo } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { useTranslation } from "react-i18next";
 import { useGoodStore } from "../../stores/good";
-import { ALL_ELEMENTS, ELEMENT_TW } from "../../lib/elements";
+import { ALL_ELEMENTS, ALL_WEAPONS, ELEMENT_TW } from "../../lib/elements";
 import { charIcon, elementIcon } from "../../lib/charAssets";
 import { localizeCharacterName } from "../../lib/localize";
-import type { Element as GenshinElement } from "../../types/wasm";
+import type { Element as GenshinElement, WeaponType } from "../../types/wasm";
 
 interface CharacterSelectModalProps {
   readonly open: boolean;
@@ -23,12 +23,16 @@ export function CharacterSelectModal({
   const { t, i18n } = useTranslation();
   const builds = useGoodStore((s) => s.builds);
   const [elementFilters, setElementFilters] = useState<Set<GenshinElement>>(new Set());
+  const [weaponFilter, setWeaponFilter] = useState<WeaponType | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const filtered = useMemo(() => {
-    if (elementFilters.size === 0) return builds;
-    return builds.filter((b) => elementFilters.has(b.character.element));
-  }, [builds, elementFilters]);
+    return [...builds].reverse().filter((b) => {
+      if (elementFilters.size > 0 && !elementFilters.has(b.character.element)) return false;
+      if (weaponFilter && b.character.weapon_type !== weaponFilter) return false;
+      return true;
+    });
+  }, [builds, elementFilters, weaponFilter]);
 
   const toggleElement = (el: GenshinElement) => {
     setElementFilters((prev) => {
@@ -45,6 +49,7 @@ export function CharacterSelectModal({
       onOpenChange(false);
       setSelectedId(null);
       setElementFilters(new Set());
+      setWeaponFilter(null);
     }
   };
 
@@ -53,7 +58,7 @@ export function CharacterSelectModal({
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-black/60 z-50" />
         <Dialog.Content className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50
-          w-[calc(100vw-2rem)] sm:w-[460px] max-h-[80vh] bg-navy-card border border-navy-border rounded-xl
+          w-[calc(100vw-2rem)] sm:w-[720px] max-h-[85vh] bg-navy-card border border-navy-border rounded-xl
           flex flex-col overflow-hidden">
 
           {/* Header */}
@@ -66,30 +71,50 @@ export function CharacterSelectModal({
             </Dialog.Close>
           </div>
 
-          {/* Element filters */}
-          <div className="flex gap-1.5 flex-wrap px-4 sm:px-5 py-3">
-            {ALL_ELEMENTS.map((el) => {
-              const active = elementFilters.has(el as GenshinElement);
-              const tw = ELEMENT_TW[el];
-              return (
-                <button
-                  key={el}
-                  type="button"
-                  onClick={() => toggleElement(el as GenshinElement)}
-                  className={`px-3 py-1 rounded-full text-[10px] font-label uppercase tracking-wider transition-all
-                    flex items-center gap-1
-                    ${active ? `${tw.bg} text-white` : "bg-navy-hover text-text-secondary hover:bg-navy-border"}`}
-                >
-                  <img src={elementIcon(el)} alt={el} className="w-3.5 h-3.5" />
-                  {t(`element.${el.toLowerCase()}`)}
-                </button>
-              );
-            })}
+          {/* Filters */}
+          <div className="flex flex-col gap-2 px-4 sm:px-5 py-3">
+            {/* Element filters */}
+            <div className="flex gap-1.5 flex-wrap">
+              {ALL_ELEMENTS.map((el) => {
+                const active = elementFilters.has(el as GenshinElement);
+                const tw = ELEMENT_TW[el];
+                return (
+                  <button
+                    key={el}
+                    type="button"
+                    onClick={() => toggleElement(el as GenshinElement)}
+                    className={`px-3 py-1 rounded-full text-[10px] font-label uppercase tracking-wider transition-all
+                      flex items-center gap-1
+                      ${active ? `${tw.bg} text-white` : "bg-navy-hover text-text-secondary hover:bg-navy-border"}`}
+                  >
+                    <img src={elementIcon(el)} alt={el} className="w-3.5 h-3.5" />
+                    {t(`element.${el.toLowerCase()}`)}
+                  </button>
+                );
+              })}
+            </div>
+            {/* Weapon type filters */}
+            <div className="flex gap-1.5 flex-wrap">
+              {ALL_WEAPONS.map((wt) => {
+                const active = weaponFilter === wt;
+                return (
+                  <button
+                    key={wt}
+                    type="button"
+                    onClick={() => setWeaponFilter(active ? null : wt as WeaponType)}
+                    className={`px-3 py-1 rounded-full text-[10px] font-label uppercase tracking-wider transition-all
+                      ${active ? "bg-gold text-navy-page font-bold" : "bg-navy-hover text-text-secondary hover:bg-navy-border"}`}
+                  >
+                    {t(`weaponType.${wt.toLowerCase()}`)}
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
           {/* Character grid — scrollable */}
           <div className="flex-1 overflow-y-auto px-4 sm:px-5">
-            <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
+            <div className="grid grid-cols-4 sm:grid-cols-8 gap-2">
               {filtered.map((build) => {
                 const id = build.character.id;
                 const disabled = disabledIds.has(id);
@@ -105,7 +130,7 @@ export function CharacterSelectModal({
                       ${disabled ? "opacity-30 cursor-not-allowed" : "cursor-pointer hover:bg-navy-hover"}
                       ${selected ? "ring-2 ring-gold" : ""}`}
                   >
-                    <div className="w-12 h-12 rounded-lg overflow-hidden mx-auto mb-1 bg-navy-hover">
+                    <div className="w-16 h-16 rounded-lg overflow-hidden mx-auto mb-1 bg-navy-hover">
                       <img
                         src={charIcon(id)}
                         alt={build.character.name}
@@ -113,7 +138,7 @@ export function CharacterSelectModal({
                         loading="lazy"
                       />
                     </div>
-                    <div className="text-[9px] text-text-primary truncate">
+                    <div className="text-[10px] text-text-primary truncate">
                       {localizeCharacterName(id, build.character.name, i18n.language)}
                     </div>
                     {disabled && (

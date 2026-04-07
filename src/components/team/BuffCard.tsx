@@ -46,26 +46,34 @@ export function BuffCard({ breakdown, memberIndex, build }: BuffCardProps) {
     if (memberIndex === undefined) return;
     const list = [...getList(info.kind)];
     const idx = list.findIndex((a) => a.name === info.buff.name);
-    if (idx === -1) return;
 
-    const current = list[idx];
     const manual = getManualActivation(info.buff.activation);
     if (!manual) return;
 
     const isStacks = typeof manual === "object" && "Stacks" in manual;
 
-    if (isStacks) {
-      const maxStacks = manual.Stacks;
-      const currentStacks = current.stacks ?? 0;
-      if (!current.active) {
-        list[idx] = { name: current.name, active: true, stacks: maxStacks };
-      } else if (currentStacks > 1) {
-        list[idx] = { name: current.name, active: true, stacks: currentStacks - 1 };
-      } else {
-        list[idx] = { name: current.name, active: false };
-      }
+    if (idx === -1) {
+      // Entry doesn't exist yet — create it as active
+      list.push({
+        name: info.buff.name,
+        active: true,
+        ...(isStacks ? { stacks: manual.Stacks } : {}),
+      });
     } else {
-      list[idx] = { name: current.name, active: !current.active };
+      const current = list[idx];
+      if (isStacks) {
+        const maxStacks = manual.Stacks;
+        const currentStacks = current.stacks ?? 0;
+        if (!current.active) {
+          list[idx] = { name: current.name, active: true, stacks: maxStacks };
+        } else if (currentStacks > 1) {
+          list[idx] = { name: current.name, active: true, stacks: currentStacks - 1 };
+        } else {
+          list[idx] = { name: current.name, active: false };
+        }
+      } else {
+        list[idx] = { name: current.name, active: !current.active };
+      }
     }
 
     const next: MemberActivations = info.kind === "weapon"
