@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import type { TFunction } from "i18next";
 import { ELEMENT_TW } from "../../lib/elements";
 import { charIcon, elementIcon } from "../../lib/charAssets";
-import { localizeCharacterName } from "../../lib/localize";
+import { localizeCharacterName, localizeBuffSource, localizeWeaponName, localizeArtifactSetName } from "../../lib/localize";
 import { getConditionalBuffs, getManualActivation, isNightsoulRequired, type ConditionalBuffInfo } from "../../lib/conditionals";
 import type { BuffBreakdown } from "../../stores/team";
 import { useTeamStore, type MemberActivations } from "../../stores/team";
@@ -14,9 +14,10 @@ interface BuffCardProps {
   readonly breakdown: Readonly<BuffBreakdown>;
   readonly memberIndex?: number;
   readonly build?: Readonly<CharacterBuild>;
+  readonly canNightsoul?: boolean;
 }
 
-export function BuffCard({ breakdown, memberIndex, build }: BuffCardProps) {
+export function BuffCard({ breakdown, memberIndex, build, canNightsoul = false }: BuffCardProps) {
   const { t, i18n } = useTranslation();
   const tw = ELEMENT_TW[breakdown.sourceElement];
   const isResonance = breakdown.sourceCharacterId === "resonance";
@@ -102,8 +103,21 @@ export function BuffCard({ breakdown, memberIndex, build }: BuffCardProps) {
     });
   }, [toggleableConditionals, mainDpsBuild?.character.element, build?.character.element]);
 
+  /** Localize a conditional buff label using frontend dictionaries (not WASM names) */
+  const localizeConditionalLabel = (info: ConditionalBuffInfo): string => {
+    if (info.kind === "weapon" && info.sourceId) {
+      return localizeWeaponName(info.sourceId, info.label, i18n.language);
+    }
+    if (info.kind === "artifact" && info.sourceId) {
+      return localizeArtifactSetName(info.sourceId, info.label, i18n.language);
+    }
+    // talent: label is buff.name (EN talent name) → localize via name dictionaries
+    return localizeBuffSource(info.label, i18n.language);
+  };
+
   /** Generate a distinct label for a conditional buff toggle */
   const getToggleLabel = (info: ConditionalBuffInfo): string => {
+    const localizedLabel = localizeConditionalLabel(info);
     const stat = info.buff.stat;
     // For element-specific stats, show full stat type name (e.g. "岩元素耐性減少")
     // to distinguish between different stat types for the same element
@@ -114,22 +128,59 @@ export function BuffCard({ breakdown, memberIndex, build }: BuffCardProps) {
       const statKey = `buff.stat.${statType}`;
       const statName = t(statKey, { element: elName });
       if (statName !== statKey) {
-        return `${info.label} (${statName})`;
+        return `${localizedLabel} (${statName})`;
       }
-      return `${info.label} (${elName})`;
+      return `${localizedLabel} (${elName})`;
     }
     // For non-element stats, show the stat name
     const statKey = `buff.stat.${stat}`;
     const statName = t(statKey);
     if (statName !== statKey) {
-      return `${info.label} (${statName})`;
+      return `${localizedLabel} (${statName})`;
     }
-    return info.label;
+    return localizedLabel;
   };
 
   // Check if there are duplicate labels to decide whether to show stat info
   const hasDuplicateLabels = relevantConditionals.length > 1 &&
     new Set(relevantConditionals.map((c) => c.label)).size < relevantConditionals.length;
+
+  // Match conditional buffs to resolved breakdown buffs (name match → stat match fallback)
+  const { conditionalValueMap, matchedIndices } = useMemo(() => {
+    const map = new Map<string, BuffBreakdownEntry>();
+    const matched = new Set<number>();
+    const statKey = (s: BuffableStat) => JSON.stringify(s);
+
+    for (const info of relevantConditionals) {
+      // Try exact name match first
+      let idx = breakdown.buffs.findIndex((b, i) => !matched.has(i) && b.name === info.buff.name);
+      // Fallback: match by stat type
+      if (idx === -1) {
+        const key = statKey(info.buff.stat);
+        idx = breakdown.buffs.findIndex((b, i) => !matched.has(i) && statKey(b.stat) === key);
+      }
+      if (idx !== -1) {
+        map.set(info.buff.name, breakdown.buffs[idx]);
+        matched.add(idx);
+      }
+    }
+    return { conditionalValueMap: map, matchedIndices: matched };
+  }, [relevantConditionals, breakdown.buffs]);
+
+  // Regular buffs = breakdown buffs NOT matched to any conditional,
+  // filtered to exclude element-specific buffs for irrelevant elements
+  const regularBuffs = useMemo(() => {
+    const mainEl = mainDpsBuild?.character.element ?? null;
+    const selfEl = build?.character.element ?? null;
+    return breakdown.buffs.filter((b, i) => {
+      if (matchedIndices.has(i)) return false;
+      const el = getStatElement(b.stat);
+      if (el === null) return true;
+      const lower = el.toLowerCase();
+      return (mainEl !== null && lower === mainEl.toLowerCase()) ||
+             (selfEl !== null && lower === selfEl.toLowerCase());
+    });
+  }, [breakdown.buffs, matchedIndices, mainDpsBuild?.character.element, build?.character.element]);
 
   return (
     <div className="bg-navy-card border border-navy-border rounded-xl p-3.5">
@@ -143,47 +194,13 @@ export function BuffCard({ breakdown, memberIndex, build }: BuffCardProps) {
         </div>
       </div>
 
-      {/* Conditional buff toggles */}
-      {relevantConditionals.length > 0 && (
-        <div className="flex flex-wrap gap-1.5 mb-3">
-          {relevantConditionals.map((info) => {
-            const act = findActivation(info);
-            const active = act?.active ?? false;
-            const nightsoul = isNightsoulRequired(info.buff.activation);
-            const manual = getManualActivation(info.buff.activation);
-            const isStacks = manual !== null && typeof manual === "object" && "Stacks" in manual;
-            const maxStacks = isStacks ? manual.Stacks : 0;
-            const currentStacks = act?.stacks ?? 0;
-
-            return (
-              <button
-                key={info.buff.name}
-                type="button"
-                onClick={() => toggleActivation(info)}
-                title={`${info.buff.description}${nightsoul ? " (夜魂キャラのみ)" : ""}`}
-                className={`px-3 py-1.5 rounded-lg text-[11px] font-medium transition-colors cursor-pointer
-                  ${active
-                    ? "bg-gold/20 text-gold border border-gold/40"
-                    : "bg-navy-border/50 text-text-muted border border-transparent hover:bg-navy-hover"
-                  }`}
-              >
-                {nightsoul && <span className="mr-0.5" aria-label="夜魂キャラのみ">◆</span>}
-                {hasDuplicateLabels ? getToggleLabel(info) : info.label}
-                {isStacks && active && (
-                  <span className="ml-1 text-[10px]">{currentStacks}/{maxStacks}</span>
-                )}
-              </button>
-            );
-          })}
-        </div>
-      )}
-
-      {/* Buff entries */}
+      {/* Unified buff list — conditionals shown in fixed position, cards never appear/disappear */}
       <div className="space-y-1.5">
-        {breakdown.buffs.map((buff, i) => (
-          <div key={i} className="flex justify-between items-center px-2.5 py-1.5 bg-navy-page rounded-md">
+        {/* Regular (non-conditional) buffs */}
+        {regularBuffs.map((buff, i) => (
+          <div key={`buff-${i}`} className="flex justify-between items-center px-2.5 py-1.5 bg-navy-page rounded-md">
             <div className="min-w-0">
-              <div className="text-[11px] text-text-primary">{buff.name}</div>
+              <div className="text-[11px] text-text-primary">{localizeBuffSource(buff.name, i18n.language)}</div>
               <div className="text-[9px] text-text-muted">{localizeBuffStat(buff.stat, t)}</div>
               {buff.condition && (
                 <div className="text-[9px] text-text-muted">
@@ -197,6 +214,55 @@ export function BuffCard({ breakdown, memberIndex, build }: BuffCardProps) {
             </span>
           </div>
         ))}
+
+        {/* All conditional buffs in fixed order — always visible, toggle changes value display */}
+        {relevantConditionals.map((info) => {
+          const act = findActivation(info);
+          const active = act?.active ?? false;
+          const nightsoul = isNightsoulRequired(info.buff.activation);
+          const manual = getManualActivation(info.buff.activation);
+          const isStacks = manual !== null && typeof manual === "object" && "Stacks" in manual;
+          const maxStacks = isStacks ? manual.Stacks : 0;
+          const currentStacks = act?.stacks ?? 0;
+          const resolvedBuff = conditionalValueMap.get(info.buff.name);
+
+          return (
+            <button
+              key={`cond-${info.buff.name}`}
+              type="button"
+              onClick={() => toggleActivation(info)}
+              title={`${info.buff.description}${nightsoul ? " (夜魂キャラのみ)" : ""}`}
+              className={`w-full flex justify-between items-center px-2.5 py-1.5 rounded-md text-left transition-colors cursor-pointer
+                ${active
+                  ? "bg-gold/10 border border-gold/30 hover:bg-gold/15"
+                  : "bg-navy-page/60 border border-dashed border-navy-border/60 hover:bg-navy-hover"
+                }`}
+            >
+              <div className="min-w-0">
+                <div className={`text-[11px] ${active ? "text-gold" : "text-text-secondary"}`}>
+                  {nightsoul && <span className="mr-0.5" aria-label="夜魂キャラのみ">◆</span>}
+                  {hasDuplicateLabels ? getToggleLabel(info) : localizeConditionalLabel(info)}
+                  {isStacks && (
+                    <span className="ml-1 text-[10px] opacity-70">
+                      {active ? `${currentStacks}/${maxStacks}` : `0/${maxStacks}`}
+                    </span>
+                  )}
+                </div>
+                <div className="text-[9px] text-text-muted">{localizeBuffStat(info.buff.stat, t)}</div>
+              </div>
+              <span className={`text-[11px] font-bold font-mono shrink-0 ml-2 ${active ? "text-green-500" : "text-text-secondary"}`}>
+                {(() => {
+                  const fallbackVal = (canNightsoul && info.buff.nightsoul_value != null)
+                    ? info.buff.nightsoul_value
+                    : info.buff.value;
+                  const val = resolvedBuff ? resolvedBuff.value : fallbackVal;
+                  const stat = resolvedBuff ? resolvedBuff.stat : info.buff.stat;
+                  return `${val > 0 ? "+" : ""}${formatBuffValue(val, stat)}`;
+                })()}
+              </span>
+            </button>
+          );
+        })}
       </div>
     </div>
   );

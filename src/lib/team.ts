@@ -190,6 +190,7 @@ export interface ResolveTeamOutput {
   readonly teamResults: Record<string, TalentCategoryResults>;
   readonly resolvedStats: Stats | null;
   readonly buffBreakdown: readonly BuffBreakdown[];
+  readonly nightsoulFlags: readonly boolean[];
 }
 
 export function resolveTeamDamage(input: ResolveTeamInput): ResolveTeamOutput {
@@ -197,18 +198,18 @@ export function resolveTeamDamage(input: ResolveTeamInput): ResolveTeamOutput {
 
   const mainDpsId = members[mainDpsIndex];
   if (!mainDpsId || !rawJson) {
-    return { soloResults: {}, teamResults: {}, resolvedStats: null, buffBreakdown: [] };
+    return { soloResults: {}, teamResults: {}, resolvedStats: null, buffBreakdown: [], nightsoulFlags: [] };
   }
 
   const mainBuild = getBuild(mainDpsId);
   if (!mainBuild) {
-    return { soloResults: {}, teamResults: {}, resolvedStats: null, buffBreakdown: [] };
+    return { soloResults: {}, teamResults: {}, resolvedStats: null, buffBreakdown: [], nightsoulFlags: [] };
   }
 
   // 1. Solo stats via build_stats_from_good
   const soloStats = buildStats(rawJson, mainDpsId, travelerElement);
   if (!soloStats) {
-    return { soloResults: {}, teamResults: {}, resolvedStats: null, buffBreakdown: [] };
+    return { soloResults: {}, teamResults: {}, resolvedStats: null, buffBreakdown: [], nightsoulFlags: [] };
   }
 
   // 2. Solo damage
@@ -221,6 +222,7 @@ export function resolveTeamDamage(input: ResolveTeamInput): ResolveTeamOutput {
   const indexMap: number[] = [];
   const memberBuilds: ({ characterId: string; characterName: string; element: GenshinElement } | null)[] = [];
   const memberBuffs: (readonly ResolvedBuff[])[] = [];
+  const nightsoulBySlot: boolean[] = new Array(members.length).fill(false);
 
   for (let i = 0; i < members.length; i++) {
     const id = members[i];
@@ -230,6 +232,7 @@ export function resolveTeamDamage(input: ResolveTeamInput): ResolveTeamOutput {
     const member = buildTeamMember(build, rawJson, activations[i], travelerElement);
     teamMembers.push(member);
     indexMap.push(i);
+    nightsoulBySlot[i] = member.can_nightsoul;
     memberBuilds.push({
       characterId: build.character.id,
       characterName: build.character.name,
@@ -272,5 +275,6 @@ export function resolveTeamDamage(input: ResolveTeamInput): ResolveTeamOutput {
     teamResults,
     resolvedStats: teamResult.final_stats,
     buffBreakdown,
+    nightsoulFlags: nightsoulBySlot,
   };
 }

@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useMemo, useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { useTranslation } from "react-i18next";
 import { useGoodStore } from "../../stores/good";
@@ -24,8 +24,6 @@ export function CharacterSelectModal({
   const builds = useGoodStore((s) => s.builds);
   const [elementFilters, setElementFilters] = useState<Set<GenshinElement>>(new Set());
   const [weaponFilter, setWeaponFilter] = useState<WeaponType | null>(null);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-
   const filtered = useMemo(() => {
     return [...builds].reverse().filter((b) => {
       if (elementFilters.size > 0 && !elementFilters.has(b.character.element)) return false;
@@ -43,11 +41,10 @@ export function CharacterSelectModal({
     });
   };
 
-  const handleConfirm = () => {
-    if (selectedId && !disabledIds.has(selectedId)) {
-      onSelect(selectedId);
+  const handleSelect = (id: string) => {
+    if (!disabledIds.has(id)) {
+      onSelect(id);
       onOpenChange(false);
-      setSelectedId(null);
       setElementFilters(new Set());
       setWeaponFilter(null);
     }
@@ -118,17 +115,15 @@ export function CharacterSelectModal({
               {filtered.map((build) => {
                 const id = build.character.id;
                 const disabled = disabledIds.has(id);
-                const selected = selectedId === id;
 
                 return (
                   <button
                     key={id}
                     type="button"
                     disabled={disabled}
-                    onClick={() => !disabled && setSelectedId(id)}
+                    onClick={() => handleSelect(id)}
                     className={`text-center p-1.5 rounded-lg transition-all
-                      ${disabled ? "opacity-30 cursor-not-allowed" : "cursor-pointer hover:bg-navy-hover"}
-                      ${selected ? "ring-2 ring-gold" : ""}`}
+                      ${disabled ? "opacity-30 cursor-not-allowed" : "cursor-pointer hover:bg-navy-hover"}`}
                   >
                     <div className="w-16 h-16 rounded-lg overflow-hidden mx-auto mb-1 bg-navy-hover">
                       <img
@@ -150,18 +145,6 @@ export function CharacterSelectModal({
             </div>
           </div>
 
-          {/* Confirm button — fixed at bottom */}
-          <div className="p-4 sm:p-5 pt-3 flex justify-end border-t border-navy-border">
-            <button
-              type="button"
-              onClick={handleConfirm}
-              disabled={!selectedId || disabledIds.has(selectedId)}
-              className="px-5 py-2 bg-gold text-navy-page rounded-md text-[12px] font-bold font-label
-                disabled:opacity-40 disabled:cursor-not-allowed hover:brightness-110 transition-all"
-            >
-              {t("team.select")}
-            </button>
-          </div>
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>

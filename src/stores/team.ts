@@ -57,6 +57,7 @@ interface TeamState {
   soloResults: Record<string, TalentCategoryResults>;
   teamResults: Record<string, TalentCategoryResults>;
   buffBreakdown: BuffBreakdown[];
+  nightsoulFlags: boolean[];
   savedTeams: SavedTeam[];
   isResolving: boolean;
   resolveError: string | null;
@@ -85,6 +86,7 @@ export const useTeamStore = create<TeamState>()(
   soloResults: {},
   teamResults: {},
   buffBreakdown: [],
+  nightsoulFlags: [],
   savedTeams: [],
   isResolving: false,
   resolveError: null,
@@ -105,7 +107,21 @@ export const useTeamStore = create<TeamState>()(
       mainDpsIndex = nextIdx === -1 ? 0 : nextIdx;
     }
 
-    set({ members, mainDpsIndex, activations });
+    const hasAnyMember = members.some((m) => m !== null);
+    if (hasAnyMember) {
+      set({ members, mainDpsIndex, activations });
+    } else {
+      set({
+        members,
+        mainDpsIndex,
+        activations,
+        resolvedStats: null,
+        buffBreakdown: [],
+        nightsoulFlags: [],
+        soloResults: {},
+        teamResults: {},
+      });
+    }
   },
 
   swapMembers: (fromIndex, toIndex) => {
@@ -153,6 +169,7 @@ export const useTeamStore = create<TeamState>()(
         teamResults: result.teamResults,
         resolvedStats: result.resolvedStats,
         buffBreakdown: [...result.buffBreakdown],
+        nightsoulFlags: [...result.nightsoulFlags],
         isResolving: false,
       });
     } catch (e) {

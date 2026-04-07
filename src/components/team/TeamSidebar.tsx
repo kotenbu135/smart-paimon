@@ -77,7 +77,8 @@ export function TeamSidebar() {
                   build={build}
                   isMainDps={index === mainDpsIndex}
                   onRemove={() => setMember(index, null)}
-                  onSetMainDps={() => setMainDps(index)}
+                  onIconClick={() => { setModalSlotIndex(index); setModalOpen(true); }}
+                  onCardClick={() => setMainDps(index)}
                 />
                 <ActivationPanel build={build} memberIndex={index} />
               </div>

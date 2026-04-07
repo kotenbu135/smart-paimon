@@ -4,6 +4,7 @@ import type { CharacterBuild, ConditionalBuff, TalentConditionalBuff, BuffActiva
 export interface ConditionalBuffInfo {
   readonly kind: "weapon" | "artifact" | "talent";
   readonly label: string;
+  readonly sourceId?: string;
   readonly buff: ConditionalBuff | TalentConditionalBuff;
   readonly refinement?: number;
 }
@@ -33,7 +34,8 @@ export function getConditionalBuffs(build: CharacterBuild): readonly Conditional
       for (const cb of conditionals) {
         results.push({
           kind: "weapon",
-          label: weapon.passive.name ?? build.weapon.weapon.name,
+          label: build.weapon.weapon.name,
+          sourceId: build.weapon.weapon.id,
           buff: cb,
           refinement: build.weapon.refinement,
         });
@@ -53,6 +55,7 @@ export function getConditionalBuffs(build: CharacterBuild): readonly Conditional
           results.push({
             kind: "artifact",
             label: entry.set.name,
+            sourceId: entry.set.id,
             buff: cb,
           });
         }
@@ -66,6 +69,7 @@ export function getConditionalBuffs(build: CharacterBuild): readonly Conditional
           results.push({
             kind: "artifact",
             label: entry.set.name,
+            sourceId: entry.set.id,
             buff: cb,
           });
         }
@@ -83,7 +87,7 @@ export function getConditionalBuffs(build: CharacterBuild): readonly Conditional
     for (const cb of talentConditionals) {
       results.push({
         kind: "talent",
-        label: build.character.name,
+        label: cb.name,
         buff: cb,
       });
     }

@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { TFunction } from "i18next";
 import type { ExtendedStats, BuffableStat } from "../../types/wasm";
@@ -99,6 +99,8 @@ export function StatsPanel({ stats, buffBreakdowns }: StatsPanelProps) {
     ({ key }) => (stats[key] as number) > 0
   );
 
+  const [buffExpanded, setBuffExpanded] = useState(false);
+
   const aggregated = useMemo(
     () => (buffBreakdowns && buffBreakdowns.length > 0 ? aggregateBuffs(buffBreakdowns, t) : []),
     [buffBreakdowns, t],
@@ -151,10 +153,19 @@ export function StatsPanel({ stats, buffBreakdowns }: StatsPanelProps) {
 
         {aggregated.length > 0 && (
           <>
-            <div className="px-3 py-1 mt-1 text-[10px] font-bold tracking-widest text-gold uppercase border-b border-navy-border/50">
-              {t("team.buffTotal")}
-            </div>
-            {aggregated.map((buff) => (
+            <button
+              type="button"
+              onClick={() => setBuffExpanded((prev) => !prev)}
+              className="w-full px-3 py-1 mt-1 flex items-center justify-between cursor-pointer border-b border-navy-border/50"
+            >
+              <span className="text-[10px] font-bold tracking-widest text-gold uppercase">
+                {t("team.buffTotal")}
+              </span>
+              <span className={`text-[10px] text-text-muted transition-transform ${buffExpanded ? "rotate-180" : ""}`}>
+                ▼
+              </span>
+            </button>
+            {buffExpanded && aggregated.map((buff) => (
               <div
                 key={buff.label}
                 className="flex justify-between items-center h-9 px-3 border-b border-navy-border/50 last:border-0"

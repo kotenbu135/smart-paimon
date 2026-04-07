@@ -28,6 +28,8 @@ export function TeamPage() {
   const rawJson = useGoodStore((s) => s.rawJson);
   const wasmReady = useUIStore((s) => s.wasmReady);
 
+  const hasAnyMember = members.some((m) => m !== null);
+
   useEffect(() => {
     const filledCount = members.filter((m) => m !== null).length;
     if (!wasmReady || !rawJson || filledCount === 0) return;
@@ -58,10 +60,12 @@ export function TeamPage() {
         <Tabs.Root value={activeTab} onValueChange={setActiveTab}>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 pb-6">
             <TeamSidebar />
-            {resolvedStats && (
-              <StatsPanel stats={resolvedStats} buffBreakdowns={buffBreakdown} />
+            {hasAnyMember && resolvedStats && (
+              <div className="self-start">
+                <StatsPanel stats={resolvedStats} buffBreakdowns={buffBreakdown} />
+              </div>
             )}
-            <div className="xl:col-span-2 flex flex-col gap-4">
+            {hasAnyMember && <div className="col-span-1 md:col-span-2 xl:col-span-2 flex flex-col gap-4">
               <Tabs.List className="flex gap-1 p-1 bg-navy-border/50 rounded-lg w-fit">
                 <Tabs.Trigger
                   value="buffs"
@@ -90,7 +94,7 @@ export function TeamPage() {
                   transition={{ duration: 0.15, ease: "easeOut" }}
                 >
                   <Tabs.Content value="buffs" forceMount={activeTab === "buffs" ? true : undefined}>
-                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-2 gap-3">
                       <BuffDetailTab />
                     </div>
                   </Tabs.Content>
@@ -99,7 +103,7 @@ export function TeamPage() {
                   </Tabs.Content>
                 </motion.div>
               </AnimatePresence>
-            </div>
+            </div>}
           </div>
         </Tabs.Root>
       </div>

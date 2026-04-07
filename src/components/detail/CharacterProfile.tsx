@@ -8,7 +8,7 @@ import type { ArtifactSlot } from "../../lib/charAssets";
 import { getCharacterArtifacts, setKeyToAssetId } from "../../lib/goodArtifacts";
 import { useGoodStore } from "../../stores/good";
 import { ArtifactDetailPopover } from "./ArtifactDetailDialog";
-import { localizeCharacterName, localizeWeaponName, localizeWeaponStat } from "../../lib/localize";
+import { localizeCharacterName, localizeWeaponName, localizeWeaponStat, localizeArtifactSetName } from "../../lib/localize";
 
 interface CharacterProfileProps {
   readonly build: Readonly<CharacterBuild>;
@@ -126,7 +126,7 @@ export function CharacterProfile({ build }: CharacterProfileProps) {
       >
         <div className="flex justify-between items-center mb-3">
           <h3 className="text-[14px] font-semibold text-text-primary truncate">
-            {artifacts.sets[0]?.set.name ?? t("detail.artifacts")}
+            {artifacts.sets[0] ? localizeArtifactSetName(artifacts.sets[0].set.id, artifacts.sets[0].set.name, locale) : t("detail.artifacts")}
           </h3>
           {artifacts.sets.length === 1 && artifacts.sets[0]?.piece_count >= 4 && (
             <span className="bg-gold/10 text-gold text-[10px] px-2 py-0.5 rounded border border-gold/30 font-bold">
