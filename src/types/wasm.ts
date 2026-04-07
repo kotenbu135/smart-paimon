@@ -208,6 +208,7 @@ export interface CharacterData {
   base_atk: number[];
   base_def: number[];
   ascension_stat: Record<string, number>; // e.g. { "Def": 0.3 }
+  constellation_pattern?: string; // e.g. "C3SkillC5Burst", "C3BurstC5Skill"
 }
 
 export interface WeaponData {

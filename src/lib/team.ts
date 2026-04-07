@@ -102,6 +102,29 @@ function talentRowsToDamageResults(rows: TalentRow[]): DamageResult[] {
   }));
 }
 
+/** Apply C3/C5 constellation talent level bonuses (+3) based on constellation_pattern */
+export function applyConstellationTalentBonus(
+  talentLevels: readonly [number, number, number],
+  constellation: number,
+  pattern: string | undefined,
+): [number, number, number] {
+  if (!pattern || constellation < 3) return [...talentLevels];
+  const [normalLv, skillLv, burstLv] = talentLevels;
+
+  let effectiveSkill = skillLv;
+  let effectiveBurst = burstLv;
+
+  if (pattern === "C3SkillC5Burst") {
+    if (constellation >= 3) effectiveSkill = Math.min(skillLv + 3, 15);
+    if (constellation >= 5) effectiveBurst = Math.min(burstLv + 3, 15);
+  } else if (pattern === "C3BurstC5Skill") {
+    if (constellation >= 3) effectiveBurst = Math.min(burstLv + 3, 15);
+    if (constellation >= 5) effectiveSkill = Math.min(skillLv + 3, 15);
+  }
+
+  return [normalLv, effectiveSkill, effectiveBurst];
+}
+
 function computeAllCategories(
   characterId: string,
   build: CharacterBuild,
@@ -117,7 +140,9 @@ function computeAllCategories(
   }
 
   const talents = charData.talents;
-  const [normalLv, skillLv, burstLv] = build.talent_levels;
+  const [normalLv, skillLv, burstLv] = applyConstellationTalentBonus(
+    build.talent_levels, build.constellation, charData.constellation_pattern,
+  );
   const el = build.character.element;
   const reactionBonus = damageContext?.amplifying_bonus ?? 0;
 

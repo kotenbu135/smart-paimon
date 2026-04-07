@@ -6,8 +6,8 @@ import { AnimatedNumber } from "../ui/AnimatedNumber";
 import type { CharacterBuild, Stats, Enemy, Reaction } from "../../types/wasm";
 import { ELEMENT_TW } from "../../lib/elements";
 import { localizeTalentName, localizeReactionName } from "../../lib/localize";
+import { find_character } from "@kotenbu135/genshin-calc-wasm";
 import {
-  getTalentData,
   computeTalentDamage,
   computeTransformativeDamage,
   computeLunarDamage,
@@ -16,6 +16,7 @@ import {
   type TalentRow,
   type TransformativeRow,
 } from "../../lib/damage";
+import { applyConstellationTalentBonus } from "../../lib/team";
 
 interface DamageTableProps {
   readonly build: Readonly<CharacterBuild>;
@@ -31,11 +32,17 @@ export function DamageTable({ build, stats, enemy, reaction, stickyHeader }: Dam
   const el = build.character.element;
   const tw = ELEMENT_TW[el];
 
-  const talents = useMemo(() => getTalentData(build.character.id), [build.character.id]);
+  const charData = useMemo(() => find_character(build.character.id), [build.character.id]);
+  const talents = charData?.talents ?? null;
   // Reaction bonuses (Crimson Witch, Thundering Fury, etc.) are handled by WASM via conditional_buffs
   const reactionBonus = 0;
 
-  const [normalLv, skillLv, burstLv] = build.talent_levels;
+  const [normalLv, skillLv, burstLv] = useMemo(
+    () => applyConstellationTalentBonus(
+      build.talent_levels, build.constellation, charData?.constellation_pattern,
+    ),
+    [build.talent_levels, build.constellation, charData],
+  );
 
   const talentRows = useMemo(() => {
     if (!talents) return { normal: [], charged: [], plunging: [], skill: [], burst: [] };
